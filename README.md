@@ -1,59 +1,129 @@
-# AngularReservae
+# Reservae Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+<div align="center">
+  <a href="https://github.com/RaphaelMun1z/Angular-Reservae">
+    <img src="https://img.shields.io/badge/frontend-Angular%2021-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Frontend Angular 21">
+  </a>
+  <img src="https://img.shields.io/badge/status-Prot%C3%B3tipo%20naveg%C3%A1vel-22C55E?style=for-the-badge" alt="Status: Protótipo navegável">
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5.9">
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-4.3-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4.3">
+  <img src="https://img.shields.io/badge/npm-11.16-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="npm 11.16">
+</div>
 
-## Development server
+Interface web do **Reservae**, plataforma de venda e gestão de ingressos para eventos. Este frontend representa a experiência de participantes e organizadores, cobrindo descoberta de eventos, seleção de setor, checkout, ingressos digitais, transferência de ingressos, área do usuário e painel administrativo.
 
-To start a local development server, run:
+> **Versão atual do frontend:** `0.0.0`<br>
+> **Estágio:** protótipo navegável em Angular
+
+## Visão geral
+
+O projeto foi construído como uma aplicação Angular standalone, com rotas declaradas em `src/app/app.routes.ts`, componentes de página em `src/app/pages` e assets visuais em `src/app/assets`. A interface utiliza uma identidade visual escura, destaque em coral, layouts responsivos e telas específicas para os principais fluxos do produto.
+
+## Rotas principais
+
+| Rota | Página |
+| :--- | :----- |
+| `/inicio` | Página inicial |
+| `/shows` | Vitrine de shows |
+| `/eventos` | Listagem de eventos |
+| `/selecionar-setor` | Seleção de setor |
+| `/checkout` | Checkout |
+| `/avaliacao` | Revisão da compra |
+| `/sucesso` | Compra concluída |
+| `/meus-ingressos` | Ingressos do usuário |
+| `/detalhes-ingresso` | Detalhes do ingresso digital |
+| `/transferir-ingresso` | Transferência de ingresso |
+| `/scanner` | Scanner de acesso |
+| `/dashboard` | Painel administrativo |
+| `/criar-evento` | Criação de evento |
+| `/perfil` | Perfil do usuário |
+| `/configuracoes` | Configurações |
+| `/suporte` | Suporte |
+
+## Stack tecnológica
+
+- **Angular 21:** base da aplicação frontend.
+- **Angular Router:** navegação entre páginas e fluxos.
+- **TypeScript 5.9:** linguagem principal do projeto.
+- **SCSS:** estilos globais e estilos por componente.
+- **Tailwind CSS 4:** tokens utilitários, tema visual e composição de layout.
+- **RxJS:** suporte reativo usado pelo ecossistema Angular.
+- **Vitest e jsdom:** ambiente de testes configurado pelo Angular.
+- **angular-cli-ghpages:** publicação da build no GitHub Pages.
+
+## Status das integrações
+
+| Status | Serviço | Responsabilidade | Páginas previstas |
+| :----: | :------ | :---------------- | :---------------- |
+| ⚪ | User Profile Service | Dados de perfil do participante e organizador | `/perfil`, `/configuracoes`, `/cadastro`, `/dashboard` |
+| ⚪ | Event Catalog Service | Catálogo de eventos, locais, categorias e detalhes de apresentação | `/inicio`, `/shows`, `/eventos`, `/club-vip`, `/criar-evento`, `/dashboard` |
+| ⚪ | Inventory Service | Disponibilidade de setores, lotes e ingressos reserváveis | `/selecionar-setor`, `/checkout`, `/dashboard`, `/criar-evento` |
+| ⚪ | Order Service | Criação, consulta e acompanhamento de pedidos | `/avaliacao`, `/checkout`, `/sucesso`, `/meus-ingressos`, `/dashboard` |
+| ⚪ | Payment Service | Dados de pagamento, status da transação e confirmação do checkout | `/checkout`, `/sucesso`, `/dashboard` |
+| ⚪ | Ticket Service | Emissão, consulta, transferência e validação de ingressos | `/meus-ingressos`, `/detalhes-ingresso`, `/transferir-ingresso`, `/scanner` |
+| ⚪ | Notification Service | Histórico e preferências de notificações relacionadas à conta e aos eventos | `/suporte`, `/perfil`, `/configuracoes`, `/dashboard` |
+
+> Legenda: `⚪` planejado, `🟡` em desenvolvimento, `✅` integrado.
+
+## Como executar localmente
+
+### Pré-requisitos
+
+- Node.js compatível com Angular 21;
+- npm 11 ou superior.
+
+### 1. Instale as dependências
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 2. Inicie o servidor de desenvolvimento
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+A aplicação ficará disponível em:
+
+```text
+http://localhost:4200
+```
+
+### 3. Gere uma build de produção
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+Os arquivos compilados serão gerados em `dist/`.
 
-To build the project run:
+## Scripts disponíveis
+
+| Script | Descrição |
+| :----- | :-------- |
+| `npm start` | Inicia o servidor local com `ng serve` |
+| `npm run build` | Gera a build de produção |
+| `npm run watch` | Gera build em modo observação para desenvolvimento |
+| `npm test` | Executa os testes unitários |
+| `npm run github-build` | Gera build com `base-href` configurado para GitHub Pages |
+| `npm run github-deploy` | Publica o conteúdo gerado no GitHub Pages |
+
+## Deploy no GitHub Pages
+
+Para publicar a aplicação:
 
 ```bash
-ng build
+npm run github-build
+npm run github-deploy
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+O script de build usa o `base-href`:
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```text
+https://raphaelmuniz.github.io/Angular-Reservae/
 ```
 
-## Running end-to-end tests
+## Relato de bugs
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Encontrou um comportamento inesperado? Abra uma issue no repositório com uma descrição objetiva, os passos para reproduzir, o resultado esperado e, quando possível, capturas de tela ou logs do navegador.
