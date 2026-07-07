@@ -1,0 +1,84 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+            :host {
+                display: block;
+                min-height: 100vh;
+                background-color: #050505;
+                --bg: #050505; --card: #0d0d0d; --red: #ff624d;
+                --white: #fff; --gray: #a7a7a7;
+            }
+
+            :host {
+                min-height: 100vh;
+                background: radial-gradient(circle at top center, #1f0b09 0%, var(--bg) 50%, #000000 100%);
+                font-family: "Montserrat", sans-serif;
+                color: white;
+            }
+
+            /* Navbar simplificada */
+            .nav {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 24px 48px;
+            }
+
+            .logo {
+                width: 52px; height: 52px; border-radius: 50%; background: var(--red);
+                display: flex; justify-content: center; align-items: center; text-decoration: none;
+            }
+
+            .logo svg { width: 28px; height: 28px; }
+
+            /* Suporte Container */
+            .support-container {
+                max-width: 900px; margin: 40px auto; padding: 0 20px;
+            }
+
+            .page-title {
+                font-size: 3rem; font-weight: 900; letter-spacing: -1.5px;
+                margin-bottom: 30px; text-align: center;
+            }
+
+            /* Barra de Pesquisa */
+            .search-box {
+                background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 12px; padding: 20px; margin-bottom: 40px;
+                display: flex; gap: 15px; align-items: center;
+            }
+
+            .search-box input {
+                flex: 1; background: transparent; border: none; color: white;
+                font-size: 16px; outline: none;
+            }
+
+            /* Categorias */
+            .faq-grid {
+                display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            }
+
+            .faq-card {
+                background: rgba(15, 15, 15, 0.6); backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px;
+                border-radius: 16px; transition: border 0.3s;
+            }
+
+            .faq-card:hover { border-color: var(--red); }
+            .faq-card h3 { margin-bottom: 15px; color: var(--red); font-size: 18px; }
+            .faq-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+
+            /* Chat de Suporte */
+            .chat-widget {
+                margin-top: 50px; background: rgba(255, 255, 255, 0.03);
+                padding: 30px; border-radius: 20px; text-align: center;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .btn-chat {
+                background: var(--red); color: white; border: none; padding: 14px 30px;
+                border-radius: 25px; font-weight: 800; cursor: pointer; margin-top: 20px;
+            }
+
+            @media (max-width: 768px) {
+                .faq-grid { grid-template-columns: 1fr; }
+            }
+
+

@@ -1,0 +1,45 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #050505;
+}
+
+/* Efeito de ruído sutil de fundo */
+        :host::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            background-image: repeating-radial-gradient(circle at 0 0, #fff 0, #fff 1px, transparent 1px, transparent 4px);
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Animação de pop-in para o ícone de sucesso */
+        @keyframes pop-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop-in {
+            animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Brilho suave e contínuo ao fundo */
+        @keyframes success-glow {
+            0%, 100% { opacity: 0.15; transform: scale(0.95); }
+            50% { opacity: 0.25; transform: scale(1.05); }
+        }
+        .glow-success {
+            animation: success-glow 4s ease-in-out infinite;
+        }
+
+        /* Borda pontilhada para simular um recibo */
+        .receipt-border {
+            background-image: linear-gradient(to right, #242424 50%, transparent 50%);
+            background-size: 16px 2px;
+            background-repeat: repeat-x;
+        }
+
+
+

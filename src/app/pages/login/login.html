@@ -1,0 +1,58 @@
+    <!-- Header Simples -->
+    <header class="absolute top-0 left-0 w-full z-40 px-8 py-6 flex justify-between items-center">
+        <a routerLink="/index" class="inline-flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform">
+            <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center relative z-10 px-6 py-20">
+        <!-- Glow Element -->
+        <div class="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-brand/20 rounded-full blur-[120px] pointer-events-none glow-bg transform -translate-x-1/2 -translate-y-1/2 origin-top-left"></div>
+
+        <div class="w-full max-w-md bg-dark-card/80 backdrop-blur-xl border border-dark-border rounded-3xl p-8 sm:p-10 shadow-2xl relative">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-black text-white mb-2 tracking-tight">Bem-vindo de volta!</h1>
+                <p class="text-sm font-medium text-gray-400">Acesse sua conta para gerenciar seus ingressos.</p>
+            </div>
+
+            <form class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">E-mail</label>
+                    <div class="relative">
+                        <i class="ph-bold ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                        <input type="email" placeholder="seu@email.com" class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Senha</label>
+                    <div class="relative">
+                        <i class="ph-bold ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                        <input type="password" placeholder="••••••••" class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 pl-11 pr-11 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-600">
+                        <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                            <i class="ph-bold ph-eye text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" class="w-4 h-4 rounded border-dark-border bg-dark-bg text-brand focus:ring-brand focus:ring-offset-dark-bg cursor-pointer accent-brand">
+                        <span class="font-semibold text-gray-400 group-hover:text-white transition-colors">Lembrar-me</span>
+                    </label>
+                    <a routerLink="/recuperar-senha" class="font-bold text-brand hover:text-brand-light transition-colors">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="w-full bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold transition-all shadow-[0_10px_20px_rgba(255,98,77,0.2)] mt-4">
+                    Entrar na Conta
+                </button>
+            </form>
+
+            <div class="mt-8 text-center text-sm font-semibold text-gray-400">
+                Ainda não tem uma conta? 
+                <a routerLink="/cadastro" class="text-white hover:text-brand transition-colors ml-1">Cadastre-se agora</a>
+            </div>
+        </div>
+    </main>
+

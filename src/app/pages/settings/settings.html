@@ -1,0 +1,454 @@
+		<aside
+			class="w-64 bg-dark-card border-r border-dark-border flex-col justify-between flex-shrink-0 relative z-40 hidden md:flex"
+		>
+			<div>
+				<div
+					class="h-20 flex items-center px-8 border-b border-dark-border"
+				>
+					<div
+						class="flex items-center gap-3 text-white font-black text-xl tracking-tight"
+					>
+						<div
+							class="w-8 h-8 rounded-full bg-brand flex items-center justify-center shadow-[0_0_15px_rgba(255,98,77,0.3)]"
+						>
+							<i class="ph-bold ph-ticket text-white"></i>
+						</div>
+						ADMIN
+					</div>
+				</div>
+
+				<nav class="p-4 space-y-1 mt-4">
+					<p
+						class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3"
+					>
+						Gestão
+					</p>
+					<a
+						routerLink="/dashboard"
+						class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors"
+					>
+						<i class="ph ph-squares-four text-xl"></i> Dashboard
+					</a>
+					<a
+						routerLink="/eventos"
+						class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors"
+					>
+						<i class="ph ph-calendar-blank text-xl"></i> Eventos
+					</a>
+					<a
+						routerLink="/scanner"
+						class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors"
+					>
+						<i class="ph ph-qr-code text-xl"></i> Scanner
+					</a>
+					<a
+						routerLink="/dashboard" fragment="clientes"
+						class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors"
+					>
+						<i class="ph ph-users text-xl"></i> Clientes
+					</a>
+					<a
+						routerLink="/dashboard" fragment="transacoes"
+						class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors"
+					>
+						<i class="ph ph-receipt text-xl"></i> Transações
+					</a>
+				</nav>
+
+				<nav class="p-4 space-y-1 mt-2">
+					<p
+						class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3"
+					>
+						Sistema
+					</p>
+					<a
+						routerLink="/dashboard" fragment="relatorios"
+						class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors"
+					>
+						<i class="ph ph-chart-line-up text-xl"></i> Relatórios
+					</a>
+					<a
+						routerLink="/configuracoes"
+						class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/10 text-brand font-semibold transition-colors"
+					>
+						<i class="ph ph-gear text-xl"></i> Configurações
+					</a>
+				</nav>
+			</div>
+
+			<div class="p-4 border-t border-dark-border">
+				<div
+					class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-dark-hover cursor-pointer transition-colors"
+				>
+					<img
+						alt="Admin"
+						class="w-9 h-9 rounded-full object-cover border border-dark-border"
+					/>
+					<div class="flex-1 min-w-0 text-left">
+						<p class="text-sm font-bold text-white truncate">
+							
+						</p>
+						<p class="text-xs text-gray-500 truncate">
+							Administrador
+						</p>
+					</div>
+					<i
+						class="ph-bold ph-sign-out text-gray-500 hover:text-brand transition-colors"
+					></i>
+				</div>
+			</div>
+		</aside>
+
+		<main
+			class="flex-1 flex flex-col h-screen overflow-hidden bg-[#0a0a0a] relative z-10"
+		>
+			<header
+				class="h-20 flex items-center justify-between px-6 md:px-8 border-b border-dark-border bg-dark-card/50 backdrop-blur-md sticky top-0 z-30"
+			>
+				<div class="flex items-center gap-4">
+					<button
+						class="md:hidden text-gray-400 hover:text-white transition-colors"
+					>
+						<i class="ph-bold ph-list text-2xl"></i>
+					</button>
+					<div
+						class="text-sm font-semibold text-gray-400 hidden sm:block"
+					>
+						Sistema / <span class="text-white">Configurações</span>
+					</div>
+				</div>
+
+				<div class="flex items-center gap-4">
+					<div class="relative hidden md:block w-64 mr-4">
+						<i
+							class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"
+						></i>
+						<input
+							type="text"
+							placeholder="Busca rápida..."
+							class="w-full bg-dark-hover border border-dark-border rounded-full py-2 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-brand transition-colors"
+						/>
+					</div>
+					<button
+						class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-dark-hover text-gray-400 hover:text-white transition-colors"
+					>
+						<i class="ph-bold ph-bell text-xl"></i>
+						<span
+							class="absolute top-2 right-2.5 w-2 h-2 bg-brand rounded-full border border-dark-card"
+						></span>
+					</button>
+					<app-user-menu name="Administrador" email="admin@reservae.com" />
+				</div>
+			</header>
+
+			<div class="flex-1 overflow-y-auto p-6 md:p-8 relative">
+				<div class="mb-8">
+					<h1
+						class="text-2xl md:text-3xl font-black text-white tracking-tight mb-1"
+					>
+						Configurações do Sistema
+					</h1>
+					<p class="text-sm text-gray-500 font-medium">
+						Ajuste os parâmetros da plataforma, integrações
+						financeiras e segurança da equipe.
+					</p>
+				</div>
+
+				<div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+					<div class="col-span-1 xl:col-span-1 space-y-2">
+						<button
+							onclick="switchConfigTab('geral')"
+							id="tab-btn-geral"
+							class="tab-btn w-full text-left px-5 py-3.5 rounded-xl bg-dark-card border border-brand text-brand font-bold flex items-center gap-3 transition-colors"
+						>
+							<i
+								class="ph-bold ph-sliders-horizontal text-xl"
+							></i>
+							Geral
+						</button>
+						<button
+							onclick="switchConfigTab('pagamentos')"
+							id="tab-btn-pagamentos"
+							class="tab-btn w-full text-left px-5 py-3.5 rounded-xl bg-transparent text-gray-400 hover:text-white hover:bg-dark-card border border-transparent transition-colors font-medium flex items-center gap-3"
+						>
+							<i class="ph-bold ph-credit-card text-xl"></i>
+							Gateways de Pagamento
+						</button>
+						<button
+							onclick="switchConfigTab('equipe')"
+							id="tab-btn-equipe"
+							class="tab-btn w-full text-left px-5 py-3.5 rounded-xl bg-transparent text-gray-400 hover:text-white hover:bg-dark-card border border-transparent transition-colors font-medium flex items-center gap-3"
+						>
+							<i class="ph-bold ph-shield-check text-xl"></i>
+							Segurança & Equipe
+						</button>
+					</div>
+
+					<div class="col-span-1 xl:col-span-3">
+						<div
+							id="tab-geral"
+							class="settings-tab block fade-in space-y-6"
+						>
+							<div
+								class="bg-dark-card border border-dark-border rounded-2xl p-6 md:p-8"
+							>
+								<h2 class="text-lg font-bold text-white mb-6">
+									Informações da Plataforma
+								</h2>
+								<div class="space-y-5">
+									<div>
+										<label
+											class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+											>Nome do Sistema</label
+										>
+										<input
+											type="text"
+											value="Music Tour Tickets"
+											class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-brand transition-colors"
+										/>
+									</div>
+									<div
+										class="grid grid-cols-1 md:grid-cols-2 gap-5"
+									>
+										<div>
+											<label
+												class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+												>E-mail de Suporte</label
+											>
+											<div class="relative">
+												<i
+													class="ph-bold ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"
+												></i>
+												<input
+													type="email"
+													value="suporte@musictour.com"
+													class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-brand transition-colors"
+												/>
+											</div>
+										</div>
+										<div>
+											<label
+												class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+												>Taxa de Conveniência (%)</label
+											>
+											<div class="relative">
+												<i
+													class="ph-bold ph-percent absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"
+												></i>
+												<input
+													type="number"
+													value="10"
+													class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-brand transition-colors"
+												/>
+											</div>
+										</div>
+									</div>
+									<div
+										class="grid grid-cols-1 md:grid-cols-2 gap-5"
+									>
+										<div>
+											<label
+												class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+												>Fuso Horário Padrão</label
+											>
+											<select
+												class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-brand transition-colors appearance-none"
+											>
+												<option>
+													América/Sao_Paulo (GMT-3)
+												</option>
+												<option>
+													América/Manaus (GMT-4)
+												</option>
+											</select>
+										</div>
+										<div>
+											<label
+												class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+												>Moeda Principal</label
+											>
+											<select
+												class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-brand transition-colors appearance-none"
+											>
+												<option>
+													Real Brasileiro (BRL)
+												</option>
+												<option>
+													Dólar Americano (USD)
+												</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div
+								class="bg-dark-card border border-dark-border rounded-2xl p-6 md:p-8"
+							>
+								<h2 class="text-lg font-bold text-white mb-6">
+									Controle de Acesso Público
+								</h2>
+								<div
+									class="flex items-center justify-between p-5 bg-dark-bg border border-dark-border rounded-xl"
+								>
+									<div>
+										<h3
+											class="text-sm font-bold text-white"
+										>
+											Modo de Manutenção
+										</h3>
+										<p
+											class="text-xs text-gray-500 mt-1 pr-4"
+										>
+											Oculta o site para os clientes e
+											exibe a página 503. Apenas
+											administradores logados conseguem
+											acessar a plataforma.
+										</p>
+									</div>
+									<label
+										class="relative cursor-pointer flex-shrink-0"
+									>
+										<input
+											type="checkbox"
+											class="sr-only peer"
+										/>
+										<div
+											class="w-11 h-6 bg-dark-hover border border-dark-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 peer-checked:after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 peer-checked:border-amber-500"
+										></div>
+									</label>
+								</div>
+							</div>
+
+							<div class="flex justify-end">
+								<button
+									class="bg-brand hover:bg-brand-dark text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-[0_10px_20px_rgba(255,98,77,0.2)] flex items-center gap-2"
+								>
+									<i
+										class="ph-bold ph-floppy-disk text-lg"
+									></i>
+									Salvar Alterações
+								</button>
+							</div>
+						</div>
+
+						<div
+							id="tab-pagamentos"
+							class="settings-tab hidden fade-in space-y-6"
+						>
+							<div
+								class="bg-dark-card border border-dark-border rounded-2xl p-6 md:p-8 relative overflow-hidden"
+							>
+								<div
+									class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[50px] pointer-events-none"
+								></div>
+
+								<div
+									class="flex justify-between items-start mb-6"
+								>
+									<div>
+										<h2
+											class="text-lg font-bold text-white flex items-center gap-2"
+										>
+											<i
+												class="ph-fill ph-handshake text-blue-500 text-2xl"
+											></i>
+											Mercado Pago
+										</h2>
+										<p class="text-xs text-gray-500 mt-1">
+											Processamento de PIX e Cartão de
+											Crédito Nacional.
+										</p>
+									</div>
+									<label
+										class="relative cursor-pointer flex-shrink-0"
+									>
+										<input
+											type="checkbox"
+											class="sr-only peer"
+											checked
+										/>
+										<div
+											class="w-11 h-6 bg-dark-hover border border-dark-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 peer-checked:after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"
+										></div>
+									</label>
+								</div>
+
+								<div class="space-y-4">
+									<div>
+										<label
+											class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+											>Public Key</label
+										>
+										<input
+											type="password"
+											value="APP_USR-xxxxxxxxxxxxxxxxxxxxxxxx"
+											class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 transition-colors"
+										/>
+									</div>
+									<div>
+										<label
+											class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+											>Access Token</label
+										>
+										<input
+											type="password"
+											value="APP_USR-xxxxxxxxxxxxxxxxxxxxxxxx"
+											class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 transition-colors"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div
+								class="bg-dark-card border border-dark-border rounded-2xl p-6 md:p-8 relative overflow-hidden"
+							>
+								<div
+									class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-[50px] pointer-events-none"
+								></div>
+
+								<div
+									class="flex justify-between items-start mb-6"
+								>
+									<div>
+										<h2
+											class="text-lg font-bold text-white flex items-center gap-2"
+										>
+											<i
+												class="ph-fill ph-stripe-logo text-purple-500 text-2xl"
+											></i>
+											Stripe
+										</h2>
+										<p class="text-xs text-gray-500 mt-1">
+											Processamento de Cartões
+											Internacionais e Apple/Google Pay.
+										</p>
+									</div>
+									<label
+										class="relative cursor-pointer flex-shrink-0"
+									>
+										<input
+											type="checkbox"
+											class="sr-only peer"
+										/>
+										<div
+											class="w-11 h-6 bg-dark-hover border border-dark-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 peer-checked:after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"
+										></div>
+									</label>
+								</div>
+
+								<div class="space-y-4">
+									<div>
+										<label
+											class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+											>Publishable Key</label
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	

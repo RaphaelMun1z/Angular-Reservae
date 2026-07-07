@@ -1,0 +1,59 @@
+    <!-- Header Simples -->
+    <header class="relative z-40 px-8 py-6">
+        <a routerLink="/index" class="inline-flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform">
+            <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
+        </a>
+    </header>
+
+    <!-- Main Content 500 -->
+    <main class="flex-1 flex items-center justify-center relative z-10 px-6">
+        
+        <!-- Glow Element (Flicker Effect) -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand/30 rounded-full blur-[120px] pointer-events-none glow-flicker"></div>
+
+        <div class="text-center max-w-2xl relative">
+            <!-- Ícone Tecnológico -->
+            <div class="flex justify-center mb-6">
+                <div class="relative w-32 h-32 bg-dark-card border border-dark-border rounded-full flex items-center justify-center shadow-2xl animate-glitch cursor-help transition-colors hover:border-brand/50">
+                    <i class="ph-duotone ph-hard-drives text-7xl text-gray-400"></i>
+                    <!-- Detalhe de curto-circuito/alerta -->
+                    <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-brand rounded-full flex items-center justify-center border-4 border-dark-bg">
+                        <i class="ph-bold ph-lightning text-white text-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Título 500 -->
+            <h1 class="text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 tracking-tighter mb-4 drop-shadow-lg">
+                500
+            </h1>
+            
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
+                Curto-circuito no Servidor!
+            </h2>
+            
+            <p class="text-gray-400 font-medium text-lg mb-10 leading-relaxed">
+                Ops! Algo deu errado nos bastidores e não conseguimos processar sua solicitação no momento. Nossa equipe técnica já foi notificada e está afinando os instrumentos para resolver isso.
+            </p>
+            
+            <!-- Botões de Ação -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="window.location.reload();" class="w-full sm:w-auto bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1 shadow-[0_10px_20px_rgba(255,98,77,0.2)] flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-arrows-clockwise text-lg"></i>
+                    Tentar Novamente
+                </button>
+                
+                <a routerLink="/index" class="w-full sm:w-auto bg-dark-card border border-dark-border text-gray-300 hover:text-white hover:border-gray-500 px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-house text-lg"></i>
+                    Voltar ao Início
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Decoração de rodapé discreta -->
+    <div class="absolute bottom-6 w-full text-center z-10 flex flex-col items-center justify-center gap-1">
+        <p class="text-xs text-gray-600 font-semibold uppercase tracking-widest">Internal Server Error • Music Tour</p>
+        <p class="text-[10px] text-gray-700 font-mono">ERR_CODE: UNEXPECTED_EXCEPTION</p>
+    </div>

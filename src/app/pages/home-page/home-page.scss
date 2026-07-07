@@ -1,0 +1,34 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #050505;
+}
+
+/* Efeito de ruído sutil de fundo */
+			:host::before {
+				content: "";
+				position: fixed;
+				inset: 0;
+				opacity: 0.03;
+				background-image: repeating-radial-gradient(
+					circle at 0 0,
+					#fff 0,
+					#fff 1px,
+					transparent 1px,
+					transparent 4px
+				);
+				pointer-events: none;
+				z-index: 50;
+			}
+
+			/* Oculta scrollbar nas listas horizontais */
+			.no-scrollbar::-webkit-scrollbar {
+				display: none;
+			}
+			.no-scrollbar {
+				-ms-overflow-style: none;
+				scrollbar-width: none;
+			}
+
+
+

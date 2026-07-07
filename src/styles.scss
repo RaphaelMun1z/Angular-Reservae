@@ -1,0 +1,37 @@
+@use 'tailwindcss';
+
+@theme {
+  --font-sans: 'Montserrat', sans-serif;
+
+  --color-brand: #ff624d;
+  --color-brand-dark: #e04c38;
+  --color-brand-light: #ff8575;
+
+  --color-dark-bg: #050505;
+  --color-dark-card: #101010;
+  --color-dark-border: #242424;
+  --color-dark-hover: #1a1a1a;
+
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  background-color: #050505;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.brand-logo-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}

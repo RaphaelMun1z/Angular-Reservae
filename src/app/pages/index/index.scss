@@ -1,0 +1,792 @@
+* {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :host {
+                display: block;
+                min-height: 100vh;
+                background-color: #050505;
+                --bg: #090909;
+                --card: #0d0d0d;
+                --red: #ff624d;
+                --red-dark: #ff4f36;
+                --white: #fff;
+                --gray: #a7a7a7;
+            }
+
+            :host {
+                min-height: 100vh;
+                background: radial-gradient(
+                    circle at center,
+                    #2d0d0a 0%,
+                    #090909 45%,
+                    #050505 100%
+                );
+                font-family: "Montserrat", sans-serif;
+                color: white;
+                padding: 12px;
+                overflow-x: hidden;
+            }
+
+            /* Navbar */
+            .nav {
+                position: relative;
+                z-index: 50;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 36px 24px 36px;
+            }
+
+            .logo {
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                background: var(--red);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+
+            .logo svg {
+                width: 28px;
+                height: 28px;
+            }
+
+            .nav-center {
+                display: flex;
+                gap: 40px;
+            }
+
+            .nav-center a {
+                text-decoration: none;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.8;
+                transition: opacity 0.2s, color 0.2s;
+            }
+            
+            .nav-center a:hover {
+                opacity: 1;
+            }
+
+            .nav-center a svg {
+                width: 22px;
+                height: 22px;
+                stroke: white;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                fill: none;
+                transition: stroke 0.2s;
+            }
+
+            .nav-center a:hover svg {
+                stroke: var(--red);
+            }
+
+            .nav-right {
+                display: flex;
+                align-items: center;
+                gap: 34px;
+            }
+
+            .location {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 14px;
+            }
+
+            .flag {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: radial-gradient(circle, #002776 30%, #fedf00 30%, #fedf00 65%, #009b3a 65%);
+                flex-shrink: 0;
+            }
+
+            /* Hambúrguer Menu Animado */
+            .menu {
+                width: 36px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                cursor: pointer;
+                z-index: 10000; 
+                position: relative;
+            }
+
+            .menu span {
+                height: 3px;
+                background: white;
+                border-radius: 10px;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+                transform-origin: center;
+            }
+
+            .menu.active span:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+            .menu.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .menu.active span:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+            }
+
+            /* Hero com Video Background */
+            .hero {
+                width: 100%;
+                min-height: calc(100vh - 110px);
+                background-color: #050505;
+                border-radius: 28px;
+                overflow: hidden;
+                position: relative;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .video-background {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0; 
+                pointer-events: none; 
+            }
+
+            .video-background video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover; 
+            }
+
+            .video-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(rgba(5, 5, 5, 0.7), rgba(5, 5, 5, 0.85));
+                z-index: 1;
+                pointer-events: none;
+            }
+
+            .hero::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                opacity: 0.04;
+                background-image: repeating-radial-gradient(
+                    circle at 0 0,
+                    #fff 0,
+                    #fff 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+                pointer-events: none;
+                z-index: 2; 
+            }
+
+            /* Componentes da Hero */
+            .bg-title {
+                position: absolute;
+                top: 150px;
+                left: 60px;
+                right: 60px;
+                font-size: clamp(4rem, 12vw, 10rem);
+                font-weight: 900;
+                letter-spacing: -4px;
+                color: rgba(255, 255, 255, 0.18);
+                z-index: 3;
+            }
+
+            .bg-title span {
+                display: block;
+                filter: blur(0.3px);
+            }
+
+            .tour {
+                position: absolute;
+                left: 60px;
+                top: 70px;
+                z-index: 5;
+            }
+
+            .tour .small {
+                font-size: 14px;
+                text-transform: uppercase;
+                font-weight: 700;
+                letter-spacing: 2px;
+            }
+
+            .tour .big {
+                font-size: clamp(2rem, 3vw, 3rem);
+                font-weight: 900;
+            }
+
+            .tour .big span {
+                -webkit-text-stroke: 1px white;
+                color: transparent;
+            }
+
+            .left-copy {
+                position: absolute;
+                left: 70px;
+                top: 360px;
+                z-index: 5;
+            }
+
+            .left-copy h2 {
+                font-size: clamp(2rem, 4vw, 4rem);
+                line-height: 1.05;
+                font-weight: 900;
+            }
+
+            .left-copy .outline {
+                color: transparent;
+                -webkit-text-stroke: 1.5px white;
+            }
+
+            @keyframes pulseGlow {
+                0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+                50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            }
+
+            .glow {
+                position: absolute;
+                left: 50%;
+                top: 52%;
+                transform: translate(-50%, -50%);
+                width: 620px;
+                height: 620px;
+                border-radius: 50%;
+                background: radial-gradient(
+                    circle,
+                    rgba(255, 90, 60, 0.9) 0%,
+                    rgba(255, 90, 60, 0.2) 45%,
+                    transparent 70%
+                );
+                filter: blur(50px);
+                z-index: 2;
+                animation: pulseGlow 5s ease-in-out infinite;
+            }
+
+            @keyframes floatArtist {
+                0%, 100% { transform: translate(-50%, -50%); }
+                50% { transform: translate(-50%, -53%); }
+            }
+
+            .artist {
+                position: absolute;
+                left: 50%;
+                top: 54%;
+                transform: translate(-50%, -50%);
+                z-index: 10;
+                min-width: min(45vw, 560px);
+                height: 100%;
+                animation: floatArtist 6s ease-in-out infinite;
+                align-items: flex-end;
+                display: flex;
+            }
+
+            .artist img {
+                width: 100%;
+                display: block;
+                filter: brightness(1.2) drop-shadow(0 0 35px rgba(255, 90, 60, 0.4));
+                object-fit: contain;
+                max-width: 40vw;
+            }
+
+            @keyframes spinSpiral {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .spiral {
+                position: absolute;
+                right: 90px;
+                top: 220px;
+                width: 160px;
+                height: 240px;
+                z-index: 4;
+                transform-origin: center center;
+                animation: spinSpiral 25s linear infinite;
+            }
+
+            .spiral div {
+                position: absolute;
+                inset: 0;
+                border-radius: 50%;
+                border: 12px solid #ff7d72;
+                transform: rotate(70deg);
+                box-shadow: 0 0 20px rgba(255, 98, 77, 0.4);
+            }
+
+            .spiral div:nth-child(2) {
+                transform: rotate(70deg) scale(0.82) translateY(12px);
+            }
+
+            .spiral div:nth-child(3) {
+                transform: rotate(70deg) scale(0.64) translateY(25px);
+            }
+
+            .spiral div:nth-child(4) {
+                transform: rotate(70deg) scale(0.46) translateY(40px);
+            }
+
+            .date {
+                position: absolute;
+                right: 95px;
+                bottom: 170px;
+                z-index: 20;
+                color: #e8e8e8;
+                font-size: 15px;
+            }
+
+            /* Botão de Mutar / Desmutar */
+            .mute-toggle {
+                position: absolute;
+                top: 25px;
+                right: 25px;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                z-index: 30;
+                transition: transform 0.2s ease, background 0.2s ease;
+            }
+
+            .mute-toggle:hover {
+                transform: scale(1.1);
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .mute-toggle svg {
+                width: 24px;
+                height: 24px;
+                stroke: white;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                fill: none;
+            }
+
+            /* Novo Componente de Ticket Essencial e Elegante */
+            .tickets {
+                position: absolute;
+                bottom: 25px;
+                left: 25px;
+                right: 25px;
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                z-index: 20;
+            }
+
+            .ticket-card {
+                background: rgba(15, 15, 15, 0.6);
+                backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 20px;
+                width: 100%;
+                max-width: 340px;
+                color: white;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                transition: transform 0.3s, border-color 0.3s;
+                position: relative;
+            }
+
+            .ticket-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(255, 98, 77, 0.4);
+            }
+
+            .tc-content {
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .tc-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 5px;
+            }
+
+            .tc-badge {
+                background: var(--red);
+                color: white;
+                font-size: 10px;
+                font-weight: 800;
+                padding: 4px 10px;
+                border-radius: 12px;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+
+            .tc-date {
+                font-size: 12px;
+                color: var(--gray);
+                font-weight: 600;
+            }
+
+            .tc-title {
+                font-size: 26px;
+                font-weight: 900;
+                margin: 0;
+                line-height: 1;
+            }
+
+            .tc-subtitle {
+                font-size: 12px;
+                color: var(--gray);
+                font-weight: 500;
+            }
+
+            .tc-price {
+                font-size: 34px;
+                font-weight: 900;
+                margin-top: 10px;
+                display: flex;
+                align-items: baseline;
+                gap: 5px;
+            }
+
+            .tc-price span {
+                font-size: 16px;
+                color: var(--gray);
+                font-weight: 500;
+            }
+
+            .tc-divider {
+                border-top: 1px dashed rgba(255,255,255,0.15);
+                width: 100%;
+                position: relative;
+            }
+
+            .tc-divider::before, .tc-divider::after {
+                content: '';
+                position: absolute;
+                top: -10px;
+                width: 20px;
+                height: 20px;
+                background-color: #050505; /* Cor do fundo da hero para dar efeito de picote */
+                border-radius: 50%;
+            }
+
+            .tc-divider::before { left: -10px; }
+            .tc-divider::after { right: -10px; }
+
+            .tc-action {
+                padding: 20px;
+            }
+
+            .tc-btn {
+                width: 100%;
+                background: white;
+                color: black;
+                border: none;
+                padding: 14px;
+                border-radius: 12px;
+                font-weight: 900;
+                font-size: 14px;
+                cursor: pointer;
+                transition: background 0.2s, color 0.2s;
+            }
+
+            .tc-btn:hover {
+                background: var(--red);
+                color: white;
+            }
+
+            /* Modais Overlay */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(5px);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+
+            .modal-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .modal-content {
+                background: var(--card);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 40px;
+                border-radius: 20px;
+                text-align: center;
+                max-width: 400px;
+                color: white;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                transform: translateY(20px);
+                transition: transform 0.3s ease;
+                position: relative; /* Para posicionar o botão fechar */
+            }
+
+            .modal-overlay.active .modal-content {
+                transform: translateY(0);
+            }
+
+            /* Botão Fechar em todos os modais */
+            .close-modal {
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                background: transparent;
+                border: none;
+                color: var(--gray);
+                font-size: 28px;
+                font-weight: 300;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            .close-modal:hover {
+                color: white;
+            }
+
+            .modal-content h3 {
+                font-size: 24px;
+                font-weight: 800;
+                margin-bottom: 15px;
+                color: var(--white);
+            }
+
+            .modal-content p {
+                font-size: 14px;
+                color: var(--gray);
+                margin-bottom: 30px;
+                line-height: 1.5;
+            }
+
+            .modal-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+            }
+
+            .btn-modal {
+                padding: 12px 24px;
+                border-radius: 25px;
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+                border: none;
+                transition: transform 0.2s, opacity 0.2s;
+            }
+            
+            .btn-modal:hover {
+                transform: scale(1.05);
+            }
+
+            .btn-allow {
+                background-color: var(--red);
+                color: white;
+            }
+
+            .btn-deny {
+                background-color: transparent;
+                border: 1px solid rgba(255,255,255,0.2);
+                color: white;
+            }
+
+            /* Modal de Login (Desktop: Abaixo do Hambúrguer | Mobile: Centro) */
+            #login-modal {
+                display: block; 
+            }
+
+            #login-modal .modal-content {
+                position: absolute;
+                top: 75px; 
+                right: 36px; 
+                transform: translateY(-20px);
+                transform-origin: top right;
+                width: 100%;
+                max-width: 360px;
+                padding: 35px 30px 30px 30px;
+            }
+
+            #login-modal.active .modal-content {
+                transform: translateY(0);
+            }
+
+            .login-form h3 {
+                margin-bottom: 25px;
+            }
+
+            .input-field {
+                width: 100%;
+                padding: 14px;
+                margin-bottom: 12px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                color: white;
+                font-family: inherit;
+                font-size: 14px;
+                outline: none;
+                transition: border 0.2s;
+            }
+
+            .input-field:focus {
+                border-color: var(--red);
+            }
+
+            .btn-full {
+                width: 100%;
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 25px 0;
+                color: var(--gray);
+                font-size: 12px;
+                text-transform: uppercase;
+                font-weight: 600;
+            }
+
+            .divider::before, .divider::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .divider span {
+                padding: 0 10px;
+            }
+
+            .btn-google {
+                background: white;
+                color: black;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            /* Mobile Responsiveness */
+            @media (max-width: 1100px) {
+                .tickets {
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .nav {
+                    padding: 16px 16px 20px 16px;
+                }
+
+                .nav-center {
+                    display: none;
+                }
+
+                /* Ajuste do Modal de Login: Fica centralizado no mobile */
+                #login-modal {
+                    display: flex; /* Volta a usar o flex nativo da modal-overlay */
+                }
+                
+                #login-modal .modal-content {
+                    position: relative;
+                    top: auto;
+                    right: auto;
+                    width: 90%;
+                    transform: translateY(20px);
+                }
+
+                .bg-title {
+                    left: 20px;
+                    top: 120px;
+                }
+
+                .left-copy {
+                    left: 20px;
+                    top: 180px;
+                }
+
+                .tour {
+                    left: 20px;
+                    right: auto;
+                    top: 50px;
+                }
+
+                /* Reduzimos o Hero no mobile para aproximar artista e tickets */
+                .hero {
+                    min-height: auto;
+                    padding-bottom: 30px;
+                }
+
+                .artist {
+                    top: 250px; /* Posição fixa mais alta */
+                    width: 100%;
+                    justify-content: center;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                
+                .artist img {
+                    max-width: 90vw;
+                    height: auto;
+                }
+
+                .spiral, .date {
+                    display: none;
+                }
+
+                .mute-toggle {
+                    top: 20px; 
+                    right: 20px;
+                }
+
+                .tickets {
+                    position: relative;
+                    margin-top: 400px; /* Puxa os tickets para cima! */
+                    left: auto;
+                    right: auto;
+                    bottom: auto;
+                    width: 100%;
+                    padding: 0 20px;
+                }
+
+                .ticket-card {
+                    max-width: 100%;
+                }
+            }
+
+
+

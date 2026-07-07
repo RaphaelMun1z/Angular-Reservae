@@ -1,0 +1,52 @@
+    <header class="relative z-40 px-8 py-6 flex justify-between items-center">
+        <a routerLink="/index" class="inline-flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform">
+            <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
+        </a>
+        
+        <div class="flex items-center gap-2 text-sm font-semibold text-gray-400">
+            <i class="ph-bold ph-lock-key"></i> Compra Segura
+        </div>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center relative z-10 px-6 py-10">
+        
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/20 rounded-full blur-[120px] pointer-events-none glow-success"></div>
+
+        <div class="w-full max-w-lg relative">
+            
+            <div class="bg-dark-card/80 backdrop-blur-xl border border-dark-border rounded-3xl p-8 md:p-10 shadow-2xl text-center relative overflow-hidden">
+                
+                <div class="flex justify-center mb-6">
+                    <div class="w-24 h-24 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center text-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.2)] animate-pop-in">
+                        <i class="ph-fill ph-check-circle text-6xl"></i>
+                    </div>
+                </div>
+
+                <h1 class="text-3xl md:text-4xl font-black text-white mb-3 tracking-tight">Tudo Certo!</h1>
+                <p class="text-gray-400 font-medium mb-8">
+                    Sua compra foi confirmada com sucesso. Os ingressos já estão vinculados à sua conta e um recibo foi enviado para o seu e-mail.
+                </p>
+
+                <div class="mock-order-summary"></div>
+
+                <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                    <a routerLink="/avaliacao" [queryParams]="{ orderId: 'mock-order' }" class="flex-1 bg-dark-card border border-dark-border text-gray-300 hover:text-white hover:bg-dark-hover px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"><i class="ph-bold ph-star text-lg"></i>Avaliar</a>
+                    <a routerLink="/meus-ingressos" class="flex-1 bg-brand hover:bg-brand-dark text-white px-6 py-4 rounded-xl font-bold transition-all shadow-[0_10px_20px_rgba(255,98,77,0.2)] flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-ticket text-lg"></i>
+                        Ver Ingressos
+                    </a>
+                    
+                    <a routerLink="/index" class="flex-1 bg-transparent border border-dark-border text-gray-300 hover:text-white hover:bg-dark-hover px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-house text-lg"></i>
+                        Início
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="relative z-10 pb-6 text-center">
+        <p class="text-xs text-gray-600 font-semibold uppercase tracking-widest">Transação Concluída • Music Tour</p>
+    </footer>
+

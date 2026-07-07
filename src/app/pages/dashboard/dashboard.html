@@ -1,0 +1,451 @@
+    <!-- Sidebar (Oculta no mobile, visível em md+) -->
+    <aside class="w-64 bg-dark-card border-r border-dark-border flex-col justify-between flex-shrink-0 relative z-40 hidden md:flex">
+        <div>
+            <!-- Logo -->
+            <div class="h-20 flex items-center px-8 border-b border-dark-border">
+                <div class="flex items-center gap-3 text-white font-black text-xl tracking-tight">
+                    <div class="w-8 h-8 rounded-full shadow-[0_0_15px_rgba(255,98,77,0.3)]"><img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" /></div>
+                    ADMIN
+                </div>
+            </div>
+
+            <!-- Navegação -->
+            <nav class="p-4 space-y-1 mt-4">
+                <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Gestão</p>
+                
+                <button id="nav-dashboard" onclick="switchPage('dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/10 text-brand font-semibold transition-colors">
+                    <i class="ph ph-squares-four text-xl"></i> Dashboard
+                </button>
+                <button id="nav-eventos" onclick="switchPage('eventos')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors">
+                    <i class="ph ph-calendar-blank text-xl"></i> Eventos
+                </button>
+                <a routerLink="/scanner" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors">
+                    <i class="ph ph-qr-code text-xl"></i> Scanner
+                </a>
+                <button id="nav-clientes" onclick="switchPage('clientes')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors">
+                    <i class="ph ph-users text-xl"></i> Clientes
+                </button>
+                <button id="nav-transacoes" onclick="switchPage('transacoes')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors">
+                    <i class="ph ph-receipt text-xl"></i> Transações
+                </button>
+            </nav>
+
+            <nav class="p-4 space-y-1 mt-2">
+                <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Sistema</p>
+                <button id="nav-relatorios" onclick="switchPage('relatorios')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors">
+                    <i class="ph ph-chart-line-up text-xl"></i> Relatórios
+                </button>
+                <a routerLink="/configuracoes" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-dark-hover font-medium transition-colors">
+                    <i class="ph ph-gear text-xl"></i> Configurações
+                </a>
+            </nav>
+        </div>
+
+        <!-- User Mini Profile -->
+        <div class="p-4 border-t border-dark-border">
+            <div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-dark-hover cursor-pointer transition-colors">
+                <img data-admin-avatar alt="Admin" class="w-9 h-9 rounded-full object-cover border border-dark-border">
+                <div class="flex-1 min-w-0 text-left">
+                    <p class="text-sm font-bold text-white truncate"></p>
+                    <p class="text-xs text-gray-500 truncate">Administrador</p>
+                </div>
+                <i class="ph ph-sign-out text-gray-500 hover:text-brand transition-colors"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-[#0a0a0a]">
+        
+        <!-- Header -->
+        <header class="h-20 flex items-center justify-between px-6 md:px-8 border-b border-dark-border bg-dark-card/50 backdrop-blur-md sticky top-0 z-30">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-gray-400 hover:text-white transition-colors">
+                    <i class="ph-bold ph-list text-2xl"></i>
+                </button>
+                <div class="text-sm font-semibold text-gray-400 hidden sm:block">
+                    Gestão / <span id="header-breadcrumb" class="text-white">Dashboard</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="relative hidden md:block w-64 mr-4">
+                    <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                    <input type="text" placeholder="Busca rápida..." class="w-full bg-dark-hover border border-dark-border rounded-full py-2 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-brand transition-colors">
+                </div>
+                <button class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-dark-hover text-gray-400 hover:text-white transition-colors">
+                    <i class="ph ph-bell text-xl"></i>
+                    <span class="absolute top-2 right-2.5 w-2 h-2 bg-brand rounded-full border border-dark-card"></span>
+                </button>
+                <app-user-menu name="Administrador" email="admin@reservae.com" />
+            </div>
+        </header>
+
+        <!-- Scrollable Area -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 relative">
+            
+            <!-- ========================================== -->
+            <!-- PÁGINA 1: DASHBOARD -->
+            <!-- ========================================== -->
+            <div id="view-dashboard" class="page-view block fade-in">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h1 class="text-2xl font-black text-white tracking-tight mb-1">Visão Geral</h1>
+                        <p class="text-sm text-gray-500 font-medium">Acompanhe o desempenho das vendas em tempo real.</p>
+                    </div>
+                    <div class="flex bg-dark-card border border-dark-border rounded-lg p-1">
+                        <button class="px-4 py-1.5 text-xs font-bold rounded-md bg-dark-hover text-white shadow-sm">Hoje</button>
+                        <button class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-white transition-colors">7D</button>
+                        <button class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-white transition-colors">30D</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                    <!-- KPIs -->
+                    <div class="bg-dark-card border border-dark-border rounded-2xl p-6 hover:border-dark-hover transition-colors group">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center text-brand group-hover:scale-110 transition-transform">
+                                <i class="ph-bold ph-currency-dollar text-xl"></i>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-md">
+                                <i class="ph-bold ph-trend-up"></i> +12.5%
+                            </span>
+                        </div>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Receita Total</p>
+                        <h3 class="text-3xl font-black text-white"></h3>
+                    </div>
+
+                    <div class="bg-dark-card border border-dark-border rounded-2xl p-6 hover:border-dark-hover transition-colors group">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                                <i class="ph-bold ph-ticket text-xl"></i>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-md">
+                                <i class="ph-bold ph-trend-up"></i> +8.2%
+                            </span>
+                        </div>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ingressos Vendidos</p>
+                        <h3 class="text-3xl font-black text-white"></h3>
+                    </div>
+
+                    <div class="bg-dark-card border border-dark-border rounded-2xl p-6 hover:border-dark-hover transition-colors group">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+                                <i class="ph-bold ph-users-three text-xl"></i>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs font-bold text-rose-500 bg-rose-500/10 px-2 py-1 rounded-md">
+                                <i class="ph-bold ph-trend-down"></i> -2.1%
+                            </span>
+                        </div>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Acessos à Página</p>
+                        <h3 class="text-3xl font-black text-white"></h3>
+                    </div>
+
+                    <div class="bg-dark-card border border-dark-border rounded-2xl p-6 hover:border-dark-hover transition-colors group">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                                <i class="ph-bold ph-lightning text-xl"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-400 bg-dark-hover px-2 py-1 rounded-md">Estável</span>
+                        </div>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Eventos Ativos</p>
+                        <h3 class="text-3xl font-black text-white"></h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PÁGINA 2: EVENTOS -->
+            <!-- ========================================== -->
+            <div id="view-eventos" class="page-view hidden fade-in">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight mb-1">Meus Eventos</h1>
+                        <p class="text-sm text-gray-500 font-medium">Faça a gestão de shows, configure lotes e acompanhe as vendas.</p>
+                    </div>
+                    <a routerLink="/criar-evento" class="bg-brand hover:bg-brand-dark text-white px-5 py-3 md:py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform transform hover:-translate-y-0.5 shadow-lg shadow-brand/20">
+                        <i class="ph-bold ph-plus"></i> Criar Evento
+                    </a>
+                </div>
+
+                <!-- Filters Bar (Padronizada) -->
+                <div class="flex flex-col lg:flex-row gap-4 mb-4">
+                    <div class="relative flex-1">
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                        <input type="text" placeholder="Procurar evento pelo nome, local ou data..." class="w-full bg-dark-card border border-dark-border text-sm text-white rounded-xl py-3.5 md:py-3 pl-11 pr-4 focus:outline-none focus:border-brand transition-colors placeholder-gray-600">
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-3 rounded-xl bg-dark-card border border-dark-border text-sm font-semibold text-gray-300 hover:text-white hover:border-gray-500 transition-colors">
+                            Status: Todos
+                            <i class="ph ph-caret-down text-gray-500"></i>
+                        </button>
+                        <button onclick="toggleFilters('filtros-eventos')" class="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-3 rounded-xl bg-dark-card border border-dark-border text-sm font-semibold text-gray-300 hover:text-white hover:border-brand transition-colors">
+                            <i class="ph ph-faders"></i>
+                            Filtros
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Painel Expansível de Filtros (EVENTOS) -->
+                <div id="filtros-eventos" class="filter-panel hidden bg-dark-card border border-dark-border rounded-2xl p-5 mb-6 fade-in shadow-xl">
+                    <h3 class="text-white font-bold text-sm mb-4">Filtros Avançados</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Período</label>
+                            <input type="date" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand [color-scheme:dark]">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Local/Cidade</label>
+                            <input type="text" placeholder="Ex: São Paulo" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Categoria</label>
+                            <select class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand appearance-none">
+                                <option>Todas</option>
+                                <option>Show / Concerto</option>
+                                <option>Festival</option>
+                                <option>Teatro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-5 pt-5 border-t border-dark-border">
+                        <button onclick="toggleFilters('filtros-eventos')" class="px-5 py-2 text-sm font-bold text-gray-400 hover:text-white transition-colors">Cancelar</button>
+                        <button class="px-5 py-2 text-sm font-bold bg-brand text-white rounded-xl hover:bg-brand-dark transition-colors">Aplicar Filtros</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr class="bg-dark-hover/50 border-b border-dark-border">
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Evento</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Data & Local</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Vendas</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-dark-border text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PÁGINA 3: CLIENTES -->
+            <!-- ========================================== -->
+            <div id="view-clientes" class="page-view hidden fade-in">
+                
+                <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-8">
+                    <div>
+                        <h1 class="text-2xl font-black text-white tracking-tight mb-1">Base de Clientes</h1>
+                        <p class="text-sm text-gray-500 font-medium">Gerencie utilizadores, histórico de compras e acessos.</p>
+                    </div>
+                    <button class="bg-dark-card border border-dark-border text-white px-5 py-3 md:py-2.5 rounded-xl font-bold hover:bg-dark-hover flex items-center justify-center gap-2 transition-colors">
+                        <i class="ph-bold ph-download-simple"></i> Exportar (CSV)
+                    </button>
+                </div>
+
+                <!-- Filters Bar (Padronizada) -->
+                <div class="flex flex-col lg:flex-row gap-4 mb-4">
+                    <div class="relative flex-1">
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                        <input type="text" placeholder="Buscar por nome, e-mail ou CPF..." class="w-full bg-dark-card border border-dark-border text-sm text-white rounded-xl py-3.5 md:py-3 pl-11 pr-4 focus:outline-none focus:border-brand transition-colors placeholder-gray-600">
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-3 rounded-xl bg-dark-card border border-dark-border text-sm font-semibold text-gray-300 hover:text-white hover:border-gray-500 transition-colors">
+                            Status: Todos
+                            <i class="ph ph-caret-down text-gray-500"></i>
+                        </button>
+                        <button onclick="toggleFilters('filtros-clientes')" class="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-3 rounded-xl bg-dark-card border border-dark-border text-sm font-semibold text-gray-300 hover:text-white hover:border-brand transition-colors">
+                            <i class="ph ph-faders"></i>
+                            Filtros
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Painel Expansível de Filtros (CLIENTES) -->
+                <div id="filtros-clientes" class="filter-panel hidden bg-dark-card border border-dark-border rounded-2xl p-5 mb-6 fade-in shadow-xl">
+                    <h3 class="text-white font-bold text-sm mb-4">Filtros Avançados</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Data de Cadastro</label>
+                            <input type="date" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand [color-scheme:dark]">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo de Conta</label>
+                            <select class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand appearance-none">
+                                <option>Todos</option>
+                                <option>Membro VIP (Club)</option>
+                                <option>Comum</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Gasto (Min - Max)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" placeholder="Min" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-brand">
+                                <span class="text-gray-500">-</span>
+                                <input type="number" placeholder="Max" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-brand">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-5 pt-5 border-t border-dark-border">
+                        <button onclick="toggleFilters('filtros-clientes')" class="px-5 py-2 text-sm font-bold text-gray-400 hover:text-white transition-colors">Cancelar</button>
+                        <button class="px-5 py-2 text-sm font-bold bg-brand text-white rounded-xl hover:bg-brand-dark transition-colors">Aplicar Filtros</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr class="bg-dark-hover/50 border-b border-dark-border">
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Cliente</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Contato</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Pedidos</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Opções</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-dark-border text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PÁGINA 4: TRANSAÇÕES -->
+            <!-- ========================================== -->
+            <div id="view-transacoes" class="page-view hidden fade-in">
+                
+                <div class="mb-8">
+                    <h1 class="text-2xl font-black text-white tracking-tight mb-1">Transações Financeiras</h1>
+                    <p class="text-sm text-gray-500 font-medium">Acompanhamento de vendas, PIX, estornos e repasses.</p>
+                </div>
+
+                <!-- Filters Bar (Padronizada) -->
+                <div class="flex flex-col lg:flex-row gap-4 mb-4">
+                    <div class="relative flex-1">
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                        <input type="text" placeholder="Buscar por ID da transação ou cliente..." class="w-full bg-dark-card border border-dark-border text-sm text-white rounded-xl py-3.5 md:py-3 pl-11 pr-4 focus:outline-none focus:border-brand transition-colors placeholder-gray-600">
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-3 rounded-xl bg-dark-card border border-dark-border text-sm font-semibold text-gray-300 hover:text-white hover:border-gray-500 transition-colors">
+                            Status: Aprovadas
+                            <i class="ph ph-caret-down text-gray-500"></i>
+                        </button>
+                        <button onclick="toggleFilters('filtros-transacoes')" class="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-3 rounded-xl bg-dark-card border border-dark-border text-sm font-semibold text-gray-300 hover:text-white hover:border-brand transition-colors">
+                            <i class="ph ph-faders"></i>
+                            Filtros
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Painel Expansível de Filtros (TRANSAÇÕES) -->
+                <div id="filtros-transacoes" class="filter-panel hidden bg-dark-card border border-dark-border rounded-2xl p-5 mb-6 fade-in shadow-xl">
+                    <h3 class="text-white font-bold text-sm mb-4">Filtros Avançados</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Período da Transação</label>
+                            <input type="date" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand [color-scheme:dark]">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Método de Pagamento</label>
+                            <select class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand appearance-none">
+                                <option>Todos</option>
+                                <option>PIX</option>
+                                <option>Cartão de Crédito</option>
+                                <option>Boleto</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Valor da Compra (Min - Max)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" placeholder="Min" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-brand">
+                                <span class="text-gray-500">-</span>
+                                <input type="number" placeholder="Max" class="w-full bg-dark-bg border border-dark-border rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-brand">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-5 pt-5 border-t border-dark-border">
+                        <button onclick="toggleFilters('filtros-transacoes')" class="px-5 py-2 text-sm font-bold text-gray-400 hover:text-white transition-colors">Cancelar</button>
+                        <button class="px-5 py-2 text-sm font-bold bg-brand text-white rounded-xl hover:bg-brand-dark transition-colors">Aplicar Filtros</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[900px]">
+                            <thead>
+                                <tr class="bg-dark-hover/50 border-b border-dark-border">
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">ID / Data</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Cliente</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Evento / Setor</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Pagamento</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Valor</th>
+                                    <th class="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-dark-border text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PÁGINA 5: RELATÓRIOS (Sem Filtros de Tabela) -->
+            <!-- ========================================== -->
+            <div id="view-relatorios" class="page-view hidden fade-in">
+                <div class="mb-8">
+                    <h1 class="text-2xl font-black text-white tracking-tight mb-1">Relatórios e Analytics</h1>
+                    <p class="text-sm text-gray-500 font-medium">Métricas de conversão e desempenho de vendas.</p>
+                </div>
+                <!-- Gráficos e Analytics ... (CÓDIGO MANTIDO IDÊNTICO AO ANTERIOR) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+                        <h2 class="text-lg font-bold text-white mb-6">Receita Semanal</h2>
+                        <div class="h-48 flex items-end justify-between gap-2 border-b border-dark-border pb-2">
+                            <div class="w-full bg-brand/30 hover:bg-brand transition-colors rounded-t-md relative group" style="height: 30%"></div>
+                            <div class="w-full bg-brand/30 hover:bg-brand transition-colors rounded-t-md relative group" style="height: 50%"></div>
+                            <div class="w-full bg-brand/30 hover:bg-brand transition-colors rounded-t-md relative group" style="height: 80%"></div>
+                            <div class="w-full bg-brand rounded-t-md relative group shadow-[0_0_15px_rgba(255,98,77,0.4)]" style="height: 100%"></div>
+                            <div class="w-full bg-brand/30 hover:bg-brand transition-colors rounded-t-md relative group" style="height: 40%"></div>
+                            <div class="w-full bg-brand/30 hover:bg-brand transition-colors rounded-t-md relative group" style="height: 60%"></div>
+                            <div class="w-full bg-brand/30 hover:bg-brand transition-colors rounded-t-md relative group" style="height: 20%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-3 font-semibold">
+                            <span>Seg</span><span>Ter</span><span>Qua</span><span class="text-brand">Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PÁGINA 6: CONFIGURAÇÕES -->
+            <!-- ========================================== -->
+            <div id="view-configuracoes" class="page-view hidden fade-in">
+                <div class="mb-8">
+                    <h1 class="text-2xl font-black text-white tracking-tight mb-1">Configurações do Sistema</h1>
+                    <p class="text-sm text-gray-500 font-medium">Ajuste os parâmetros da plataforma, integrações e segurança.</p>
+                </div>
+                <!-- ... Configurações Form ... (CÓDIGO MANTIDO) -->
+                <div class="bg-dark-card border border-dark-border rounded-2xl p-6 md:p-8">
+                    <h2 class="text-lg font-bold text-white mb-6">Informações da Plataforma</h2>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Nome do Sistema</label>
+                            <input type="text" value="Music Tour Tickets" class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 text-white focus:outline-none focus:border-brand transition-colors">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- JS de Controle de UI -->

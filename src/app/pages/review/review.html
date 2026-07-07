@@ -1,0 +1,143 @@
+<!-- Header Simples -->
+<header class="absolute top-0 left-0 w-full z-40 px-8 py-6 flex justify-between items-center">
+  <a
+    routerLink="/index"
+    class="inline-flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform"
+  >
+    <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
+  </a>
+  <a
+    routerLink="/index"
+    class="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+  >
+    Pular Avaliação <i class="ph-bold ph-arrow-right"></i>
+  </a>
+</header>
+
+<!-- Main Content -->
+<main class="flex-1 flex items-center justify-center relative z-10 px-6 py-20 w-full">
+  <!-- Efeito Glow de Fundo -->
+  <div
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-brand/20 rounded-full blur-[120px] pointer-events-none glow-bg"
+  ></div>
+
+  <div class="w-full max-w-md relative">
+    <!-- Cartão Principal -->
+    <div
+      id="evaluation-card"
+      class="bg-dark-card/90 backdrop-blur-xl border border-dark-border rounded-3xl p-8 shadow-2xl relative overflow-hidden transition-all duration-300"
+    >
+      <!-- Formulário de Avaliação (Estado Inicial) -->
+      <div id="evaluation-form" class="fade-in">
+        <!-- Resumo da Compra (Contexto) -->
+        <div class="mock-order-summary"></div>
+        <i class="ph-fill ph-check-circle text-emerald-500 text-xl"></i>
+      </div>
+
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-black text-white mb-2 tracking-tight">Avalie sua experiência</h1>
+        <p class="text-sm font-medium text-gray-400">
+          Como foi o processo de compra na plataforma?
+        </p>
+      </div>
+
+      <!-- Sistema de Emojis -->
+      <div class="flex justify-between items-center mb-8 px-2">
+        <button
+          type="button"
+          onclick="selectRating(1)"
+          class="rating-btn text-4xl grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-200"
+          data-rating="1"
+        >
+          😡
+        </button>
+        <button
+          type="button"
+          onclick="selectRating(2)"
+          class="rating-btn text-4xl grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-200"
+          data-rating="2"
+        >
+          😕
+        </button>
+        <button
+          type="button"
+          onclick="selectRating(3)"
+          class="rating-btn text-4xl grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-200"
+          data-rating="3"
+        >
+          😐
+        </button>
+        <button
+          type="button"
+          onclick="selectRating(4)"
+          class="rating-btn text-4xl grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-200"
+          data-rating="4"
+        >
+          🙂
+        </button>
+        <button
+          type="button"
+          onclick="selectRating(5)"
+          class="rating-btn text-4xl grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-200"
+          data-rating="5"
+        >
+          😍
+        </button>
+      </div>
+
+      <!-- Caixa de Texto (Surge dinamicamente) -->
+      <div id="feedback-text-area" class="hidden mb-6 fade-in">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"
+          >Comentário (Opcional)</label
+        >
+        <textarea
+          id="feedback-comment"
+          rows="3"
+          placeholder="Conta pra gente o que achou..."
+          class="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-brand transition-colors resize-none placeholder-gray-600"
+        ></textarea>
+      </div>
+
+      <!-- Botão Enviar -->
+      <button
+        id="btn-submit-feedback"
+        onclick="submitFeedback()"
+        disabled
+        class="w-full bg-dark-hover text-gray-500 py-4 rounded-xl font-bold transition-all cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        Enviar Avaliação
+      </button>
+    </div>
+
+    <!-- Estado de Sucesso (Oculto Inicialmente) -->
+    <div
+      id="evaluation-success"
+      class="hidden flex-col items-center justify-center text-center py-10 fade-in"
+    >
+      <div
+        class="w-20 h-20 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center text-emerald-500 mb-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]"
+      >
+        <i class="ph-fill ph-heart text-4xl"></i>
+      </div>
+      <h2 class="text-2xl font-black text-white mb-2">Muito Obrigado!</h2>
+      <p class="text-sm text-gray-400 mb-8 leading-relaxed">
+        Sua opinião é fundamental para continuarmos melhorando nosso palco e a sua experiência.
+      </p>
+
+      <a
+        routerLink="/index"
+        class="w-full bg-dark-bg border border-dark-border text-white hover:bg-dark-hover py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+      >
+        <i class="ph-bold ph-house text-lg"></i>
+        Voltar ao Início
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- Rodapé -->
+<footer class="absolute bottom-6 w-full text-center z-10">
+  <p class="text-xs text-gray-600 font-semibold uppercase tracking-widest">Feedback • Music Tour</p>
+</footer>
+
+<!-- Lógica da Avaliação -->

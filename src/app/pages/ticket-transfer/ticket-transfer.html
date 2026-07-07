@@ -1,0 +1,39 @@
+<main class="transfer-container">
+  <a routerLink="/meus-ingressos" class="back-link">
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      stroke="currentColor"
+      fill="none"
+      stroke-width="2"
+    >
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Cancelar e voltar
+  </a>
+
+  <div class="glass-box">
+    <h1 class="title">Transferir Ingresso</h1>
+    <p class="subtitle"></p>
+
+    <form id="transfer-form">
+      <div class="form-group">
+        <label class="label">E-mail do Destinatário</label>
+        <input type="email" class="input-field" placeholder="amigo@email.com" required />
+      </div>
+
+      <div class="form-group">
+        <label class="label">Confirmar Palavra-passe</label>
+        <input type="password" class="input-field" placeholder="••••••••" required />
+      </div>
+
+      <button type="submit" class="btn-action">Confirmar Transferência</button>
+    </form>
+
+    <div class="security-notice">
+      <strong>Atenção:</strong> Ao confirmar, este ingresso será removido permanentemente da sua
+      carteira e enviado para o destinatário. Esta ação é irreversível.
+    </div>
+  </div>
+</main>

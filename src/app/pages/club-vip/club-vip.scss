@@ -1,0 +1,41 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #050505;
+}
+
+:host::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            opacity: 0.02;
+            background-image: repeating-radial-gradient(circle at 0 0, #fff 0, #fff 1px, transparent 1px, transparent 4px);
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Animação de flutuação suave para o cartão */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Efeito de brilho ao passar o rato no cartão */
+        .card-shine {
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease;
+        }
+        .group:hover .card-shine {
+            left: 200%;
+        }
+
+
+

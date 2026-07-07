@@ -1,0 +1,53 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #050505;
+}
+
+/* Efeito de ruído sutil de fundo */
+:host::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  background-image: repeating-radial-gradient(
+    circle at 0 0,
+    #fff 0,
+    #fff 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Animação de abalo (shake) simulando uma porta trancada */
+@keyframes lock-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px) rotate(-2deg);
+  }
+  40% {
+    transform: translateX(5px) rotate(2deg);
+  }
+  60% {
+    transform: translateX(-5px) rotate(-2deg);
+  }
+  80% {
+    transform: translateX(5px) rotate(2deg);
+  }
+}
+.animate-shake {
+  animation: lock-shake 0.5s ease-in-out;
+}
+.group:hover .animate-shake-hover {
+  animation: lock-shake 0.4s ease-in-out;
+}
+
+/* Brilho estático de alerta */
+.glow-alert {
+  box-shadow: 0 0 80px 20px rgba(239, 68, 68, 0.15);
+}

@@ -1,0 +1,95 @@
+    <!-- Navbar -->
+    <nav class="relative z-40 flex justify-between items-center px-6 md:px-12 py-6">
+        <a routerLink="/index" class="w-12 h-12 rounded-full bg-brand flex items-center justify-center hover:scale-105 transition-transform shadow-[0_0_15px_rgba(255,98,77,0.3)]">
+            <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
+        </a>
+
+        <div class="hidden md:flex gap-10">
+            <a routerLink="/club-vip" class="text-white hover:text-gold-500 transition-colors"><i class="ph-bold ph-clubs text-2xl"></i></a>
+            <a routerLink="/shows" class="text-gray-400 hover:text-white transition-colors"><i class="ph-bold ph-calendar-blank text-2xl"></i></a>
+            <a routerLink="/meus-ingressos" class="text-gray-400 hover:text-white transition-colors"><i class="ph-bold ph-wallet text-2xl"></i></a>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2 text-sm font-semibold">
+                <span class="w-3.5 h-3.5 rounded-full bg-[radial-gradient(circle,_#002776_30%,_#fedf00_30%,_#fedf00_65%,_#009b3a_65%)]"></span>
+                Brasil
+            </div>
+            <app-user-menu />
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col items-center justify-center px-6 py-12 relative z-10 w-full max-w-5xl mx-auto text-center">
+        
+        <!-- Glow de fundo dourado -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="mb-12 relative">
+            <span class="inline-block text-gold-500 font-bold uppercase tracking-[0.2em] text-xs mb-6 px-4 py-1.5 rounded-full border border-gold-500/30 bg-gold-500/10">
+                Acesso Premium
+            </span>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-6 text-white drop-shadow-lg">
+                MUSIC TOUR <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-gold-600">CLUB</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+                Junte-se ao clube mais exclusivo da música. Compra antecipada, convites para os bastidores e experiências verdadeiramente únicas.
+            </p>
+        </div>
+
+        <!-- 3D Membership Card -->
+        <div class="w-full max-w-[420px] aspect-[1.58/1] rounded-2xl p-8 mb-16 relative overflow-hidden group animate-float cursor-pointer shadow-[0_20px_50px_rgba(245,158,11,0.15)] hover:shadow-[0_30px_60px_rgba(245,158,11,0.25)] transition-shadow duration-500 bg-gradient-to-br from-[#1a1a1a] via-black to-[#0a0a0a] border border-gold-500/30">
+            <!-- Padrão geométrico de fundo no cartão -->
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fbbf24_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            
+            <div class="card-shine z-20"></div>
+            
+            <div class="relative z-10 flex flex-col h-full justify-between text-left">
+                <div class="flex justify-between items-start">
+                    <span class="text-gold-500 font-black tracking-[0.2em] text-lg">MEMBER</span>
+                    <i class="ph-fill ph-crown text-3xl text-gold-500 drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]"></i>
+                </div>
+                
+                <div>
+                    <div class="font-mono text-gray-500 tracking-[0.2em] text-sm mb-1">#0000 1234</div>
+                    <div class="text-white font-bold tracking-[0.15em] text-xl">RAPHAEL MUNIZ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefícios Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-16 relative">
+            
+            <article class="bg-dark-card/80 backdrop-blur-md border border-dark-border rounded-2xl p-8 text-left hover:border-gold-500/30 transition-colors group">
+                <div class="w-14 h-14 rounded-xl bg-gold-500/10 flex items-center justify-center text-gold-500 mb-6 group-hover:scale-110 transition-transform">
+                    <i class="ph-bold ph-ticket text-3xl"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white mb-3">Compra Antecipada</h4>
+                <p class="text-sm text-gray-400 font-medium leading-relaxed">Tenha acesso aos ingressos 48 horas antes da abertura das vendas para o público geral.</p>
+            </article>
+
+            <article class="bg-dark-card/80 backdrop-blur-md border border-dark-border rounded-2xl p-8 text-left hover:border-gold-500/30 transition-colors group">
+                <div class="w-14 h-14 rounded-xl bg-gold-500/10 flex items-center justify-center text-gold-500 mb-6 group-hover:scale-110 transition-transform">
+                    <i class="ph-bold ph-star text-3xl"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white mb-3">Acesso Backstage</h4>
+                <p class="text-sm text-gray-400 font-medium leading-relaxed">Participe de sorteios mensais exclusivos para conhecer os seus artistas favoritos no camarim.</p>
+            </article>
+
+            <article class="bg-dark-card/80 backdrop-blur-md border border-dark-border rounded-2xl p-8 text-left hover:border-gold-500/30 transition-colors group">
+                <div class="w-14 h-14 rounded-xl bg-gold-500/10 flex items-center justify-center text-gold-500 mb-6 group-hover:scale-110 transition-transform">
+                    <i class="ph-bold ph-play-circle text-3xl"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white mb-3">Conteúdo Exclusivo</h4>
+                <p class="text-sm text-gray-400 font-medium leading-relaxed">Tenha acesso VIP a documentários, músicas inéditas e gravações exclusivas dos bastidores.</p>
+            </article>
+
+        </div>
+
+        <button class="bg-gradient-to-r from-gold-600 to-gold-400 text-black font-black uppercase tracking-wider text-sm px-10 py-5 rounded-full hover:scale-105 hover:shadow-[0_10px_30px_rgba(245,158,11,0.3)] transition-all duration-300">
+            Tornar-me Membro Agora
+        </button>
+
+    </main>
+

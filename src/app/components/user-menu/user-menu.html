@@ -1,0 +1,54 @@
+<div class="user-menu">
+  <button
+    type="button"
+    class="avatar-button"
+    aria-label="Abrir menu do usuário"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="isOpen()"
+    (click)="toggle($event)"
+  >
+    @if (avatarUrl) {
+      <img [src]="avatarUrl" [alt]="'Avatar de ' + name" />
+    } @else {
+      <span>{{ initials }}</span>
+    }
+  </button>
+
+  @if (isOpen()) {
+    <div class="user-popup" role="menu" (click)="$event.stopPropagation()">
+      <div class="user-summary">
+        <div class="summary-avatar">
+          @if (avatarUrl) {
+            <img [src]="avatarUrl" [alt]="'Avatar de ' + name" />
+          } @else {
+            <span>{{ initials }}</span>
+          }
+        </div>
+        <div>
+          <strong>{{ name }}</strong>
+          <small>{{ email }}</small>
+        </div>
+      </div>
+
+      <nav aria-label="Opções do usuário">
+        <a routerLink="/perfil" role="menuitem" (click)="close()">
+          <span aria-hidden="true">👤</span>
+          Meu perfil
+        </a>
+        <a routerLink="/meus-ingressos" role="menuitem" (click)="close()">
+          <span aria-hidden="true">🎟️</span>
+          Meus ingressos
+        </a>
+        <a routerLink="/configuracoes" role="menuitem" (click)="close()">
+          <span aria-hidden="true">⚙️</span>
+          Configurações
+        </a>
+      </nav>
+
+      <a class="logout" routerLink="/login" role="menuitem" (click)="close()">
+        <span aria-hidden="true">↪</span>
+        Sair
+      </a>
+    </div>
+  }
+</div>

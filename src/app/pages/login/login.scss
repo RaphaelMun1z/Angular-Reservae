@@ -1,0 +1,18 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #050505;
+}
+
+:host::before {
+            content: ""; position: fixed; inset: 0; opacity: 0.03;
+            background-image: repeating-radial-gradient(circle at 0 0, #fff 0, #fff 1px, transparent 1px, transparent 4px);
+            pointer-events: none; z-index: 50;
+        }
+        .glow-bg { animation: pulse-glow 6s ease-in-out infinite; }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.15; transform: scale(0.95) translate(-50%, -50%); }
+            50% { opacity: 0.25; transform: scale(1.05) translate(-50%, -50%); }
+        }
+
+

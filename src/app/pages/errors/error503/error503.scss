@@ -1,0 +1,37 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #050505;
+}
+
+/* Efeito de ruído sutil de fundo */
+        :host::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            background-image: repeating-radial-gradient(circle at 0 0, #fff 0, #fff 1px, transparent 1px, transparent 4px);
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Animação de rotação suave para a engrenagem */
+        @keyframes slow-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-slow-spin {
+            animation: slow-spin 8s linear infinite;
+        }
+
+        /* Pulsação do fundo (Glow) */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.15; transform: scale(0.95); }
+            50% { opacity: 0.25; transform: scale(1.05); }
+        }
+        .glow-maintenance {
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+
+

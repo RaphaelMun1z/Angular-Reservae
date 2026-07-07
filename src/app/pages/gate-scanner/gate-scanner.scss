@@ -1,0 +1,35 @@
+/* Bloqueia o scroll e pull-to-refresh em dispositivos móveis */
+        :host {
+            display: block;
+            min-height: 100vh;
+            background-color: #050505; overscroll-behavior-y: none; }
+
+        /* Animação do Laser do Scanner */
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        
+        .laser-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ff624d;
+            box-shadow: 0 0 15px 2px rgba(255, 98, 77, 0.8), 0 0 30px rgba(255, 98, 77, 0.4);
+            animation: scan 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        /* Efeito de flash na leitura */
+        @keyframes flash {
+            0% { background-color: rgba(255, 255, 255, 0.8); }
+            100% { background-color: transparent; }
+        }
+        .scan-flash {
+            animation: flash 0.3s ease-out;
+        }
+
+
+

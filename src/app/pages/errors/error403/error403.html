@@ -1,0 +1,51 @@
+    <header class="relative z-40 px-8 py-6">
+        <a routerLink="/index" class="inline-flex items-center justify-center w-12 h-12 bg-dark-card border border-dark-border rounded-full text-white font-black text-xl tracking-tighter hover:border-danger/50 transition-colors">
+            <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
+        </a>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center relative z-10 px-6">
+        
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-danger/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="text-center max-w-2xl relative group">
+            <div class="flex justify-center mb-6">
+                <div class="relative w-32 h-32 bg-dark-card border border-dark-border rounded-full flex items-center justify-center shadow-2xl transition-colors group-hover:border-danger/40 glow-alert animate-shake-hover cursor-not-allowed">
+                    <i class="ph-duotone ph-lock-key text-7xl text-gray-400 group-hover:text-danger transition-colors"></i>
+                    <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-danger rounded-full flex items-center justify-center border-4 border-dark-bg">
+                        <i class="ph-bold ph-hand-palm text-white text-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 tracking-tighter mb-4 drop-shadow-lg">
+                403
+            </h1>
+            
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
+                Acesso Restrito ao Backstage
+            </h2>
+            
+            <p class="text-gray-400 font-medium text-lg mb-10 leading-relaxed">
+                Alto lá! Não tens a credencial necessária para entrar nesta área. Se acreditas que isto é um engano, verifica se tens a sessão iniciada com a conta correta.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a routerLink="/index" class="w-full sm:w-auto bg-dark-card border border-dark-border text-gray-300 hover:text-white hover:border-gray-500 px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-house text-lg"></i>
+                    Voltar ao Início
+                </a>
+
+                <a routerLink="/dashboard" class="w-full sm:w-auto bg-white text-black hover:bg-gray-200 px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1 shadow-[0_10px_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2"><i class="ph-bold ph-shield-check text-lg"></i>Ir para o Painel</a>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="absolute bottom-6 w-full text-center z-10 flex flex-col items-center justify-center gap-1">
+        <p class="text-xs text-gray-600 font-semibold uppercase tracking-widest">Forbidden • Music Tour</p>
+        <p class="text-[10px] text-danger/70 font-mono flex items-center gap-1">
+            ACCESS_DENIED_MISSING_PERMISSIONS
+        </p>
+    </div>
+

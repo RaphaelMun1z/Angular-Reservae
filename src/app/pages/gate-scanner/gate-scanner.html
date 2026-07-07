@@ -1,0 +1,116 @@
+    <!-- Efeito de Flash (invisível por padrão) -->
+    <div id="flash-overlay" class="absolute inset-0 z-50 pointer-events-none"></div>
+
+    <!-- Header App -->
+    <header class="h-16 flex items-center justify-between px-6 border-b border-dark-border bg-dark-bg/80 backdrop-blur-md z-40 relative">
+        <a routerLink="/dashboard" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-dark-hover transition-colors text-gray-400 hover:text-white">
+            <i class="ph ph-caret-left text-xl"></i>
+        </a>
+        <div class="flex flex-col items-center">
+            <h1 class="text-sm font-bold text-white tracking-wide"></h1>
+            <span class="text-[10px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full mt-0.5">Porta Principal</span>
+        </div>
+        <app-user-menu name="Administrador" email="admin@reservae.com" />
+    </header>
+
+    <!-- Área Principal do Scanner -->
+    <main class="flex-1 flex flex-col items-center justify-center p-6 relative">
+        
+        <!-- Viewfinder (Visor da Câmara) -->
+        <div class="relative w-full max-w-[320px] aspect-square rounded-3xl overflow-hidden border border-dark-border bg-[#0a0a0a] shadow-[0_0_50px_rgba(0,0,0,0.5)] mb-8 z-10 flex items-center justify-center">
+            
+            <!-- Simulador de feed da câmara (fundo escuro com ícone de qr code) -->
+            <i class="ph-light ph-qr-code text-[120px] text-gray-800 opacity-50"></i>
+
+            <!-- Cantos do Scanner (Retículas) -->
+            <div class="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white rounded-tl-3xl opacity-50 m-6"></div>
+            <div class="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white rounded-tr-3xl opacity-50 m-6"></div>
+            <div class="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white rounded-bl-3xl opacity-50 m-6"></div>
+            <div class="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white rounded-br-3xl opacity-50 m-6"></div>
+
+            <!-- Linha do Laser -->
+            <div class="laser-line" id="laser"></div>
+        </div>
+
+        <!-- Ferramentas Rápidas (Lanterna / Flip Camera) -->
+        <div class="flex items-center gap-6 mb-auto z-10">
+            <button class="flex flex-col items-center gap-2 group outline-none">
+                <div class="w-14 h-14 rounded-full bg-dark-card border border-dark-border flex items-center justify-center group-hover:bg-dark-hover transition-colors text-gray-400 group-hover:text-white">
+                    <i class="ph-fill ph-flashlight text-2xl"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-500">Lanterna</span>
+            </button>
+            
+            <button class="flex flex-col items-center gap-2 group outline-none" onclick="simulateScan()">
+                <div class="w-16 h-16 rounded-full bg-brand flex items-center justify-center hover:bg-brand-dark transition-colors text-white shadow-[0_0_20px_rgba(255,98,77,0.3)]">
+                    <i class="ph-bold ph-scan text-3xl"></i>
+                </div>
+                <span class="text-xs font-bold text-brand uppercase tracking-wider">Ler QR</span>
+            </button>
+
+            <button class="flex flex-col items-center gap-2 group outline-none">
+                <div class="w-14 h-14 rounded-full bg-dark-card border border-dark-border flex items-center justify-center group-hover:bg-dark-hover transition-colors text-gray-400 group-hover:text-white">
+                    <i class="ph-fill ph-camera-rotate text-2xl"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-500">Câmara</span>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Cartão de Feedback de Status (Fixo na Base) -->
+    <div id="feedback-panel" class="absolute bottom-0 left-0 w-full bg-dark-card border-t border-dark-border rounded-t-[32px] p-6 pb-10 transition-transform duration-300 transform translate-y-0 z-50">
+        
+        <!-- Estado: Aguardando -->
+        <div id="state-idle" class="flex flex-col items-center justify-center h-24">
+            <div class="animate-pulse flex items-center gap-3 text-gray-400">
+                <i class="ph-bold ph-aperture text-2xl"></i>
+                <p class="font-semibold text-sm">Aponte a câmara para o código QR</p>
+            </div>
+        </div>
+
+        <!-- Estado: Sucesso (Verde) -->
+        <div id="state-success" class="hidden flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-3">
+                <i class="ph-fill ph-check-circle text-4xl"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white mb-1">ENTRADA LIBERADA</h2>
+            <p class="text-emerald-500 font-bold text-sm mb-4">Ingresso Válido</p>
+            
+            <div class="w-full bg-dark-bg rounded-xl p-4 border border-dark-border text-left">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs text-gray-500 font-semibold uppercase">Setor</span>
+                    <span class="text-sm font-bold text-white bg-dark-hover px-2 py-1 rounded"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500 font-semibold uppercase">Titular</span>
+                    <span class="text-sm font-bold text-gray-300"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado: Erro (Vermelho) -->
+        <div id="state-error" class="hidden flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mb-3">
+                <i class="ph-fill ph-x-circle text-4xl"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white mb-1">ACESSO NEGADO</h2>
+            <p class="text-rose-500 font-bold text-sm mb-4">Ingresso já utilizado ou inválido</p>
+            
+            <div class="w-full bg-dark-bg rounded-xl p-4 border border-dark-border text-left opacity-70">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs text-gray-500 font-semibold uppercase">Data do Scan</span>
+                    <span class="text-sm font-bold text-gray-300">14:32 (Há 2 horas)</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500 font-semibold uppercase">Portão</span>
+                    <span class="text-sm font-bold text-gray-300">Entrada Sul</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Efeito de sombreamento de fundo para destacar o painel inferior -->
+    <div id="bg-dimmer" class="absolute inset-0 bg-black/60 z-30 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+

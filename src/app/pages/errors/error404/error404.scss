@@ -1,0 +1,39 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #050505;
+}
+
+/* Efeito de ruído sutil de fundo */
+        :host::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            background-image: repeating-radial-gradient(circle at 0 0, #fff 0, #fff 1px, transparent 1px, transparent 4px);
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Animação suave de flutuação para o ícone principal */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        /* Brilho pulsante atrás do 404 */
+        @keyframes pulse-glow {
+            0% { opacity: 0.2; transform: scale(0.9); }
+            50% { opacity: 0.4; transform: scale(1.1); }
+            100% { opacity: 0.2; transform: scale(0.9); }
+        }
+        .glow-bg {
+            animation: pulse-glow 4s infinite ease-in-out;
+        }
+
+
+

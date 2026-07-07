@@ -1,0 +1,112 @@
+        <div class="modal-overlay" id="video-modal">
+            <div class="modal-content">
+                <button class="close-modal" id="close-video-modal" aria-label="Fechar">&times;</button>
+                <h3>Ativar experiência com áudio?</h3>
+                <p>Para uma melhor imersão, o vídeo de fundo possui áudio. Deseja reproduzi-lo?</p>
+                <div class="modal-buttons">
+                    <button class="btn-modal btn-deny" id="btn-muted">Apenas Vídeo</button>
+                    <button class="btn-modal btn-allow" id="btn-unmuted">Com Áudio</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a routerLink="/index" class="logo" aria-label="Página inicial"><img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" /></a>
+
+            <div class="nav-center">
+                <a routerLink="/club-vip" aria-label="Club VIP">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+                    </svg>
+                </a>
+                <a routerLink="/shows" aria-label="Shows">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path>
+                    </svg>
+                </a>
+                <a routerLink="/suporte" aria-label="Suporte">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                </a>
+                <a routerLink="/meus-ingressos" aria-label="Meus ingressos">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                        <path d="M3 6h18"></path>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="nav-right">
+                <div class="location">
+                    <span class="flag"></span>
+                    <span data-event-location></span>
+                </div>
+                <app-user-menu />
+                <div class="menu" id="hamburger-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+
+        <section class="hero">
+            
+            <div class="video-background">
+                <video id="hero-video" loop playsinline muted>
+                    <source src="/assets/hero-video.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeos HTML5.
+                </video>
+            </div>
+            
+            <div class="video-overlay"></div>
+            <div class="glow"></div>
+
+            <div class="bg-title">
+                <span>Natanzinho Lima</span>
+            </div>
+
+            <div class="tour">
+                <div class="small">Turnê Musical</div>
+                <div class="big">São Paulo<span> no 12!</span></div>
+            </div>
+
+            <div class="left-copy">
+                <h2>
+                    SÁB. <span class="outline">12 DE JUNHO</span><br />
+                    <span class="outline">EM</span> SANTOS/SP
+                </h2>
+            </div>
+
+            <div class="artist">
+                <img src="/assets/artist-natanzinho.png" alt="Natanzinho Lima" />
+            </div>
+
+            <div class="spiral">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <div class="date" data-event-date></div>
+
+            <button class="mute-toggle" id="mute-toggle" aria-label="Toggle Audio">
+                <svg id="icon-muted" viewBox="0 0 24 24">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                    <line x1="23" y1="1" x2="1" y2="23"></line>
+                </svg>
+                <svg id="icon-unmuted" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+            </button>
+
+            <div class="tickets"></div>
+        </section>
+
+    
