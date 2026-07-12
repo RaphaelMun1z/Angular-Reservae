@@ -159,6 +159,10 @@ export class AdminShell {
   }
 
   private isMobileViewport(): boolean {
+    if (typeof window.matchMedia !== 'function') {
+      return false;
+    }
+
     return window.matchMedia('(max-width: 767px)').matches;
   }
 }

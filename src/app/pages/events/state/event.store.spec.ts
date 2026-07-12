@@ -6,7 +6,14 @@ class FakeEventApi implements EventApi {
   supportsEventList?: boolean;
   response: Observable<EventListResponse> = of({
     items: [{ id: 'event-1', name: 'Show A', city: 'Sao Paulo' }],
-    total: 1,
+    totalElements: 1,
+    totalPages: 1,
+    size: 12,
+    number: 0,
+    numberOfElements: 1,
+    first: true,
+    last: true,
+    empty: false,
   });
 
   filters: EventFilters[] = [];
@@ -42,7 +49,7 @@ describe('EventStore', () => {
 
     expect(store.loading()).toBe(false);
     expect(store.events().length).toBe(1);
-    expect(store.total()).toBe(1);
+    expect(store.totalElements()).toBe(1);
   });
 
   it('should expose load errors', () => {
@@ -57,7 +64,7 @@ describe('EventStore', () => {
     store.updateFilters({ city: 'Sao Paulo', page: 2 });
 
     expect(store.filters().city).toBe('Sao Paulo');
-    expect(store.filters().page).toBe(2);
+    expect(store.filters().page).toBe(0);
     expect(api.filters.length).toBe(1);
   });
 
@@ -66,7 +73,7 @@ describe('EventStore', () => {
     store.search('s');
     store.search('sh');
     store.search('show');
-    await vi.advanceTimersByTimeAsync(299);
+    await vi.advanceTimersByTimeAsync(399);
 
     expect(api.filters.length).toBe(0);
 
@@ -76,13 +83,23 @@ describe('EventStore', () => {
     vi.useRealTimers();
   });
 
-  it('should mark catalog list as pending when backend does not document listing', () => {
-    api.supportsEventList = false;
+  it('should change backend page using zero-based indexes', () => {
+    api.response = of({
+      items: [],
+      totalElements: 24,
+      totalPages: 2,
+      size: 12,
+      number: 1,
+      numberOfElements: 12,
+      first: false,
+      last: true,
+      empty: false,
+    });
 
     store.loadEvents();
+    store.changePage(1);
 
-    expect(store.events()).toEqual([]);
-    expect(store.error()).toBeNull();
-    expect(store.catalogListPending()).toContain('Listagem de eventos pendente');
+    expect(api.filters[1].page).toBe(1);
+    expect(store.currentUiPage()).toBe(2);
   });
 });

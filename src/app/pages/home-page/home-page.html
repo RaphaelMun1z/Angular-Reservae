@@ -1,750 +1,238 @@
-		<!-- Header / Navbar -->
-		<div
-			class="sticky top-0 z-40 bg-dark-bg/80 backdrop-blur-lg border-b border-dark-border"
-		>
-			<header
-				class="max-w-[1600px] mx-auto w-[96%] px-6 py-4 flex items-center justify-between"
-			>
-				<div class="flex items-center gap-10">
-					<!-- Logo -->
-					<a
-						routerLink="/index"
-						class="flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform"
-					>
-						<img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
-					</a>
+<div class="sticky top-0 z-40 bg-dark-bg/80 backdrop-blur-lg border-b border-dark-border">
+  <header class="max-w-[1600px] mx-auto w-[96%] px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-10">
+      <a
+        routerLink="/inicio"
+        class="flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform"
+      >
+        <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
+      </a>
 
-					<!-- Nav Links (Desktop) -->
-					<nav class="hidden lg:block">
-						<ul class="flex gap-6 text-sm font-semibold text-gray-400">
-							<li><a routerLink="/shows" class="hover:text-white transition-colors">Shows</a></li>
-							<li><a routerLink="/club-vip" class="hover:text-white transition-colors">Club VIP</a></li>
-							<li><a routerLink="/meus-ingressos" class="hover:text-white transition-colors">Meus ingressos</a></li>
-							<li><a routerLink="/perfil" class="hover:text-white transition-colors">Perfil</a></li>
-							<li><a routerLink="/suporte" class="hover:text-white transition-colors">Suporte</a></li>
-							<li><a routerLink="/dashboard" class="hover:text-white transition-colors">Admin</a></li>
-						</ul>
-					</nav>
-				</div>
+      <nav class="hidden lg:block" aria-label="Navegacao principal">
+        <ul class="flex gap-6 text-sm font-semibold text-gray-400">
+          <li><a routerLink="/inicio" class="hover:text-white transition-colors">Inicio</a></li>
+          <li><a routerLink="/shows" class="hover:text-white transition-colors">Eventos</a></li>
+          <li><a routerLink="/meus-ingressos" class="hover:text-white transition-colors">Meus ingressos</a></li>
+          <li><a routerLink="/checkout" class="hover:text-white transition-colors">Meus pedidos</a></li>
+          <li><a routerLink="/perfil" class="hover:text-white transition-colors">Perfil</a></li>
+          <li><a routerLink="/suporte" class="hover:text-white transition-colors">Suporte</a></li>
+          @if (authStore.isAdmin()) {
+            <li><a routerLink="/dashboard" class="hover:text-white transition-colors">Administracao</a></li>
+          }
+        </ul>
+      </nav>
+    </div>
 
-				<!-- Actions -->
-				<div class="flex items-center gap-4">
-					<button
-						class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-dark-hover transition-colors"
-					>
-						<i class="ph-bold ph-magnifying-glass text-xl"></i>
-					</button>
-					<button
-						class="flex items-center gap-2 bg-dark-card border border-dark-border px-4 py-2 rounded-full text-sm font-bold text-gray-300 hover:text-white hover:border-gray-500 transition-colors"
-					>
-						<i class="ph-bold ph-globe text-lg"></i>
-						En
-					</button>
-					<app-user-menu />
-				</div>
-			</header>
-		</div>
+    <div class="flex items-center gap-4">
+      <a
+        routerLink="/shows"
+        aria-label="Buscar eventos"
+        class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-dark-hover transition-colors"
+      >
+        <i class="ph-bold ph-magnifying-glass text-xl"></i>
+      </a>
+      <app-user-menu />
+    </div>
+  </header>
+</div>
 
-		<main class="max-w-[1600px] mx-auto w-[96%] relative z-10 py-10">
-			<!-- Hero Section -->
-			<section
-				class="mb-12 relative rounded-3xl overflow-hidden bg-dark-card border border-dark-border flex flex-col lg:flex-row items-center justify-between p-10 lg:p-16 gap-10"
-			>
-				<!-- Background Image with Dark Overlay -->
-				<div class="absolute inset-0 z-0">
-					<img
-						src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=1600"
-						alt="Concert"
-						class="w-full h-full object-cover"
-					/>
-					<div
-						class="absolute inset-0 bg-dark-bg/90 backdrop-blur-sm"
-					></div>
-				</div>
+<main class="max-w-[1600px] mx-auto w-[96%] relative z-10 py-10">
+  <section class="mb-12 relative rounded-3xl overflow-hidden bg-dark-card border border-dark-border flex flex-col lg:flex-row items-center justify-between p-10 lg:p-16 gap-10">
+    <div class="absolute inset-0 z-0">
+      <img [src]="eventImage(featuredEvent())" alt="Publico em show ao vivo" class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-dark-bg/90 backdrop-blur-sm"></div>
+    </div>
 
-				<button
-					class="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 w-12 h-12 bg-dark-card/50 hover:bg-brand text-white rounded-full flex items-center justify-center backdrop-blur-md border border-dark-border z-20 transition-colors"
-				>
-					<i class="ph-bold ph-caret-left text-xl"></i>
-				</button>
+    <div class="relative z-10 w-full lg:w-2/5 text-center lg:text-left">
+      <p class="text-gray-400 font-medium mb-4">Shows, festivais e experiencias perto de voce</p>
+      <h1 class="text-5xl lg:text-7xl font-black text-brand tracking-tighter mb-5 drop-shadow-lg">
+        Viva seus melhores momentos
+      </h1>
+      <p class="text-white font-bold text-lg leading-relaxed mb-7">
+        Encontre eventos inesqueciveis, escolha seu setor e receba seus ingressos digitais com seguranca.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+        <a routerLink="/shows" class="home-action primary">Explorar eventos</a>
+        <a routerLink="/shows" [queryParams]="{ status: 'SCHEDULED' }" class="home-action secondary">Ver proximos shows</a>
+      </div>
+    </div>
 
-				<!-- Hero Text -->
-				<div
-					class="relative z-10 w-full lg:w-2/5 text-center lg:text-left"
-				>
-					<p class="text-gray-400 font-medium mb-4">
-						Up to 50% off tickets for dances, traditional arts,
-						concerts, etc.
-					</p>
-					<h2
-						class="text-7xl lg:text-8xl font-black text-brand tracking-tighter mb-4 drop-shadow-lg"
-					>
-						tkts
-					</h2>
-					<p class="text-white font-bold text-lg leading-relaxed">
-						It will be available for purchase from 1 week before the
-						public performance
-					</p>
-				</div>
+    <div class="relative z-10 w-full lg:w-3/5 bg-dark-card/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 lg:p-12 shadow-2xl">
+      @if (eventStore.featuredLoading()) {
+        <div class="hero-skeleton" aria-label="Carregando evento em destaque"></div>
+      } @else if (featuredEvent(); as event) {
+        <p class="text-xs text-brand font-black uppercase tracking-widest mb-3">Evento em destaque</p>
+        <h2 class="text-3xl lg:text-5xl font-black text-white tracking-tight mb-6">
+          {{ event.name }}
+        </h2>
+        <div class="featured-meta">
+          <span>{{ formatDate(event.date) }}</span>
+          <span>{{ formatTime(event.date) }}</span>
+          <span>{{ event.venueName || 'Local a confirmar' }}</span>
+          <span>{{ event.city || 'Cidade' }}/{{ event.state || 'UF' }}</span>
+        </div>
+        <a [routerLink]="['/selecionar-setor', event.id]" class="featured-link">Ver evento</a>
+      } @else {
+        <p class="text-xs text-brand font-black uppercase tracking-widest mb-3">Reservae</p>
+        <h2 class="text-3xl lg:text-5xl font-black text-white tracking-tight mb-6">
+          Seu ingresso digital, do seu jeito
+        </h2>
+        <p class="text-gray-300 font-semibold mb-6">
+          Novos eventos serao adicionados em breve. Enquanto isso, explore o catalogo e acompanhe as novidades.
+        </p>
+        <a routerLink="/shows" class="featured-link">Ir para eventos</a>
+      }
+    </div>
+  </section>
 
-				<!-- Hero Glass Card -->
-				<div
-					class="relative z-10 w-full lg:w-3/5 bg-dark-card/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 lg:p-12 shadow-2xl text-center"
-				>
-					<i class="ph-fill ph-ticket text-5xl text-brand mb-6"></i>
+  <section class="flex flex-col lg:flex-row items-start lg:items-center gap-6 mb-16">
+    <h2 class="text-xl font-black tracking-widest text-white flex-shrink-0">AVISOS</h2>
+    <div class="flex gap-4 overflow-x-auto no-scrollbar flex-1 pb-2 w-full">
+      @for (notice of platformNotices; track notice.title) {
+        <article class="min-w-[280px] bg-dark-card border border-dark-border p-5 rounded-2xl hover:border-gray-600 transition-colors">
+          <div class="text-xs text-brand font-bold mb-2">Reservae</div>
+          <h3 class="text-sm font-black text-white mb-2">{{ notice.title }}</h3>
+          <p class="text-sm font-semibold text-gray-400 leading-relaxed">{{ notice.description }}</p>
+        </article>
+      }
+    </div>
+  </section>
 
-					<!-- Timeline visual -->
-					<div
-						class="relative flex justify-between items-center my-10 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:left-5 before:right-5 before:h-0.5 before:bg-dark-border before:z-0"
-					>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center w-12 h-12 rounded-full bg-dark-hover border border-dark-border text-xs font-bold text-gray-400"
-						>
-							<span class="text-lg text-white">1</span>Days
-						</div>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center w-12 h-12 rounded-full bg-dark-hover border border-dark-border text-xs font-bold text-gray-400"
-						>
-							<span class="text-lg text-white">6</span>Days
-						</div>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center w-12 h-12 rounded-full bg-dark-hover border border-dark-border text-xs font-bold text-gray-400"
-						>
-							<span class="text-lg text-white">5</span>Days
-						</div>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center w-12 h-12 rounded-full bg-dark-hover border border-dark-border text-xs font-bold text-gray-400"
-						>
-							<span class="text-lg text-white">4</span>Days
-						</div>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center w-12 h-12 rounded-full bg-dark-hover border border-dark-border text-xs font-bold text-gray-400"
-						>
-							<span class="text-lg text-white">3</span>Days
-						</div>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center w-12 h-12 rounded-full bg-dark-hover border border-dark-border text-xs font-bold text-gray-400"
-						>
-							<span class="text-lg text-white">2</span>Days
-						</div>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center w-12 h-12 rounded-full bg-brand text-xs font-bold text-white shadow-[0_0_15px_rgba(255,98,77,0.5)]"
-						>
-							<span class="text-lg">1</span>Days
-						</div>
-						<div
-							class="relative z-10 flex flex-col items-center justify-center px-4 h-12 rounded-xl bg-white text-dark-bg text-xs font-black leading-tight text-center"
-						>
-							On The Public<br />Performance Day
-						</div>
-					</div>
+  <section class="mb-20 relative bg-gradient-to-r from-brand/20 via-[#101010] to-brand/5 border border-brand/20 rounded-3xl p-8 lg:p-12 flex flex-col md:flex-row justify-between items-center gap-8 overflow-hidden">
+    <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-dark-bg rounded-full border-r border-brand/20"></div>
+    <div class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-dark-bg rounded-full border-l border-brand/20"></div>
 
-					<p class="text-gray-300 font-semibold mb-4">
-						You can get tickets for your designated performance
-						starting one week in advance!
-					</p>
-					<p
-						class="text-xs text-gray-600 font-medium uppercase tracking-wider"
-					>
-						■ From October 1, 2024 onwards ■ Some performances are
-						excluded ■
-					</p>
-				</div>
+    <div class="text-center md:text-left z-10">
+      <h2 class="text-3xl lg:text-4xl font-black tracking-tight text-white mb-3">Seu proximo show comeca aqui</h2>
+      <p class="text-gray-300 font-semibold max-w-2xl">
+        Descubra eventos, escolha seu setor e receba seus ingressos digitais com seguranca.
+      </p>
+    </div>
 
-				<button
-					class="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 w-12 h-12 bg-dark-card/50 hover:bg-brand text-white rounded-full flex items-center justify-center backdrop-blur-md border border-dark-border z-20 transition-colors"
-				>
-					<i class="ph-bold ph-caret-right text-xl"></i>
-				</button>
-			</section>
+    <a routerLink="/shows" class="z-10 bg-white text-black px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-gray-200 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+      Ver eventos
+    </a>
+  </section>
 
-			<!-- News Section -->
-			<section
-				class="flex flex-col lg:flex-row items-start lg:items-center gap-6 mb-16"
-			>
-				<h3
-					class="text-xl font-black tracking-widest text-white flex-shrink-0"
-				>
-					NEWS
-				</h3>
+  <section class="mb-20">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center gap-8 mb-10">
+      <h2 class="text-3xl font-black leading-tight tracking-tighter">
+        EVENTOS<br /><span class="text-brand">EM DESTAQUE</span>
+      </h2>
 
-				<div class="flex items-center gap-4 w-full overflow-hidden">
-					<button
-						class="w-10 h-10 rounded-full bg-dark-card border border-dark-border flex items-center justify-center text-gray-400 hover:text-white flex-shrink-0"
-					>
-						<i class="ph-bold ph-caret-left"></i>
-					</button>
+      <div class="flex flex-wrap gap-3">
+        @for (filter of homeFilters; track filter.label) {
+          <a
+            routerLink="/shows"
+            [queryParams]="filter.queryParams"
+            class="px-5 py-2.5 rounded-full bg-dark-card border border-dark-border text-sm font-semibold text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          >
+            {{ filter.label }}
+          </a>
+        }
+      </div>
+    </div>
 
-					<div
-						class="flex gap-4 overflow-x-auto no-scrollbar flex-1 pb-2"
-					>
-						<div
-							class="min-w-[280px] bg-dark-card border border-dark-border p-5 rounded-2xl hover:border-gray-600 transition-colors cursor-pointer group"
-						>
-							<div class="text-xs text-brand font-bold mb-2">
-								2024.10.07
-							</div>
-							<div
-								class="text-sm font-semibold text-gray-300 group-hover:text-white leading-relaxed"
-							>
-								We received congratulatory comments from Mr. Yu
-								Yoshizawa! ★TKTS open 5th anniversary★
-							</div>
-						</div>
-						<div
-							class="min-w-[280px] bg-dark-card border border-dark-border p-5 rounded-2xl hover:border-gray-600 transition-colors cursor-pointer group"
-						>
-							<div class="text-xs text-brand font-bold mb-2">
-								2024.10.04
-							</div>
-							<div
-								class="text-sm font-semibold text-gray-300 group-hover:text-white leading-relaxed"
-							>
-								Congratulations from Eriko Ogawa, Artistic
-								Director of the New National Theatre!
-							</div>
-						</div>
-						<div
-							class="min-w-[280px] bg-dark-card border border-dark-border p-5 rounded-2xl hover:border-gray-600 transition-colors cursor-pointer group"
-						>
-							<div class="text-xs text-brand font-bold mb-2">
-								2024.09.25
-							</div>
-							<div
-								class="text-sm font-semibold text-gray-300 group-hover:text-white leading-relaxed"
-							>
-								You will be able to purchase tickets from 1 week
-								before the performance!
-							</div>
-						</div>
-					</div>
+    @if (eventStore.featuredLoading()) {
+      <div class="featured-list" aria-label="Carregando eventos">
+        @for (_item of skeletonItems; track _item) {
+          <div class="event-skeleton"></div>
+        }
+      </div>
+    } @else if (eventStore.featuredError()) {
+      <div class="state-panel">
+        <h3>Nao foi possivel carregar os eventos</h3>
+        <p>Verifique sua conexao e tente novamente.</p>
+        <button type="button" (click)="retryEvents()">Tentar novamente</button>
+      </div>
+    } @else if (eventStore.featuredEmpty()) {
+      <div class="state-panel">
+        <h3>Nenhum evento disponivel no momento</h3>
+        <p>Novos eventos serao adicionados em breve.</p>
+        <button type="button" (click)="retryEvents()">Atualizar</button>
+      </div>
+    } @else {
+      <div class="featured-list">
+        @for (event of visibleEvents(); track event.id) {
+          <article class="event-card">
+            <img [src]="eventImage(event)" [alt]="event.name || 'Evento Reservae'" />
+            <div class="event-content">
+              <div>
+                <span class="event-status">{{ event.status || 'EVENTO' }}</span>
+                <h3>{{ event.name || 'Evento sem titulo' }}</h3>
+              </div>
+              <div class="event-details">
+                <p>{{ formatDate(event.date) }} - {{ formatTime(event.date) }}</p>
+                <p>{{ eventLocation(event) }}</p>
+              </div>
+              <a [routerLink]="['/selecionar-setor', event.id]">Ver detalhes</a>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
 
-					<button
-						class="w-10 h-10 rounded-full bg-dark-card border border-dark-border flex items-center justify-center text-gray-400 hover:text-white flex-shrink-0"
-					>
-						<i class="ph-bold ph-caret-right"></i>
-					</button>
-				</div>
-			</section>
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+    @for (city of cityDestinations; track city.name) {
+      <a
+        routerLink="/shows"
+        [queryParams]="city.queryParams"
+        class="city-card"
+        [attr.aria-label]="'Ver eventos em ' + city.name"
+      >
+        <img [src]="city.imageUrl" [alt]="'Eventos em ' + city.name" />
+        <div class="city-overlay"></div>
+        <div class="city-copy">
+          <h3>{{ city.name }}</h3>
+          <p>{{ city.description }}</p>
+        </div>
+      </a>
+    }
+  </section>
+</main>
 
-			<!-- Ad Banner -->
-			<section
-				class="mb-20 relative bg-gradient-to-r from-brand/20 via-purple-900/20 to-brand/5 border border-brand/20 rounded-3xl p-8 lg:p-12 flex flex-col md:flex-row justify-between items-center gap-8 overflow-hidden"
-			>
-				<!-- Cutouts for ticket effect -->
-				<div
-					class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-dark-bg rounded-full border-r border-brand/20"
-				></div>
-				<div
-					class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-dark-bg rounded-full border-l border-brand/20"
-				></div>
+<footer class="relative bg-[#111] pt-24 overflow-hidden border-t border-dark-border">
+  <div class="absolute -top-10 left-0 text-[160px] lg:text-[260px] font-black text-white/[0.02] tracking-tighter leading-none pointer-events-none select-none">
+    Reservae
+  </div>
 
-				<div class="text-center md:text-left z-10">
-					<h2
-						class="text-3xl lg:text-4xl font-black tracking-tight text-white mb-1"
-					>
-						COLDPLAY
-					</h2>
-					<h3
-						class="text-xl lg:text-2xl font-light tracking-widest text-gray-300"
-					>
-						MUSIC OF THE SPHERES
-					</h3>
-				</div>
+  <div class="max-w-[1600px] mx-auto w-[96%] relative z-10">
+    <div class="newsletter">
+      <div>
+        <h2>Fique por dentro</h2>
+        <p>Receba novidades sobre shows, festivais e eventos perto de voce.</p>
+      </div>
+      <form (submit)="submitNewsletter($event)">
+        <label class="sr-only" for="newsletter-email">Seu melhor e-mail</label>
+        <input id="newsletter-email" type="email" placeholder="Seu melhor e-mail" />
+        <button type="submit">Quero receber</button>
+      </form>
+    </div>
 
-				<img
-					src="https://images.unsplash.com/photo-1470229722913-7c092bce28f1?auto=format&fit=crop&q=80&w=300"
-					alt="Preview"
-					class="hidden lg:block w-64 h-20 object-cover rounded-xl border border-white/10 shadow-xl z-10"
-				/>
+    @if (newsletterMessage()) {
+      <p class="newsletter-message">{{ newsletterMessage() }}</p>
+    }
 
-				<button
-					class="z-10 bg-white text-black px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-gray-200 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-				>
-					Don't miss out!
-				</button>
-			</section>
+    <div class="footer-card">
+      <div class="footer-top">
+        <div>
+          <h2>Reservae</h2>
+          <p>Ingressos digitais para momentos que merecem sair do calendario.</p>
+        </div>
+        <a routerLink="/shows">Explorar eventos</a>
+      </div>
 
-			<!-- Popular Pick Up -->
-			<section class="mb-20">
-				<div
-					class="flex flex-col lg:flex-row items-start lg:items-center gap-8 mb-10"
-				>
-					<h2
-						class="text-3xl font-black leading-tight tracking-tighter"
-					>
-						POPULAR<br /><span class="text-brand">PICK UP</span>
-					</h2>
-
-					<!-- Filters -->
-					<div class="flex flex-wrap gap-3">
-						<button
-							class="px-5 py-2.5 rounded-full bg-dark-card border border-dark-border text-sm font-semibold text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
-						>
-							Musical
-						</button>
-						<button
-							class="px-5 py-2.5 rounded-full bg-dark-card border border-dark-border text-sm font-semibold text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
-						>
-							Theater
-						</button>
-						<button
-							class="px-5 py-2.5 rounded-full bg-brand border border-brand text-sm font-bold text-white shadow-[0_0_15px_rgba(255,98,77,0.3)]"
-						>
-							Live Concert
-						</button>
-						<button
-							class="px-5 py-2.5 rounded-full bg-dark-card border border-dark-border text-sm font-semibold text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
-						>
-							Comedy
-						</button>
-						<button
-							class="px-5 py-2.5 rounded-full bg-dark-card border border-dark-border text-sm font-semibold text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
-						>
-							Sports
-						</button>
-						<button
-							class="px-5 py-2.5 rounded-full bg-transparent border border-transparent text-sm font-bold text-white hover:text-brand transition-colors flex items-center gap-1"
-						>
-							More <i class="ph-bold ph-caret-right"></i>
-						</button>
-					</div>
-				</div>
-
-				<div class="flex flex-col gap-6">
-					<!-- Event Card 1 -->
-					<div
-						class="bg-dark-card border border-dark-border rounded-[2rem] p-6 flex flex-col xl:flex-row gap-8 relative overflow-hidden group hover:border-dark-hover transition-colors"
-					>
-						<img
-							src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=400"
-							alt="Broadway"
-							class="w-full xl:w-56 h-56 object-cover rounded-2xl flex-shrink-0 group-hover:scale-105 transition-transform duration-500"
-						/>
-
-						<div class="flex-1 flex flex-col justify-center">
-							<h3 class="text-2xl font-bold text-white mb-4">
-								Broadway Christmas Wonderland 2024
-							</h3>
-
-							<div
-								class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"
-							>
-								<div>
-									<p
-										class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1"
-									>
-										Venue
-									</p>
-									<p
-										class="text-sm font-semibold text-gray-300"
-									>
-										Tokyu Theater Orb
-									</p>
-								</div>
-								<div>
-									<p
-										class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1"
-									>
-										Ticket
-									</p>
-									<p
-										class="text-sm font-semibold text-gray-300"
-									>
-										Day Voucher (S Seat) ¥11,800
-									</p>
-								</div>
-							</div>
-
-							<p
-								class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-3"
-							>
-								Showtimes
-							</p>
-							<div class="flex flex-wrap gap-3">
-								<div
-									class="flex border border-dark-border rounded-lg overflow-hidden text-xs font-semibold"
-								>
-									<div
-										class="bg-dark-hover px-3 py-2 text-center text-gray-400 border-r border-dark-border"
-									>
-										Dec<br />2024
-									</div>
-									<div
-										class="px-3 py-2 text-white flex items-center"
-									>
-										Fri 20<br />2:00pm
-									</div>
-								</div>
-								<div
-									class="flex border border-dark-border rounded-lg overflow-hidden text-xs font-semibold"
-								>
-									<div
-										class="px-3 py-2 text-white flex items-center"
-									>
-										Sat 21<br />4:00pm
-									</div>
-								</div>
-								<div
-									class="flex border border-dark-border rounded-lg overflow-hidden text-xs font-semibold"
-								>
-									<div
-										class="px-3 py-2 text-white flex items-center"
-									>
-										Sun 22<br />12:00pm, 4:00pm
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div
-							class="xl:absolute right-6 top-6 bottom-6 flex flex-row xl:flex-col justify-between items-end mt-4 xl:mt-0"
-						>
-							<div class="flex gap-2">
-								<span
-									class="bg-dark-hover text-gray-300 px-3 py-1.5 rounded-md text-xs font-bold"
-									>Age 6+</span
-								>
-								<span
-									class="bg-brand text-white px-3 py-1.5 rounded-md text-xs font-bold"
-									>OFF 30%</span
-								>
-							</div>
-							<button
-								class="bg-white text-black px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors flex items-center gap-2"
-							>
-								Show Details
-								<i class="ph-bold ph-arrow-right"></i>
-							</button>
-						</div>
-					</div>
-
-					<!-- Event Card 2 -->
-					<div
-						class="bg-dark-card border border-dark-border rounded-[2rem] p-6 flex flex-col xl:flex-row gap-8 relative overflow-hidden group hover:border-dark-hover transition-colors"
-					>
-						<img
-							src="https://images.unsplash.com/photo-1507676184212-d0330a15183c?auto=format&fit=crop&q=80&w=400"
-							alt="The Lion"
-							class="w-full xl:w-56 h-56 object-cover rounded-2xl flex-shrink-0 group-hover:scale-105 transition-transform duration-500"
-						/>
-
-						<div class="flex-1 flex flex-col justify-center">
-							<h3 class="text-2xl font-bold text-white mb-4">
-								The Lion
-							</h3>
-
-							<div
-								class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"
-							>
-								<div>
-									<p
-										class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1"
-									>
-										Venue
-									</p>
-									<p
-										class="text-sm font-semibold text-gray-300"
-									>
-										Shinagawa Princehotel Club Ex
-									</p>
-								</div>
-								<div>
-									<p
-										class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1"
-									>
-										Ticket
-									</p>
-									<p
-										class="text-sm font-semibold text-gray-300"
-									>
-										Balcony Voucher ¥12,500
-									</p>
-								</div>
-							</div>
-
-							<p
-								class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-3"
-							>
-								Showtimes
-							</p>
-							<div class="flex flex-wrap gap-3">
-								<div
-									class="flex border border-dark-border rounded-lg overflow-hidden text-xs font-semibold"
-								>
-									<div
-										class="bg-dark-hover px-3 py-2 text-center text-gray-400 border-r border-dark-border"
-									>
-										Dec<br />2024
-									</div>
-									<div
-										class="px-3 py-2 text-white flex items-center"
-									>
-										Fri 20<br />3:30pm
-									</div>
-								</div>
-								<div
-									class="flex border border-dark-border rounded-lg overflow-hidden text-xs font-semibold"
-								>
-									<div
-										class="px-3 py-2 text-white flex items-center"
-									>
-										Sat 21<br />3:30pm, 7:00pm
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div
-							class="xl:absolute right-6 top-6 bottom-6 flex flex-row xl:flex-col justify-between items-end mt-4 xl:mt-0"
-						>
-							<div class="flex gap-2">
-								<span
-									class="bg-dark-hover text-gray-300 px-3 py-1.5 rounded-md text-xs font-bold"
-									>Age 16+</span
-								>
-								<span
-									class="bg-brand text-white px-3 py-1.5 rounded-md text-xs font-bold"
-									>OFF 44%</span
-								>
-							</div>
-							<button
-								class="bg-white text-black px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors flex items-center gap-2"
-							>
-								Show Details
-								<i class="ph-bold ph-arrow-right"></i>
-							</button>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Cities Grid -->
-			<section
-				class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20"
-			>
-				<!-- City 1 -->
-				<div
-					class="relative h-64 rounded-3xl overflow-hidden group cursor-pointer border border-dark-border"
-				>
-					<img
-						src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&q=80&w=600"
-						alt="Tokyo"
-						class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-					/>
-					<div
-						class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90"
-					></div>
-
-					<h3
-						class="absolute top-6 left-6 text-2xl font-bold text-white"
-					>
-						Tokyo
-					</h3>
-
-					<div class="absolute bottom-6 left-6 right-6 flex gap-3">
-						<img
-							src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&q=80"
-							class="w-12 h-12 rounded-lg object-cover border-2 border-white/20"
-						/>
-						<img
-							src="https://images.unsplash.com/photo-1507676184212-d0330a15183c?w=100&q=80"
-							class="w-12 h-12 rounded-lg object-cover border-2 border-white/20"
-						/>
-						<img
-							src="https://images.unsplash.com/photo-1470229722913-7c092bce28f1?w=100&q=80"
-							class="w-12 h-12 rounded-lg object-cover border-2 border-white/20"
-						/>
-					</div>
-				</div>
-				<!-- City 2 -->
-				<div
-					class="relative h-64 rounded-3xl overflow-hidden group cursor-pointer border border-dark-border"
-				>
-					<img
-						src="https://images.unsplash.com/photo-1590559899731-a382839ce269?auto=format&fit=crop&q=80&w=600"
-						alt="Osaka"
-						class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-					/>
-					<div
-						class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90"
-					></div>
-					<h3
-						class="absolute top-6 left-6 text-2xl font-bold text-white"
-					>
-						Osaka
-					</h3>
-					<div class="absolute bottom-6 left-6 right-6 flex gap-3">
-						<img
-							src="https://images.unsplash.com/photo-1540039155732-d68a1a9e7019?w=100&q=80"
-							class="w-12 h-12 rounded-lg object-cover border-2 border-white/20"
-						/>
-						<img
-							src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&q=80"
-							class="w-12 h-12 rounded-lg object-cover border-2 border-white/20"
-						/>
-					</div>
-				</div>
-				<!-- City 3 -->
-				<div
-					class="relative h-64 rounded-3xl overflow-hidden group cursor-pointer border border-dark-border"
-				>
-					<img
-						src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=600"
-						alt="Kyoto"
-						class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-					/>
-					<div
-						class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90"
-					></div>
-					<h3
-						class="absolute top-6 left-6 text-2xl font-bold text-white"
-					>
-						Kyoto
-					</h3>
-					<div class="absolute bottom-6 left-6 right-6 flex gap-3">
-						<img
-							src="https://images.unsplash.com/photo-1470229722913-7c092bce28f1?w=100&q=80"
-							class="w-12 h-12 rounded-lg object-cover border-2 border-white/20"
-						/>
-						<img
-							src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&q=80"
-							class="w-12 h-12 rounded-lg object-cover border-2 border-white/20"
-						/>
-					</div>
-				</div>
-			</section>
-		</main>
-
-		<!-- Footer -->
-		<footer
-			class="relative bg-[#111] pt-24 overflow-hidden border-t border-dark-border"
-		>
-			<!-- Background Text Watermark -->
-			<div
-				class="absolute -top-10 left-0 text-[200px] lg:text-[300px] font-black text-white/[0.02] tracking-tighter leading-none pointer-events-none select-none"
-			>
-				tkts
-			</div>
-
-			<div class="max-w-[1600px] mx-auto w-[96%] relative z-10">
-				<!-- Newsletter -->
-				<div
-					class="flex flex-col lg:flex-row justify-between items-center gap-10 mb-20"
-				>
-					<h3
-						class="text-2xl lg:text-3xl font-medium text-white max-w-2xl leading-snug text-center lg:text-left"
-					>
-						Stay Updated. Events, exclusives and a whole lot more
-						straight from the source.
-					</h3>
-					<div class="flex w-full lg:w-auto gap-3">
-						<input
-							type="email"
-							placeholder="Email Address"
-							class="flex-1 lg:w-80 bg-dark-card border border-dark-border rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand transition-colors"
-						/>
-						<button
-							class="bg-brand text-white px-8 py-4 rounded-xl font-bold hover:bg-brand-dark transition-colors flex items-center gap-2"
-						>
-							Sign Up <i class="ph-bold ph-arrow-right"></i>
-						</button>
-					</div>
-				</div>
-
-				<!-- Footer Card -->
-				<div
-					class="bg-brand rounded-[2rem] p-10 lg:p-16 relative mb-10 overflow-hidden shadow-2xl"
-				>
-					<!-- Decorative Cutouts -->
-					<div
-						class="absolute left-0 bottom-12 -translate-x-1/2 w-12 h-12 bg-[#111] rounded-full"
-					></div>
-					<div
-						class="absolute right-0 bottom-12 translate-x-1/2 w-12 h-12 bg-[#111] rounded-full"
-					></div>
-
-					<div
-						class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-white/20 pb-10 mb-10 gap-10"
-					>
-						<div>
-							<h2 class="text-4xl font-black text-white mb-6">
-								tkts
-							</h2>
-							<div class="flex gap-4 text-white">
-								<a
-									routerLink="/shows"
-									class="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center hover:bg-black/40 transition-colors"
-									><i
-										class="ph-fill ph-twitter-logo text-xl"
-									></i
-								></a>
-								<a
-									routerLink="/shows"
-									class="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center hover:bg-black/40 transition-colors"
-									><i
-										class="ph-fill ph-facebook-logo text-xl"
-									></i
-								></a>
-								<a
-									routerLink="/shows"
-									class="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center hover:bg-black/40 transition-colors"
-									><i
-										class="ph-fill ph-instagram-logo text-xl"
-									></i
-								></a>
-							</div>
-						</div>
-
-						<div class="flex flex-col sm:flex-row gap-4">
-							<div
-								class="bg-white rounded-xl p-4 flex items-center justify-center w-40 h-16"
-							>
-								<span class="text-[#06c755] font-black text-2xl"
-									>LINE</span
-								>
-							</div>
-							<div
-								class="bg-[#f0fff0] border-2 border-[#06c755] rounded-xl p-4 flex items-center justify-center w-40 h-16"
-							>
-								<span
-									class="text-[#06c755] text-[10px] font-bold text-center leading-tight"
-									>COVID-19<br />Measures</span
-								>
-							</div>
-						</div>
-					</div>
-
-					<div
-						class="flex flex-col md:flex-row justify-between items-center gap-6 text-white/80 text-sm font-medium"
-					>
-						<div class="flex flex-wrap justify-center gap-6">
-							<a
-								routerLink="/shows"
-								class="hover:text-white transition-colors"
-								>Operating company</a
-							>
-							<a
-								routerLink="/shows"
-								class="hover:text-white transition-colors"
-								>Privacy Policy</a
-							>
-							<a
-								routerLink="/shows"
-								class="hover:text-white transition-colors"
-								>Site Map</a
-							>
-							<a
-								routerLink="/shows"
-								class="hover:text-white transition-colors"
-								>Contact Us</a
-							>
-						</div>
-						<div>
-							Copyright LongrunPlanning.co. All rights reserved
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
-	
+      <div class="footer-bottom">
+        <nav aria-label="Links do rodape">
+          <a routerLink="/inicio">Sobre o Reservae</a>
+          <a routerLink="/inicio">Politica de Privacidade</a>
+          <a routerLink="/inicio">Termos de Uso</a>
+          <a routerLink="/suporte">Suporte</a>
+          <a routerLink="/suporte">Contato</a>
+        </nav>
+        <div>© 2026 Reservae. Todos os direitos reservados.</div>
+      </div>
+    </div>
+  </div>
+</footer>

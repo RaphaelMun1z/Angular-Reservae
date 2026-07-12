@@ -18,7 +18,7 @@ describe('MockAuthIntegration', () => {
       expect(session.userId).toBe('SUBSTITUIR_POR_UUID_VALIDO_DO_BACKEND');
       expect(session.username).toBe('Raphael Muniz');
       expect(session.email).toBe('raphaelmunizvarela@hotmail.com');
-      expect(session.roles).toEqual(['USER']);
+      expect(session.roles).toEqual(['CUSTOMER']);
     });
   });
 

@@ -27,6 +27,27 @@
     transform 160ms ease;
 }
 
+.login-button {
+  min-width: 82px;
+  min-height: 42px;
+  padding: 0 18px;
+  color: #fff;
+  font: 800 0.86rem/1 Montserrat, sans-serif;
+  cursor: pointer;
+  background: #ff624d;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 999px;
+  box-shadow: 0 10px 22px rgb(255 98 77 / 18%);
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.login-button:hover {
+  background: #d93f2c;
+  transform: translateY(-1px);
+}
+
 .avatar-button:hover,
 .avatar-button[aria-expanded='true'] {
   border-color: #ff624d;
@@ -112,6 +133,9 @@ nav a,
   font-size: 0.84rem;
   font-weight: 650;
   text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
   border-radius: 11px;
   transition:
     color 150ms ease,
@@ -124,6 +148,7 @@ nav a:hover {
 }
 
 .logout {
+  width: 100%;
   color: #ff8575;
   border-top: 1px solid #292929;
   border-radius: 0 0 11px 11px;

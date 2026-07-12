@@ -17,7 +17,9 @@ export class UserMenu {
   @Input() avatarUrl = '';
 
   protected readonly isOpen = signal(false);
-  protected readonly displayName = computed(() => this.name || this.authStore.username() || 'Sessao nao autenticada');
+  protected readonly authenticated = this.authStore.authenticated;
+  protected readonly isAdmin = this.authStore.isAdmin;
+  protected readonly displayName = computed(() => this.name || this.authStore.displayName());
   protected readonly displayEmail = computed(() => this.email || this.authStore.email() || 'Entre para acessar sua conta');
 
   protected get initials(): string {
@@ -37,6 +39,10 @@ export class UserMenu {
 
   protected close(): void {
     this.isOpen.set(false);
+  }
+
+  protected login(): void {
+    this.authStore.login();
   }
 
   protected logout(): void {

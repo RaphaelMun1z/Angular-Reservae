@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UserMenu } from '../../components/user-menu/user-menu';
+import { EventStatus } from '../../core/models/event-catalog.model';
 import { EventStore } from '../events/state/event.store';
 
 @Component({
@@ -11,8 +12,43 @@ import { EventStore } from '../events/state/event.store';
 })
 export class Shows implements OnInit {
   readonly store = inject(EventStore);
+  private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this.store.markCatalogListPending();
+    const query = this.route.snapshot.queryParamMap;
+    const city = query.get('city');
+    const state = query.get('state');
+    const status = query.get('status');
+
+    if (city || state || status) {
+      this.store.updateFilters({
+        city,
+        state,
+        status: this.toEventStatus(status),
+      });
+      return;
+    }
+
+    this.store.loadEvents();
+  }
+
+  filterCity(city: string | null): void {
+    this.store.updateFilters({ city });
+  }
+
+  formatDate(value: string | null | undefined): string {
+    if (!value) {
+      return 'Data em breve';
+    }
+
+    return new Date(value).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
+
+  private toEventStatus(status: string | null): EventStatus | null {
+    return status === 'SCHEDULED' || status === 'CANCELED' || status === 'FINISHED' ? status : null;
   }
 }

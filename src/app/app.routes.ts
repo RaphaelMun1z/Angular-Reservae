@@ -29,6 +29,8 @@ import { CheckoutStore } from './pages/checkout/state/checkout.store';
 import { EventStore } from './pages/events/state/event.store';
 import { ScannerStore } from './pages/gate-scanner/state/scanner.store';
 import { TicketStore } from './pages/my-tickets/state/ticket.store';
+import { authGuard } from './core/auth/auth.guard';
+import { roleGuard } from './core/auth/role.guard';
 
 export const routes: Routes = [
   {
@@ -55,10 +57,12 @@ export const routes: Routes = [
       {
         path: 'checkout',
         component: Checkout,
+        canActivate: [authGuard],
       },
       {
         path: 'checkout/:eventId',
         component: Checkout,
+        canActivate: [authGuard],
       },
       {
         path: 'club-vip',
@@ -67,22 +71,32 @@ export const routes: Routes = [
       {
         path: 'criar-evento',
         component: CreateEvent,
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
       },
       {
         path: 'dashboard',
         component: Dashboard,
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
       },
       {
         path: 'clientes',
         component: Dashboard,
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
       },
       {
         path: 'transacoes',
         component: Dashboard,
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
       },
       {
         path: 'relatorios',
         component: Dashboard,
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
       },
       {
         path: 'eventos',
@@ -95,11 +109,15 @@ export const routes: Routes = [
       {
         path: 'scanner',
         component: GateScanner,
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
         providers: [ScannerStore],
       },
       {
         path: 'scanner/:eventId',
         component: GateScanner,
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
         providers: [ScannerStore],
       },
       {
@@ -109,10 +127,12 @@ export const routes: Routes = [
       {
         path: 'meus-ingressos',	
         component: MyTickets,
+        canActivate: [authGuard],
       },
       {
         path: 'perfil',
         component: Profile,
+        canActivate: [authGuard],
       },
       {
         path: 'cadastro',
@@ -133,6 +153,7 @@ export const routes: Routes = [
       {
         path: 'configuracoes',
         component: Settings,
+        canActivate: [authGuard],
       },
       {
         path: 'shows',
@@ -149,14 +170,17 @@ export const routes: Routes = [
       {
         path: 'detalhes-ingresso',
         component: TicketDetails,
+        canActivate: [authGuard],
       },
       {
         path: 'detalhes-ingresso/:ticketId',
         component: TicketDetails,
+        canActivate: [authGuard],
       },
       {
         path: 'transferir-ingresso',
         component: TicketTransfer,
+        canActivate: [authGuard],
       },
       {
         path: '403',

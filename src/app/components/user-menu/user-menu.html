@@ -1,20 +1,24 @@
 <div class="user-menu">
-  <button
-    type="button"
-    class="avatar-button"
-    aria-label="Abrir menu do usuario"
-    aria-haspopup="menu"
-    [attr.aria-expanded]="isOpen()"
-    (click)="toggle($event)"
-  >
-    @if (avatarUrl) {
-      <img [src]="avatarUrl" [alt]="'Avatar de ' + displayName()" />
-    } @else {
-      <span>{{ initials }}</span>
-    }
-  </button>
+  @if (!authenticated()) {
+    <button type="button" class="login-button" (click)="login()">Entrar</button>
+  } @else {
+    <button
+      type="button"
+      class="avatar-button"
+      aria-label="Abrir menu do usuario"
+      aria-haspopup="menu"
+      [attr.aria-expanded]="isOpen()"
+      (click)="toggle($event)"
+    >
+      @if (avatarUrl) {
+        <img [src]="avatarUrl" [alt]="'Avatar de ' + displayName()" />
+      } @else {
+        <span>{{ initials }}</span>
+      }
+    </button>
+  }
 
-  @if (isOpen()) {
+  @if (authenticated() && isOpen()) {
     <div class="user-popup" role="menu" (click)="$event.stopPropagation()">
       <div class="user-summary">
         <div class="summary-avatar">
@@ -43,12 +47,18 @@
           <lucide-icon name="settings" size="16" aria-hidden="true"></lucide-icon>
           Configuracoes
         </a>
+        @if (isAdmin()) {
+          <a routerLink="/dashboard" role="menuitem" (click)="close()">
+            <lucide-icon name="gauge" size="16" aria-hidden="true"></lucide-icon>
+            Administracao
+          </a>
+        }
       </nav>
 
-      <a class="logout" routerLink="/login" role="menuitem" (click)="logout()">
+      <button class="logout" type="button" role="menuitem" (click)="logout()">
         <lucide-icon name="log-out" size="16" aria-hidden="true"></lucide-icon>
         Sair
-      </a>
+      </button>
     </div>
   }
 </div>

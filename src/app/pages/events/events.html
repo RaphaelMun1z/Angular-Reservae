@@ -9,9 +9,77 @@
     </div>
 
     <div class="filter-bar">
-      <input type="text" placeholder="Procurar evento pelo nome, local ou data..." />
-      <button type="button">Status: Todos</button>
-      <button type="button">Filtros</button>
+      <label>
+        <span>Busca</span>
+        <input
+          type="search"
+          placeholder="Procurar evento pelo titulo..."
+          [ngModel]="store.filters().search"
+          (ngModelChange)="search($event)"
+        />
+      </label>
+      <label>
+        <span>Cidade</span>
+        <input
+          type="text"
+          placeholder="Santos"
+          [ngModel]="store.filters().city ?? ''"
+          (ngModelChange)="updateCity($event)"
+        />
+      </label>
+      <label>
+        <span>Estado</span>
+        <input
+          type="text"
+          maxlength="2"
+          placeholder="SP"
+          [ngModel]="store.filters().state ?? ''"
+          (ngModelChange)="updateState($event)"
+        />
+      </label>
+      <label>
+        <span>Status</span>
+        <select [ngModel]="store.filters().status ?? ''" (ngModelChange)="updateStatus($event)">
+          <option value="">Todos</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ statusLabel(status) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        <span>Data inicial</span>
+        <input
+          type="date"
+          [ngModel]="dateInputValue(store.filters().startDate)"
+          (ngModelChange)="updateStartDate($event)"
+        />
+      </label>
+      <label>
+        <span>Data final</span>
+        <input
+          type="date"
+          [ngModel]="dateInputValue(store.filters().endDate)"
+          (ngModelChange)="updateEndDate($event)"
+        />
+      </label>
+      <button type="button" (click)="store.clearFilters()">Limpar filtros</button>
+    </div>
+
+    <div class="result-summary">
+      @if (store.loading()) {
+        <span>Carregando eventos...</span>
+      } @else {
+        <span>{{ store.totalElements() }} evento(s) encontrados</span>
+      }
+
+      <label>
+        Itens
+        <select [ngModel]="store.pageSize()" (ngModelChange)="updatePageSize($event)">
+          <option [value]="6">6</option>
+          <option [value]="12">12</option>
+          <option [value]="24">24</option>
+        </select>
+      </label>
     </div>
 
     <div class="data-card">
@@ -20,19 +88,56 @@
           <tr>
             <th>Evento</th>
             <th>Data & Local</th>
-            <th>Vendas</th>
+            <th>Cidade</th>
             <th>Status</th>
             <th>Acoes</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td colspan="5">
-              {{ store.catalogListPending() || 'Area reservada para a futura gestao completa de eventos.' }}
-            </td>
-          </tr>
+          @if (store.error()) {
+            <tr>
+              <td colspan="5">{{ store.error() }}</td>
+            </tr>
+          } @else if (!store.loading() && store.empty()) {
+            <tr>
+              <td colspan="5">Nenhum evento encontrado para os filtros informados.</td>
+            </tr>
+          } @else {
+            @for (event of store.events(); track event.id) {
+              <tr>
+                <td>
+                  <strong>{{ event.name || 'Evento sem titulo' }}</strong>
+                  <small>{{ event.id }}</small>
+                </td>
+                <td>
+                  <strong>{{ formatDate(event.date) }}</strong>
+                  <small>{{ event.venueName || 'Local nao informado' }} - {{ event.city || 'Cidade' }}/{{ event.state || 'UF' }}</small>
+                </td>
+                <td>{{ event.city || '-' }}</td>
+                <td>
+                  <span class="status-pill" [class.canceled]="event.status === 'CANCELED'" [class.finished]="event.status === 'FINISHED'">
+                    {{ statusLabel(event.status) }}
+                  </span>
+                </td>
+                <td>
+                  <a [routerLink]="['/selecionar-setor', event.id]">Ver detalhes</a>
+                </td>
+              </tr>
+            }
+          }
+          @if (store.loading() && store.events().length === 0) {
+            <tr>
+              <td colspan="5">Carregando...</td>
+            </tr>
+          }
         </tbody>
       </table>
+    </div>
+
+    <div class="pagination">
+      <button type="button" [disabled]="store.first() || store.loading()" (click)="previousPage()">Anterior</button>
+      <span>Pagina {{ store.currentUiPage() }} de {{ store.totalPages() || 1 }}</span>
+      <button type="button" [disabled]="store.last() || store.loading()" (click)="nextPage()">Proxima</button>
     </div>
   </section>
 </app-admin-shell>

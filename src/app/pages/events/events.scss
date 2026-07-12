@@ -31,7 +31,8 @@
 }
 
 .primary-action,
-.filter-bar button {
+.filter-bar button,
+.pagination button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -53,31 +54,66 @@
 
 .filter-bar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(5, minmax(130px, 1fr)) auto;
   gap: 12px;
+  align-items: end;
 }
 
 .filter-bar input,
-.filter-bar button {
+.filter-bar select,
+.filter-bar button,
+.result-summary select {
   border: 1px solid #242424;
   color: #fff;
   background: #101010;
 }
 
-.filter-bar input {
+.filter-bar label {
+  display: grid;
+  gap: 7px;
+}
+
+.filter-bar span,
+.result-summary {
+  color: #737373;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filter-bar input,
+.filter-bar select,
+.result-summary select {
   min-height: 46px;
   border-radius: 12px;
   padding: 0 16px;
 }
 
-.filter-bar button {
+.filter-bar button,
+.pagination button {
   color: #a3a3a3;
   cursor: pointer;
 }
 
-.filter-bar button:hover {
+.filter-bar button:hover,
+.pagination button:hover:not(:disabled) {
   color: #fff;
   background: #1a1a1a;
+}
+
+.result-summary,
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.result-summary label {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .data-card {
@@ -114,6 +150,60 @@ td {
   font-size: 0.9rem;
 }
 
+td strong,
+td small {
+  display: block;
+}
+
+td strong {
+  color: #f5f5f5;
+  margin-bottom: 4px;
+}
+
+td small {
+  color: #737373;
+  font-size: 0.78rem;
+}
+
+td a {
+  color: #ff624d;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.status-pill {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 10px;
+  color: #9ff0c4;
+  background: rgb(34 197 94 / 12%);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.status-pill.canceled {
+  color: #ff9a8d;
+  background: rgb(255 98 77 / 12%);
+}
+
+.status-pill.finished {
+  color: #c7c7c7;
+  background: rgb(255 255 255 / 8%);
+}
+
+.pagination {
+  color: #a3a3a3;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 @media (max-width: 720px) {
   .page-heading {
     align-items: stretch;
@@ -122,5 +212,11 @@ td {
 
   .filter-bar {
     grid-template-columns: 1fr;
+  }
+
+  .result-summary,
+  .pagination {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

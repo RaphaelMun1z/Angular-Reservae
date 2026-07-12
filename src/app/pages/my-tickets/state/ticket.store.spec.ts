@@ -50,10 +50,14 @@ describe('TicketStore', () => {
     });
     store = TestBed.inject(TicketStore);
     TestBed.inject(AuthStore).updateSession({
+      initialized: true,
       authenticated: true,
       userId: 'user-1',
       username: 'User',
+      fullName: 'User',
+      email: 'user@reservae.test',
       roles: [],
+      profile: null,
     });
   });
 

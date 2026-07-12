@@ -60,7 +60,16 @@ describe('Checkout', () => {
   it('should redirect to a valid paymentUrl', () => {
     const authStore = TestBed.inject(AuthStore);
     const redirectSpy = vi.spyOn(component, 'redirectToPayment').mockImplementation(() => undefined);
-    authStore.updateSession({ authenticated: true, userId: 'user-1', username: 'User', roles: [] });
+    authStore.updateSession({
+      initialized: true,
+      authenticated: true,
+      userId: 'user-1',
+      username: 'User',
+      fullName: 'User',
+      email: 'user@reservae.test',
+      roles: [],
+      profile: null,
+    });
     component.store.selectEvent('event-1');
     component.store.addItem({
       sectorId: 'sector-1',
@@ -78,7 +87,16 @@ describe('Checkout', () => {
 
   it('should show an error when paymentUrl is absent', () => {
     const authStore = TestBed.inject(AuthStore);
-    authStore.updateSession({ authenticated: true, userId: 'user-1', username: 'User', roles: [] });
+    authStore.updateSession({
+      initialized: true,
+      authenticated: true,
+      userId: 'user-1',
+      username: 'User',
+      fullName: 'User',
+      email: 'user@reservae.test',
+      roles: [],
+      profile: null,
+    });
     api.response = { ...api.response, paymentUrl: null };
     component.store.selectEvent('event-1');
     component.store.addItem({

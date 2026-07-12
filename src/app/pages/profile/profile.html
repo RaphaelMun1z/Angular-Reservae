@@ -1,141 +1,117 @@
-        <nav class="nav">
-            <a routerLink="/index" class="logo">
-                <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
-            </a>
+<nav class="nav">
+  <a routerLink="/index" class="logo">
+    <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
+  </a>
 
-            <div class="nav-center">
-                <a routerLink="/club-vip" aria-label="Club VIP"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></a>
-                <a routerLink="/shows" aria-label="Bilhetes"><svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg></a>
-                <a routerLink="/meus-ingressos" aria-label="A Minha Carteira"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg></a>
-            </div>
+  <div class="nav-center">
+    <a routerLink="/club-vip" aria-label="Club VIP">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    </a>
+    <a routerLink="/shows" aria-label="Bilhetes">
+      <svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg>
+    </a>
+    <a routerLink="/meus-ingressos" aria-label="Minha carteira">
+      <svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
+    </a>
+  </div>
 
-            <div class="nav-right">
-                <div class="location"><span class="flag"></span><span>Portugal</span></div>
-                <app-user-menu />
-                <div class="menu" id="hamburger-menu">
-                    <span></span><span></span><span></span>
-                </div>
-            </div>
-        </nav>
+  <div class="nav-right">
+    <div class="location"><span class="flag"></span><span>Brasil</span></div>
+    <app-user-menu />
+    <div class="menu" id="hamburger-menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
 
-        <main class="profile-container">
-            <header class="page-header">
-                <h1 class="page-title">A MINHA CONTA</h1>
-                <p class="page-subtitle">Gira as tuas informações pessoais, segurança e métodos de pagamento.</p>
-            </header>
+<main class="profile-container">
+  <header class="page-header">
+    <h1 class="page-title">A MINHA CONTA</h1>
+    <p class="page-subtitle">Gerencie suas informacoes pessoais e os dados usados no Reservae.</p>
+  </header>
 
-            <div class="profile-grid">
-                
-                <aside class="sidebar">
-                    <div class="user-snapshot">
-                        <div class="avatar-wrapper">
-                            <img data-user-avatar alt="Avatar do Utilizador">
-                            <div class="edit-avatar">
-                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                            </div>
-                        </div>
-                        <h3 data-user-name></h3>
-                        <p data-user-email></p>
-                    </div>
+  <div class="profile-grid">
+    <aside class="sidebar">
+      <div class="user-snapshot">
+        <div class="avatar-wrapper">
+          <div class="edit-avatar">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </div>
+        </div>
+        <h3>{{ displayName() }}</h3>
+        <p>{{ email() }}</p>
+      </div>
 
-                    <div class="nav-tabs">
-                        <button class="nav-tab active" data-target="tab-dados">
-                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                            Dados Pessoais
-                        </button>
-                        <button class="nav-tab" data-target="tab-seguranca">
-                            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            Segurança
-                        </button>
-                        <button class="nav-tab" data-target="tab-pagamentos">
-                            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                            Métodos de Pagamento
-                        </button>
-                        <button class="nav-tab" data-target="tab-historico">
-                            <svg viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"></polyline><circle cx="12" cy="12" r="10"></circle></svg>
-                            Histórico de Compras
-                        </button>
-                    </div>
-                </aside>
+      <div class="nav-tabs">
+        <button class="nav-tab active" type="button">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Dados Pessoais
+        </button>
+        <button class="nav-tab" type="button">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Seguranca
+        </button>
+        <button class="nav-tab" type="button">
+          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          Metodos de Pagamento
+        </button>
+        <button class="nav-tab" type="button" routerLink="/meus-ingressos">
+          <svg viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"></polyline><circle cx="12" cy="12" r="10"></circle></svg>
+          Historico de Compras
+        </button>
+      </div>
+    </aside>
 
-                <section class="content-area">
-                    
-                    <div id="tab-dados" class="tab-content active">
-                        <h2 class="section-title">Dados Pessoais</h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label">Nome Completo</label>
-                                <input type="text" name="name" class="input-field" value="">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Endereço de E-mail</label>
-                                <input type="email" name="email" class="input-field" value="">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Telemóvel</label>
-                                <input type="tel" name="phone" class="input-field" value="">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">NIF / Documento</label>
-                                <input type="text" class="input-field" value="123456789" disabled>
-                            </div>
-                        </div>
-                        <button class="btn-action">Guardar Alterações</button>
-                    </div>
+    <section class="content-area">
+      <div id="tab-dados" class="tab-content active">
+        <h2 class="section-title">Dados Pessoais</h2>
 
-                    <div id="tab-seguranca" class="tab-content">
-                        <h2 class="section-title">Alterar Palavra-passe</h2>
-                        <div class="form-grid">
-                            <div class="form-group full">
-                                <label class="form-label">Palavra-passe Atual</label>
-                                <input type="password" class="input-field" placeholder="••••••••">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Nova Palavra-passe</label>
-                                <input type="password" class="input-field" placeholder="••••••••">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Confirmar Nova Palavra-passe</label>
-                                <input type="password" class="input-field" placeholder="••••••••">
-                            </div>
-                        </div>
-                        <button class="btn-action">Atualizar Palavra-passe</button>
-                    </div>
+        @if (authStore.error()) {
+          <div class="form-group full">
+            <p class="form-label">{{ authStore.error() }}</p>
+          </div>
+        }
 
-                    <div id="tab-pagamentos" class="tab-content">
-                        <h2 class="section-title">Cartões Guardados</h2>
-                        <div class="cards-grid">
-                            <div class="credit-card">
-                                <div class="cc-header">
-                                    <div class="cc-brand">
-                                        <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="7" fill="#EB001B"></circle><circle cx="17" cy="12" r="7" fill="#F79E1B" opacity="0.8"></circle></svg>
-                                    </div>
-                                    <button class="cc-delete" aria-label="Remover Cartão">
-                                        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                    </button>
-                                </div>
-                                <div class="cc-number"></div>
-                                <div class="cc-footer">
-                                    <div>Nome <strong></strong></div>
-                                    <div>Validade <strong></strong></div>
-                                </div>
-                            </div>
-                            
-                            <button class="add-card-btn">
-                                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                Adicionar Cartão
-                            </button>
-                        </div>
-                    </div>
+        @if (saved()) {
+          <div class="form-group full">
+            <p class="form-label">Perfil atualizado com sucesso.</p>
+          </div>
+        }
 
-                    <div id="tab-historico" class="tab-content">
-                        <h2 class="section-title">O Meu Histórico</h2>
-                        
-                        <div class="history-list"></div>
-                    </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input
+              type="text"
+              name="name"
+              class="input-field"
+              [ngModel]="fullName()"
+              (ngModelChange)="fullName.set($event)"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Endereco de E-mail</label>
+            <input type="email" name="email" class="input-field" [value]="email()" disabled />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Identificador</label>
+            <input type="text" class="input-field" [value]="authStore.userId() ?? 'Nao informado'" disabled />
+          </div>
+          <div class="form-group">
+            <label class="form-label">CPF / Documento</label>
+            <input
+              type="text"
+              class="input-field"
+              [ngModel]="document()"
+              (ngModelChange)="document.set($event)"
+            />
+          </div>
+        </div>
+        <button class="btn-action" type="button" [disabled]="authStore.loading()" (click)="saveProfile()">
+          {{ authStore.loading() ? 'Guardando...' : 'Guardar Alteracoes' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</main>
 
-                </section>
-            </div>
-        </main>
-
-    

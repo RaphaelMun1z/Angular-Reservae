@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthStore } from '../../core/state/auth.store';
 
 @Component({
   selector: 'app-login',
@@ -7,6 +8,17 @@ import { RouterLink } from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login {
+export class Login implements OnInit {
+  protected readonly authStore = inject(AuthStore);
+  private readonly router = inject(Router);
 
+  ngOnInit(): void {
+    if (this.authStore.authenticated()) {
+      void this.router.navigateByUrl('/inicio');
+    }
+  }
+
+  protected login(): void {
+    this.authStore.login();
+  }
 }
