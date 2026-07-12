@@ -1,14 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { Review } from './review';
 
+import { CheckoutStore } from '../checkout/state/checkout.store';
 describe('Review', () => {
   let component: Review;
   let fixture: ComponentFixture<Review>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Review]
+      imports: [Review],
+      providers: [provideRouter([]), CheckoutStore]
     })
     .compileComponents();
 

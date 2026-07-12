@@ -59,6 +59,10 @@
                 <button class="filter-btn">Nordeste</button>
             </div>
 
+            @if (store.catalogListPending()) {
+                <p class="page-subtitle">{{ store.catalogListPending() }}</p>
+            }
+
             <section class="shows-grid"></section>
         </main>
 

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserMenu } from '../../components/user-menu/user-menu';
+import { EventStore } from '../events/state/event.store';
 
 @Component({
   selector: 'app-shows',
@@ -8,6 +9,10 @@ import { UserMenu } from '../../components/user-menu/user-menu';
   templateUrl: './shows.html',
   styleUrl: './shows.scss',
 })
-export class Shows {
+export class Shows implements OnInit {
+  readonly store = inject(EventStore);
 
+  ngOnInit(): void {
+    this.store.markCatalogListPending();
+  }
 }

@@ -25,6 +25,10 @@ import { Success } from './pages/success/success';
 import { Support } from './pages/support/support';
 import { TicketDetails } from './pages/ticket-details/ticket-details';
 import { TicketTransfer } from './pages/ticket-transfer/ticket-transfer';
+import { CheckoutStore } from './pages/checkout/state/checkout.store';
+import { EventStore } from './pages/events/state/event.store';
+import { ScannerStore } from './pages/gate-scanner/state/scanner.store';
+import { TicketStore } from './pages/my-tickets/state/ticket.store';
 
 export const routes: Routes = [
   {
@@ -33,111 +37,135 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'inicio',
-    component: HomePage,
-  },
-  {
-    path: 'index',
-    component: Index,
-  },
-  {
-    path: 'carregando',
-    component: Loading,
-  },
-  {
-    path: 'checkout',
-    component: Checkout,
-  },
-  {
-    path: 'club-vip',
-    component: ClubVip,
-  },
-  {
-    path: 'criar-evento',
-    component: CreateEvent,
-  },
-  {
-    path: 'dashboard',
-    component: Dashboard,
-  },
-  {
-    path: 'eventos',
-    component: Events,
-  },
-  {
-    path: 'recuperar-senha',
-    component: ForgotPassword,
-  },
-  {
-    path: 'scanner',
-    component: GateScanner,
-  },
-  {
-    path: 'login',
-    component: Login,
-  },
-  {
-    path: 'meus-ingressos',
-    component: MyTickets,
-  },
-  {
-    path: 'perfil',
-    component: Profile,
-  },
-  {
-    path: 'cadastro',
-    component: Register,
-  },
-  {
-    path: 'avaliacao',
-    component: Review,
-  },
-  {
-    path: 'selecionar-setor',
-    component: SectorSelection,
-  },
-  {
-    path: 'configuracoes',
-    component: Settings,
-  },
-  {
-    path: 'shows',
-    component: Shows,
-  },
-  {
-    path: 'sucesso',
-    component: Success,
-  },
-  {
-    path: 'suporte',
-    component: Support,
-  },
-  {
-    path: 'detalhes-ingresso',
-    component: TicketDetails,
-  },
-  {
-    path: 'transferir-ingresso',
-    component: TicketTransfer,
-  },
-  {
-    path: '403',
-    component: Error403,
-  },
-  {
-    path: '404',
-    component: Error404,
-  },
-  {
-    path: '500',
-    component: Error500,
-  },
-  {
-    path: '503',
-    component: Error503,
-  },
-  {
-    path: '**',
-    component: Error404,
+    path: '',
+    providers: [CheckoutStore, EventStore, TicketStore],
+    children: [
+      {
+        path: 'inicio',
+        component: HomePage,
+      },
+      {
+        path: 'index',
+        component: Index,
+      },
+      {
+        path: 'carregando',
+        component: Loading,
+      },
+      {
+        path: 'checkout',
+        component: Checkout,
+      },
+      {
+        path: 'checkout/:eventId',
+        component: Checkout,
+      },
+      {
+        path: 'club-vip',
+        component: ClubVip,
+      },
+      {
+        path: 'criar-evento',
+        component: CreateEvent,
+      },
+      {
+        path: 'dashboard',
+        component: Dashboard,
+      },
+      {
+        path: 'eventos',
+        component: Events,
+      },
+      {
+        path: 'recuperar-senha',
+        component: ForgotPassword,
+      },
+      {
+        path: 'scanner',
+        component: GateScanner,
+        providers: [ScannerStore],
+      },
+      {
+        path: 'scanner/:eventId',
+        component: GateScanner,
+        providers: [ScannerStore],
+      },
+      {
+        path: 'login',
+        component: Login,
+      },
+      {
+        path: 'meus-ingressos',	
+        component: MyTickets,
+      },
+      {
+        path: 'perfil',
+        component: Profile,
+      },
+      {
+        path: 'cadastro',
+        component: Register,
+      },
+      {
+        path: 'avaliacao',
+        component: Review,
+      },
+      {
+        path: 'selecionar-setor',
+        component: SectorSelection,
+      },
+      {
+        path: 'selecionar-setor/:eventId',
+        component: SectorSelection,
+      },
+      {
+        path: 'configuracoes',
+        component: Settings,
+      },
+      {
+        path: 'shows',
+        component: Shows,
+      },
+      {
+        path: 'sucesso',
+        component: Success,
+      },
+      {
+        path: 'suporte',
+        component: Support,
+      },
+      {
+        path: 'detalhes-ingresso',
+        component: TicketDetails,
+      },
+      {
+        path: 'detalhes-ingresso/:ticketId',
+        component: TicketDetails,
+      },
+      {
+        path: 'transferir-ingresso',
+        component: TicketTransfer,
+      },
+      {
+        path: '403',
+        component: Error403,
+      },
+      {
+        path: '404',
+        component: Error404,
+      },
+      {
+        path: '500',
+        component: Error500,
+      },
+      {
+        path: '503',
+        component: Error503,
+      },
+      {
+        path: '**',
+        component: Error404,
+      },
+    ],
   },
 ];

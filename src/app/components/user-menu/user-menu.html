@@ -8,7 +8,7 @@
     (click)="toggle($event)"
   >
     @if (avatarUrl) {
-      <img [src]="avatarUrl" [alt]="'Avatar de ' + name" />
+      <img [src]="avatarUrl" [alt]="'Avatar de ' + displayName()" />
     } @else {
       <span>{{ initials }}</span>
     }
@@ -19,14 +19,14 @@
       <div class="user-summary">
         <div class="summary-avatar">
           @if (avatarUrl) {
-            <img [src]="avatarUrl" [alt]="'Avatar de ' + name" />
+            <img [src]="avatarUrl" [alt]="'Avatar de ' + displayName()" />
           } @else {
             <span>{{ initials }}</span>
           }
         </div>
         <div>
-          <strong>{{ name }}</strong>
-          <small>{{ email }}</small>
+          <strong>{{ displayName() }}</strong>
+          <small>{{ displayEmail() }}</small>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
         </a>
       </nav>
 
-      <a class="logout" routerLink="/login" role="menuitem" (click)="close()">
+      <a class="logout" routerLink="/login" role="menuitem" (click)="logout()">
         <span aria-hidden="true">↪</span>
         Sair
       </a>

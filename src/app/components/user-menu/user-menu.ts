@@ -1,5 +1,6 @@
-import { Component, HostListener, Input, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, Input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthStore } from '../../core/state/auth.store';
 
 @Component({
   selector: 'app-user-menu',
@@ -8,14 +9,18 @@ import { RouterLink } from '@angular/router';
   styleUrl: './user-menu.scss',
 })
 export class UserMenu {
-  @Input() name = 'Usuário Reservaê';
-  @Input() email = 'usuario@reservae.com';
+  private readonly authStore = inject(AuthStore);
+
+  @Input() name: string | null = null;
+  @Input() email: string | null = null;
   @Input() avatarUrl = '';
 
   protected readonly isOpen = signal(false);
+  protected readonly displayName = computed(() => this.name || this.authStore.username() || 'Sessao nao autenticada');
+  protected readonly displayEmail = computed(() => this.email || this.authStore.email() || 'Entre para acessar sua conta');
 
   protected get initials(): string {
-    return this.name
+    return this.displayName()
       .split(' ')
       .filter(Boolean)
       .slice(0, 2)
@@ -31,6 +36,11 @@ export class UserMenu {
 
   protected close(): void {
     this.isOpen.set(false);
+  }
+
+  protected logout(): void {
+    this.authStore.logout();
+    this.close();
   }
 
   @HostListener('document:click')

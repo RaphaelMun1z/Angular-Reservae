@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserMenu } from '../../components/user-menu/user-menu';
+import { EventStore } from '../events/state/event.store';
 
 @Component({
   selector: 'app-home-page',
@@ -9,5 +10,5 @@ import { UserMenu } from '../../components/user-menu/user-menu';
   styleUrl: './home-page.scss',
 })
 export class HomePage {
-
+  readonly eventStore = inject(EventStore);
 }

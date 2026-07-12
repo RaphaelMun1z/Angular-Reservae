@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CheckoutStore } from '../checkout/state/checkout.store';
 
 @Component({
   selector: 'app-review',
@@ -8,5 +9,5 @@ import { RouterLink } from '@angular/router';
   styleUrl: './review.scss',
 })
 export class Review {
-
+  readonly store = inject(CheckoutStore);
 }

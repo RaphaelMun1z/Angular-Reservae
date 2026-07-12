@@ -1,39 +1,69 @@
-        <!-- Navbar -->
-        <nav class="nav">
-            <a routerLink="/index" class="logo">
-                <img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" />
-            </a>
+<nav class="nav">
+  <a routerLink="/index" class="logo">
+    <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
+  </a>
 
-            <div class="nav-center">
-                <a routerLink="/club-vip" aria-label="Club VIP">
-                    <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-                </a>
-                <a routerLink="/shows" aria-label="Tickets">
-                    <svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg>
-                </a>
-                <a routerLink="/meus-ingressos" class="active" aria-label="Minha Carteira">
-                    <svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
-                </a>
-            </div>
+  <div class="nav-center">
+    <a routerLink="/club-vip" aria-label="Club VIP"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></a>
+    <a routerLink="/shows" aria-label="Tickets"><svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg></a>
+    <a routerLink="/meus-ingressos" class="active" aria-label="Minha Carteira"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg></a>
+  </div>
 
-            <div class="nav-right">
-                <app-user-menu />
-                <div class="menu" id="hamburger-menu">
-                    <span></span><span></span><span></span>
-                </div>
-            </div>
-        </nav>
+  <div class="nav-right">
+    <app-user-menu />
+    <div class="menu" id="hamburger-menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
 
-        <!-- View do Ingresso Específico -->
-        <main class="single-ticket-view">
-            
-            <a routerLink="/meus-ingressos" class="back-link">
-                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                Voltar aos ingressos
-            </a>
+<main class="single-ticket-view">
+  <a routerLink="/meus-ingressos" class="back-link">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    Voltar aos ingressos
+  </a>
 
-            <!-- Card do Ingresso -->
-            <section class="mock-ticket-detail"></section>
-        </main>
+  @if (store.loading()) {
+    <p>Carregando ingresso...</p>
+  }
+  @if (store.error()) {
+    <p>{{ store.error() }}</p>
+  }
 
-    
+  @if (store.selectedTicket(); as ticket) {
+    <section class="super-ticket">
+      <div class="ticket-header">
+        <span class="status-badge">{{ ticket.status }}</span>
+        <h1>{{ ticket.eventId || 'Evento nao informado' }}</h1>
+        <p class="st-ticket-id">Ingresso: {{ ticket.id }}</p>
+      </div>
+
+      <div class="ticket-info-grid">
+        <div>
+          <span>Setor</span>
+          <strong>{{ ticket.sectorId || 'nao informado' }}</strong>
+        </div>
+        <div>
+          <span>Tipo</span>
+          <strong>{{ ticket.ticketType || 'nao informado' }}</strong>
+        </div>
+        <div>
+          <span>Pedido</span>
+          <strong>{{ ticket.orderId || 'nao informado' }}</strong>
+        </div>
+        <div>
+          <span>Criado em</span>
+          <strong>{{ ticket.createdAt || 'nao informado' }}</strong>
+        </div>
+      </div>
+
+      <div class="qr-code-box">
+        <p>QR Code ainda nao esta disponivel nesta versao do frontend.</p>
+      </div>
+
+      <div class="ticket-actions">
+        <a class="btn-action btn-transfer" routerLink="/transferir-ingresso">Transferir</a>
+      </div>
+    </section>
+  }
+</main>

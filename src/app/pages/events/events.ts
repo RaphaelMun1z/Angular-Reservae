@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { EventStore } from './state/event.store';
 
 @Component({
   selector: 'app-events',
@@ -7,6 +8,10 @@ import { RouterLink } from '@angular/router';
   templateUrl: './events.html',
   styleUrl: './events.scss',
 })
-export class Events {
+export class Events implements OnInit {
+  readonly store = inject(EventStore);
 
+  ngOnInit(): void {
+    this.store.markCatalogListPending();
+  }
 }

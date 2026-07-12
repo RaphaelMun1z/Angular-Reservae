@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TicketStore } from '../my-tickets/state/ticket.store';
 
 @Component({
   selector: 'app-ticket-transfer',
@@ -8,5 +9,5 @@ import { RouterLink } from '@angular/router';
   styleUrl: './ticket-transfer.scss',
 })
 export class TicketTransfer {
-
+  readonly store = inject(TicketStore);
 }

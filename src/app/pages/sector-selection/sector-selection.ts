@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserMenu } from '../../components/user-menu/user-menu';
+import { CheckoutStore } from '../checkout/state/checkout.store';
+import { EventSector, EventStore } from '../events/state/event.store';
+import { TicketType } from '../../core/models/event-catalog.model';
 
 @Component({
   selector: 'app-sector-selection',
@@ -8,6 +11,82 @@ import { UserMenu } from '../../components/user-menu/user-menu';
   templateUrl: './sector-selection.html',
   styleUrl: './sector-selection.scss',
 })
-export class SectorSelection {
+export class SectorSelection implements OnInit {
+  readonly checkoutStore = inject(CheckoutStore);
+  readonly eventStore = inject(EventStore);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly quantities = signal<Record<string, number>>({});
+  private readonly ticketTypes = signal<Record<string, TicketType>>({});
 
+  readonly checkoutUrl = computed(() => {
+    const eventId = this.checkoutStore.eventId();
+    return eventId ? ['/checkout', eventId] : ['/checkout'];
+  });
+
+  ngOnInit(): void {
+    const eventId = this.route.snapshot.paramMap.get('eventId');
+
+    if (!eventId) {
+      return;
+    }
+
+    this.checkoutStore.selectEvent(eventId);
+    this.eventStore.loadEvent(eventId);
+    this.eventStore.loadSectors(eventId);
+  }
+
+  quantity(sectorId: string): number {
+    return this.quantities()[sectorId] ?? 1;
+  }
+
+  ticketType(sectorId: string): TicketType {
+    return this.ticketTypes()[sectorId] ?? 'FULL_TICKET_PRICE';
+  }
+
+  setTicketType(sectorId: string, ticketType: TicketType): void {
+    this.ticketTypes.update((ticketTypes) => ({ ...ticketTypes, [sectorId]: ticketType }));
+  }
+
+  increment(sector: EventSector): void {
+    this.setQuantity(sector, this.quantity(sector.id) + 1);
+  }
+
+  decrement(sector: EventSector): void {
+    this.setQuantity(sector, this.quantity(sector.id) - 1);
+  }
+
+  setQuantity(sector: EventSector, quantity: number): void {
+    const maxQuantity = sector.availableQuantity ?? Number.MAX_SAFE_INTEGER;
+    const nextQuantity = Math.min(Math.max(1, quantity), maxQuantity);
+    this.quantities.update((quantities) => ({ ...quantities, [sector.id]: nextQuantity }));
+  }
+
+  addSector(sector: EventSector): void {
+    const ticketType = this.ticketType(sector.id);
+    const unitPrice = ticketType === 'HALF_TICKET_PRICE' ? sector.halfPrice : sector.basePrice;
+
+    if (!unitPrice && unitPrice !== 0) {
+      this.checkoutStore.setError('Preco indisponivel para o setor selecionado.');
+      return;
+    }
+
+    this.checkoutStore.addItem({
+      sectorId: sector.id,
+      sectorName: sector.name,
+      quantity: this.quantity(sector.id),
+      ticketType,
+      unitPrice,
+    });
+  }
+
+  continueToCheckout(): void {
+    void this.router.navigate(this.checkoutUrl());
+  }
+
+  formatCurrency(value: number | null | undefined): string {
+    return typeof value === 'number'
+      ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      : 'Indisponivel';
+  }
 }
