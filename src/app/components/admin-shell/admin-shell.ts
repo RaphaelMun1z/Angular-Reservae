@@ -1,7 +1,25 @@
-import { Component, HostListener, computed, effect, signal } from '@angular/core';
+import { Component, HostListener, Input, effect, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { LucideAngularModule } from 'lucide-angular';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import {
+  Bell,
+  CalendarDays,
+  ChartNoAxesCombined,
+  Gauge,
+  LogOut,
+  Menu,
+  QrCode,
+  Receipt,
+  Search,
+  Settings,
+  Ticket,
+  UserCircle,
+  Users,
+  X,
+  LUCIDE_ICONS,
+  LucideAngularModule,
+  LucideIconProvider,
+} from 'lucide-angular';
+import { UserMenu } from '../user-menu/user-menu';
 
 type AdminNavItem = {
   readonly label: string;
@@ -9,35 +27,46 @@ type AdminNavItem = {
   readonly icon: string;
   readonly link: string;
   readonly exact: boolean;
-  readonly fragment?: string;
 };
 
 @Component({
-  selector: 'app-settings',
-  imports: [
-    RouterLink,
-    RouterLinkActive,
-    UserMenu,
-    LucideAngularModule,
+  selector: 'app-admin-shell',
+  imports: [RouterLink, RouterLinkActive, UserMenu, LucideAngularModule],
+  templateUrl: './admin-shell.html',
+  styleUrl: './admin-shell.scss',
+  providers: [
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new LucideIconProvider({
+        Bell,
+        CalendarDays,
+        ChartNoAxesCombined,
+        Gauge,
+        LogOut,
+        Menu,
+        QrCode,
+        Receipt,
+        Search,
+        Settings,
+        Ticket,
+        UserCircle,
+        Users,
+        X,
+      }),
+    },
   ],
-  templateUrl: './settings.html',
-  styleUrl: './settings.scss',
   host: {
     '[class.sidebar-collapsed]': 'sidebarCollapsed()',
     '[class.mobile-sidebar-open]': 'mobileSidebarOpen()',
   },
 })
-export class Settings {
+export class AdminShell {
+  @Input() breadcrumbRoot = 'Gestao';
+  @Input() breadcrumbCurrent = 'Dashboard';
+
   protected readonly sidebarCollapsed = signal(false);
   protected readonly mobileSidebarOpen = signal(false);
-  protected readonly activeTab = signal<'geral' | 'pagamentos' | 'equipe'>('geral');
-
-  protected readonly menuButtonLabel = computed(() =>
-    this.mobileSidebarOpen() ? 'Fechar menu administrativo' : 'Abrir menu administrativo',
-  );
-  protected menuExpanded(): boolean {
-    return this.isMobileViewport() ? this.mobileSidebarOpen() : !this.sidebarCollapsed();
-  }
 
   protected readonly navItems: readonly AdminNavItem[] = [
     {
@@ -100,6 +129,10 @@ export class Settings {
     });
   }
 
+  protected menuExpanded(): boolean {
+    return this.isMobileViewport() ? this.mobileSidebarOpen() : !this.sidebarCollapsed();
+  }
+
   protected toggleSidebar(): void {
     if (this.isMobileViewport()) {
       this.mobileSidebarOpen.update((isOpen) => !isOpen);
@@ -111,10 +144,6 @@ export class Settings {
 
   protected closeMobileSidebar(): void {
     this.mobileSidebarOpen.set(false);
-  }
-
-  protected selectTab(tab: 'geral' | 'pagamentos' | 'equipe'): void {
-    this.activeTab.set(tab);
   }
 
   @HostListener('window:keydown.escape')

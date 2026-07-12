@@ -28,6 +28,10 @@ body {
   min-height: 100vh;
 }
 
+body.admin-menu-open {
+  overflow: hidden;
+}
+
 .brand-logo-image {
   display: block;
   width: 100%;

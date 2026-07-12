@@ -2,7 +2,7 @@
   <button
     type="button"
     class="avatar-button"
-    aria-label="Abrir menu do usuário"
+    aria-label="Abrir menu do usuario"
     aria-haspopup="menu"
     [attr.aria-expanded]="isOpen()"
     (click)="toggle($event)"
@@ -30,23 +30,23 @@
         </div>
       </div>
 
-      <nav aria-label="Opções do usuário">
+      <nav aria-label="Opcoes do usuario">
         <a routerLink="/perfil" role="menuitem" (click)="close()">
-          <span aria-hidden="true">👤</span>
+          <lucide-icon name="user-circle" size="16" aria-hidden="true"></lucide-icon>
           Meu perfil
         </a>
         <a routerLink="/meus-ingressos" role="menuitem" (click)="close()">
-          <span aria-hidden="true">🎟️</span>
+          <lucide-icon name="ticket" size="16" aria-hidden="true"></lucide-icon>
           Meus ingressos
         </a>
         <a routerLink="/configuracoes" role="menuitem" (click)="close()">
-          <span aria-hidden="true">⚙️</span>
-          Configurações
+          <lucide-icon name="settings" size="16" aria-hidden="true"></lucide-icon>
+          Configuracoes
         </a>
       </nav>
 
       <a class="logout" routerLink="/login" role="menuitem" (click)="logout()">
-        <span aria-hidden="true">↪</span>
+        <lucide-icon name="log-out" size="16" aria-hidden="true"></lucide-icon>
         Sair
       </a>
     </div>

@@ -1,0 +1,124 @@
+<div class="admin-layout">
+  @if (mobileSidebarOpen()) {
+    <button
+      type="button"
+      class="sidebar-backdrop"
+      aria-label="Fechar menu administrativo"
+      (click)="closeMobileSidebar()"
+    ></button>
+  }
+
+  <aside id="admin-sidebar" class="admin-sidebar" aria-label="Navegacao administrativa">
+    <div class="sidebar-scroll">
+      <div class="brand-row">
+        <div class="brand-mark">
+          <lucide-icon name="ticket" size="18" aria-hidden="true"></lucide-icon>
+        </div>
+        <span class="brand-title">PAINEL</span>
+      </div>
+
+      <nav class="nav-section" aria-label="Gestao">
+        <p class="section-label">Gestao</p>
+
+        @for (item of navItems; track item.label) {
+          <a
+            class="admin-nav-item"
+            [routerLink]="item.link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+            [attr.aria-label]="sidebarCollapsed() ? item.label + ': ' + item.description : null"
+            [title]="sidebarCollapsed() ? item.label : null"
+            (click)="closeMobileSidebar()"
+            #navActive="routerLinkActive"
+            [attr.aria-current]="navActive.isActive ? 'page' : null"
+          >
+            <lucide-icon [name]="item.icon" size="20" aria-hidden="true"></lucide-icon>
+            <span class="nav-copy">
+              <span class="nav-title">{{ item.label }}</span>
+              <span class="nav-description">{{ item.description }}</span>
+            </span>
+          </a>
+        }
+      </nav>
+
+      <nav class="nav-section" aria-label="Sistema">
+        <p class="section-label">Sistema</p>
+
+        @for (item of systemItems; track item.label) {
+          <a
+            class="admin-nav-item"
+            [routerLink]="item.link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+            [attr.aria-label]="sidebarCollapsed() ? item.label + ': ' + item.description : null"
+            [title]="sidebarCollapsed() ? item.label : null"
+            (click)="closeMobileSidebar()"
+            #systemActive="routerLinkActive"
+            [attr.aria-current]="systemActive.isActive ? 'page' : null"
+          >
+            <lucide-icon [name]="item.icon" size="20" aria-hidden="true"></lucide-icon>
+            <span class="nav-copy">
+              <span class="nav-title">{{ item.label }}</span>
+              <span class="nav-description">{{ item.description }}</span>
+            </span>
+          </a>
+        }
+      </nav>
+    </div>
+
+    <div class="account-link">
+      <a routerLink="/perfil" class="admin-nav-item account-nav" title="Conta" (click)="closeMobileSidebar()">
+        <lucide-icon name="user-circle" size="22" aria-hidden="true"></lucide-icon>
+        <span class="nav-copy">
+          <span class="nav-title">Conta</span>
+          <span class="nav-description">Gerencie seu perfil e sessao</span>
+        </span>
+        <lucide-icon class="logout-icon" name="log-out" size="18" aria-hidden="true"></lucide-icon>
+      </a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-header">
+      <div class="header-left">
+        <button
+          type="button"
+          class="icon-button menu-toggle"
+          aria-label="Alternar menu administrativo"
+          [attr.aria-expanded]="menuExpanded()"
+          aria-controls="admin-sidebar"
+          (click)="toggleSidebar()"
+        >
+          @if (mobileSidebarOpen()) {
+            <lucide-icon name="x" size="22" aria-hidden="true"></lucide-icon>
+          } @else {
+            <lucide-icon name="menu" size="22" aria-hidden="true"></lucide-icon>
+          }
+        </button>
+
+        <div class="breadcrumb" aria-label="Breadcrumb">
+          {{ breadcrumbRoot }} / <span>{{ breadcrumbCurrent }}</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <label class="quick-search">
+          <lucide-icon name="search" size="18" aria-hidden="true"></lucide-icon>
+          <span class="sr-only">Busca rapida</span>
+          <input type="text" placeholder="Busca rapida..." />
+        </label>
+
+        <button type="button" class="icon-button notify-button" aria-label="Ver notificacoes">
+          <lucide-icon name="bell" size="20" aria-hidden="true"></lucide-icon>
+          <span aria-hidden="true"></span>
+        </button>
+
+        <app-user-menu />
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <ng-content></ng-content>
+    </main>
+  </div>
+</div>

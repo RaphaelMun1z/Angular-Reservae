@@ -73,6 +73,18 @@ export const routes: Routes = [
         component: Dashboard,
       },
       {
+        path: 'clientes',
+        component: Dashboard,
+      },
+      {
+        path: 'transacoes',
+        component: Dashboard,
+      },
+      {
+        path: 'relatorios',
+        component: Dashboard,
+      },
+      {
         path: 'eventos',
         component: Events,
       },

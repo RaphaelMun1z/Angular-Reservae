@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { ActivatedRoute } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
+import { AdminShell } from '../../components/admin-shell/admin-shell';
 import { ScannerStore } from './state/scanner.store';
 
 @Component({
   selector: 'app-gate-scanner',
-  imports: [RouterLink, UserMenu],
+  imports: [AdminShell, LucideAngularModule],
   templateUrl: './gate-scanner.html',
   styleUrl: './gate-scanner.scss',
 })

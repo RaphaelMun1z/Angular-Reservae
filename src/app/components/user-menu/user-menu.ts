@@ -1,10 +1,11 @@
 import { Component, computed, HostListener, inject, Input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 import { AuthStore } from '../../core/state/auth.store';
 
 @Component({
   selector: 'app-user-menu',
-  imports: [RouterLink],
+  imports: [RouterLink, LucideAngularModule],
   templateUrl: './user-menu.html',
   styleUrl: './user-menu.scss',
 })

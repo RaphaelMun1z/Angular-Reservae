@@ -1,84 +1,83 @@
-<div id="flash-overlay" class="absolute inset-0 z-50 pointer-events-none"></div>
-
-<header class="h-16 flex items-center justify-between px-6 border-b border-dark-border bg-dark-bg/80 backdrop-blur-md z-40 relative">
-  <a routerLink="/dashboard" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-dark-hover transition-colors text-gray-400 hover:text-white">
-    <i class="ph ph-caret-left text-xl"></i>
-  </a>
-  <div class="flex flex-col items-center">
-    <h1 class="text-sm font-bold text-white tracking-wide">{{ eventId() || 'Evento nao informado' }}</h1>
-    <span class="text-[10px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full mt-0.5">{{ store.gateId() || 'gateId ausente' }}</span>
-  </div>
-  <app-user-menu />
-</header>
-
-<main class="flex-1 flex flex-col items-center justify-center p-6 relative">
-  <div class="relative w-full max-w-[320px] aspect-square rounded-3xl overflow-hidden border border-dark-border bg-[#0a0a0a] shadow-[0_0_50px_rgba(0,0,0,0.5)] mb-8 z-10 flex items-center justify-center">
-    <i class="ph-light ph-qr-code text-[120px] text-gray-800 opacity-50"></i>
-    <div class="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white rounded-tl-3xl opacity-50 m-6"></div>
-    <div class="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white rounded-tr-3xl opacity-50 m-6"></div>
-    <div class="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white rounded-bl-3xl opacity-50 m-6"></div>
-    <div class="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white rounded-br-3xl opacity-50 m-6"></div>
-    <div class="laser-line" id="laser"></div>
-  </div>
-
-  <div class="w-full max-w-[420px] z-10">
-    <input
-      type="text"
-      class="w-full bg-dark-card border border-dark-border text-white rounded-xl py-3 px-4 mb-3"
-      placeholder="Cole o qrCodeHash"
-      [value]="qrCodeHash()"
-      (input)="updateQrCodeHash($event)"
-    />
-    <button type="button" class="w-full bg-brand text-white py-3 rounded-xl font-bold" [disabled]="store.processing() || !store.gateId()" (click)="validateManualCode()">
-      {{ store.processing() ? 'Validando...' : 'Validar manualmente' }}
-    </button>
-    @if (!store.gateId()) {
-      <p class="text-rose-500 font-bold text-sm mt-3">Informe gateId na URL para validar ingressos.</p>
-    }
-    @if (store.error()) {
-      <p class="text-rose-500 font-bold text-sm mt-3">{{ store.error() }}</p>
-    }
-  </div>
-</main>
-
-<div id="feedback-panel" class="absolute bottom-0 left-0 w-full bg-dark-card border-t border-dark-border rounded-t-[32px] p-6 pb-10 transition-transform duration-300 transform translate-y-0 z-50">
-  @if (!store.hasResult()) {
-    <div id="state-idle" class="flex flex-col items-center justify-center h-24">
-      <div class="animate-pulse flex items-center gap-3 text-gray-400">
-        <i class="ph-bold ph-aperture text-2xl"></i>
-        <p class="font-semibold text-sm">Cole um qrCodeHash para validar</p>
+<app-admin-shell breadcrumbRoot="Gestao" breadcrumbCurrent="Scanner">
+  <section class="scanner-page">
+    <div class="page-heading">
+      <div>
+        <h1>Scanner de Portaria</h1>
+        <p>{{ eventId() || 'Evento nao informado' }}</p>
       </div>
+      <span class="gate-pill">{{ store.gateId() || 'gateId ausente' }}</span>
     </div>
-  }
 
-  @if (store.lastResult(); as result) {
-    <div class="flex flex-col items-center text-center">
-      <div class="w-16 h-16 rounded-full flex items-center justify-center mb-3" [class]="store.accessGranted() ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'">
-        <i class="ph-fill text-4xl" [class]="store.accessGranted() ? 'ph-check-circle' : 'ph-x-circle'"></i>
-      </div>
-      <h2 class="text-2xl font-black text-white mb-1">{{ store.accessGranted() ? 'ENTRADA LIBERADA' : 'ACESSO NEGADO' }}</h2>
-      <p class="font-bold text-sm mb-4" [class]="store.accessGranted() ? 'text-emerald-500' : 'text-rose-500'">{{ resultMessage(result.status) }}</p>
-      <div class="w-full bg-dark-bg rounded-xl p-4 border border-dark-border text-left">
-        <div class="flex justify-between items-center mb-2">
-          <span class="text-xs text-gray-500 font-semibold uppercase">Setor</span>
-          <span class="text-sm font-bold text-white bg-dark-hover px-2 py-1 rounded">{{ result.sectorName || 'nao informado' }}</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-xs text-gray-500 font-semibold uppercase">Ticket</span>
-          <span class="text-sm font-bold text-gray-300">{{ result.ticketId || 'nao informado' }}</span>
+    <div class="scanner-grid">
+      <div class="scanner-stage">
+        <div id="flash-overlay" class="flash-overlay"></div>
+        <div class="scanner-frame">
+          <lucide-icon name="qr-code" size="120" aria-hidden="true"></lucide-icon>
+          <span class="corner corner-a"></span>
+          <span class="corner corner-b"></span>
+          <span class="corner corner-c"></span>
+          <span class="corner corner-d"></span>
+          <div class="laser-line" id="laser"></div>
         </div>
       </div>
-    </div>
-  }
 
-  @if (store.sessionHistory().length > 0) {
-    <div class="mt-4">
-      <p class="text-xs text-gray-500 font-semibold uppercase mb-2">Historico da sessao</p>
-      @for (entry of store.sessionHistory(); track $index) {
-        <p class="text-xs text-gray-400">{{ resultMessage(entry.status) }} - {{ entry.ticketId || 'ticket nao informado' }}</p>
-      }
-    </div>
-  }
-</div>
+      <div class="scanner-controls">
+        <div class="manual-card">
+          <h2>Validacao manual</h2>
+          <p>Cole o hash do QR Code para validar o ingresso no portao selecionado.</p>
+          <input
+            type="text"
+            placeholder="Cole o qrCodeHash"
+            [value]="qrCodeHash()"
+            (input)="updateQrCodeHash($event)"
+          />
+          <button type="button" [disabled]="store.processing() || !store.gateId()" (click)="validateManualCode()">
+            {{ store.processing() ? 'Validando...' : 'Validar manualmente' }}
+          </button>
 
-<div id="bg-dimmer" class="absolute inset-0 bg-black/60 z-30 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+          @if (!store.gateId()) {
+            <p class="error-text">Informe gateId na URL para validar ingressos.</p>
+          }
+          @if (store.error()) {
+            <p class="error-text">{{ store.error() }}</p>
+          }
+        </div>
+
+        <div class="feedback-card">
+          @if (!store.hasResult()) {
+            <div class="idle-state">
+              <p>Cole um qrCodeHash para validar</p>
+            </div>
+          }
+
+          @if (store.lastResult(); as result) {
+            <div class="result-state" [class.granted]="store.accessGranted()">
+              <span class="result-mark">{{ store.accessGranted() ? 'OK' : 'X' }}</span>
+              <h2>{{ store.accessGranted() ? 'ENTRADA LIBERADA' : 'ACESSO NEGADO' }}</h2>
+              <p>{{ resultMessage(result.status) }}</p>
+              <dl>
+                <div>
+                  <dt>Setor</dt>
+                  <dd>{{ result.sectorName || 'nao informado' }}</dd>
+                </div>
+                <div>
+                  <dt>Ticket</dt>
+                  <dd>{{ result.ticketId || 'nao informado' }}</dd>
+                </div>
+              </dl>
+            </div>
+          }
+
+          @if (store.sessionHistory().length > 0) {
+            <div class="history">
+              <p>Historico da sessao</p>
+              @for (entry of store.sessionHistory(); track $index) {
+                <span>{{ resultMessage(entry.status) }} - {{ entry.ticketId || 'ticket nao informado' }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</app-admin-shell>
