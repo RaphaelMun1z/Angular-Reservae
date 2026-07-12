@@ -1,6 +1,9 @@
 # Reservae Frontend
 
 <div align="center">
+  <a href="https://github.com/RaphaelMun1z/Angular-Reservae/releases">
+    <img src="https://img.shields.io/github/v/release/RaphaelMun1z/Angular-Reservae?label=frontend&style=for-the-badge&color=6C63FF" alt="Última versão do frontend">
+  </a>
   <a href="https://github.com/RaphaelMun1z/Angular-Reservae">
     <img src="https://img.shields.io/badge/frontend-Angular%2021-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Frontend Angular 21">
   </a>
@@ -18,6 +21,63 @@ Interface web do **Reservae**, plataforma de venda e gestão de ingressos para e
 ## Visão geral
 
 O projeto foi construído como uma aplicação Angular standalone, com rotas declaradas em `src/app/app.routes.ts`, componentes de página em `src/app/pages` e assets visuais em `src/app/assets`. A interface utiliza uma identidade visual escura, destaque em coral, layouts responsivos e telas específicas para os principais fluxos do produto.
+
+## Preview do projeto
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/inicio.png" alt="Página inicial do Reservae" width="100%">
+      <br>
+      <strong>Página inicial</strong>
+    </td>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/shows.png" alt="Vitrine de shows do Reservae" width="100%">
+      <br>
+      <strong>Vitrine de shows</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/eventos.png" alt="Listagem de eventos do Reservae" width="100%">
+      <br>
+      <strong>Listagem de eventos</strong>
+    </td>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/selecionar-setor.png" alt="Seleção de setor do Reservae" width="100%">
+      <br>
+      <strong>Seleção de setor</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/checkout.png" alt="Checkout do Reservae" width="100%">
+      <br>
+      <strong>Checkout</strong>
+    </td>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/meus-ingressos.png" alt="Ingressos digitais do Reservae" width="100%">
+      <br>
+      <strong>Meus ingressos</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/detalhes-ingresso.png" alt="Detalhes do ingresso digital do Reservae" width="100%">
+      <br>
+      <strong>Ingresso digital</strong>
+    </td>
+    <td align="center" width="50%">
+      <img src="./src/app/assets/previews/dashboard.png" alt="Dashboard administrativo do Reservae" width="100%">
+      <br>
+      <strong>Dashboard administrativo</strong>
+    </td>
+  </tr>
+</table>
+
+</div>
 
 ## Rotas principais
 
