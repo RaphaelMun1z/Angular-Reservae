@@ -314,15 +314,38 @@
 }
 
 .footer-card {
+  position: relative;
   padding: 36px;
   margin-bottom: 40px;
+  overflow: hidden;
   color: #fff;
   background: #ff624d;
   border-radius: 28px;
 }
 
+.ticket-cutout {
+  position: absolute;
+  bottom: 46px;
+  width: 48px;
+  height: 48px;
+  background: #111;
+  border-radius: 50%;
+}
+
+.ticket-cutout-left {
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.ticket-cutout-right {
+  right: 0;
+  transform: translateX(50%);
+}
+
 .footer-top,
 .footer-bottom {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 24px;
   align-items: center;
@@ -409,4 +432,3 @@
     display: grid;
   }
 }
-
