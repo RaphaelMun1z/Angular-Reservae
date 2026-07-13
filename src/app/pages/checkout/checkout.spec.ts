@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 
 import { Checkout } from './checkout';
 
@@ -57,9 +57,10 @@ describe('Checkout', () => {
     expect(component.store.error()).toContain('Selecione');
   });
 
-  it('should redirect to a valid paymentUrl', () => {
+  it('should create an async checkout and navigate to the order tracking page', () => {
     const authStore = TestBed.inject(AuthStore);
-    const redirectSpy = vi.spyOn(component, 'redirectToPayment').mockImplementation(() => undefined);
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     authStore.updateSession({
       initialized: true,
       authenticated: true,
@@ -81,12 +82,14 @@ describe('Checkout', () => {
 
     component.payNow();
 
-    expect(redirectSpy).toHaveBeenCalledOnce();
-    expect(redirectSpy).toHaveBeenCalledWith('https://pay.test/order-1');
+    expect(api.calls).toBe(1);
+    expect(navigateSpy).toHaveBeenCalledWith('/sucesso');
   });
 
-  it('should show an error when paymentUrl is absent', () => {
+  it('should accept checkout creation without an immediate paymentUrl', () => {
     const authStore = TestBed.inject(AuthStore);
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     authStore.updateSession({
       initialized: true,
       authenticated: true,
@@ -109,6 +112,7 @@ describe('Checkout', () => {
 
     component.payNow();
 
-    expect(component.store.error()).toContain('URL de pagamento valida');
+    expect(component.store.error()).toBeNull();
+    expect(navigateSpy).toHaveBeenCalledWith('/sucesso');
   });
 });

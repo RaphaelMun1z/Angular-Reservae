@@ -1,7 +1,8 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
-import { AuthStore } from '../../core/state/auth.store';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
+import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { EventListItem, EventStore } from '../events/state/event.store';
 
 const DEFAULT_EVENT_IMAGE =
@@ -26,15 +27,13 @@ interface CityDestination {
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, UserMenu],
+  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage implements OnInit {
   readonly eventStore = inject(EventStore);
-  protected readonly authStore = inject(AuthStore);
   protected readonly newsletterMessage = signal<string | null>(null);
-  protected readonly skeletonItems = [1, 2, 3, 4, 5, 6] as const;
   protected readonly featuredEvent = computed(() => this.eventStore.featuredEvents()[0] ?? null);
   protected readonly visibleEvents = computed(() => this.eventStore.featuredEvents().slice(0, 6));
 

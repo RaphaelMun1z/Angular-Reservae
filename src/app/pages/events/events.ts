@@ -2,12 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminShell } from '../../components/admin-shell/admin-shell';
+import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { EventStatus } from '../../core/models/event-catalog.model';
 import { EventStore } from './state/event.store';
 
 @Component({
   selector: 'app-events',
-  imports: [FormsModule, RouterLink, AdminShell],
+  imports: [FormsModule, RouterLink, AdminShell, SkeletonLoader],
   templateUrl: './events.html',
   styleUrl: './events.scss',
 })

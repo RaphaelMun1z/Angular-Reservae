@@ -1,12 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
+import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { EventStatus } from '../../core/models/event-catalog.model';
 import { EventStore } from '../events/state/event.store';
 
 @Component({
   selector: 'app-shows',
-  imports: [RouterLink, UserMenu],
+  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader],
   templateUrl: './shows.html',
   styleUrl: './shows.scss',
 })

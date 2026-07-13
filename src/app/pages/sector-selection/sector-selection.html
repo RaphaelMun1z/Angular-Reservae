@@ -1,118 +1,191 @@
-<nav class="nav">
-  <a routerLink="/index" class="logo">
-    <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
-  </a>
-
-  <div class="nav-center">
-    <a routerLink="/club-vip" aria-label="Club VIP"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></a>
-    <a routerLink="/shows" class="active" aria-label="Tickets"><svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg></a>
-    <a routerLink="/meus-ingressos" aria-label="Minha Carteira"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg></a>
-  </div>
-
-  <div class="nav-right">
-    <div class="location">
-      <span class="flag"></span>
-      <span>Brasil</span>
-    </div>
-    <app-user-menu />
-    <div class="menu" id="hamburger-menu">
-      <span></span><span></span><span></span>
-    </div>
-  </div>
-</nav>
+<app-site-navbar />
 
 <main class="sector-container">
   <header class="page-header">
-    <h1 class="page-title">{{ eventStore.selectedEvent()?.name || 'SELECIONE O SEU SETOR' }}</h1>
-    <p class="page-subtitle">
-      @if (eventStore.selectedEvent()?.venueName) {
-        {{ eventStore.selectedEvent()?.venueName }} - {{ eventStore.selectedEvent()?.city }}
-      } @else {
-        Escolha setor, tipo de ingresso e quantidade.
-      }
-    </p>
+    <a routerLink="/shows" class="back-link">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+      Voltar para eventos
+    </a>
+    <div class="header-content">
+      <div>
+        <span class="page-kicker">Ingressos do evento</span>
+        <h1 class="page-title">{{ eventStore.selectedEvent()?.name || 'Selecione o seu setor' }}</h1>
+        <p class="page-subtitle">
+          @if (eventStore.selectedEvent()?.venueName) {
+            {{ eventStore.selectedEvent()?.venueName }} - {{ eventStore.selectedEvent()?.city }}
+          } @else {
+            Escolha a area, tipo de ingresso e quantidade.
+          }
+        </p>
+      </div>
+    </div>
   </header>
 
-  @if (eventStore.loading()) {
-    <p class="page-subtitle">Carregando setores...</p>
-  }
   @if (eventStore.error()) {
-    <p class="page-subtitle">{{ eventStore.error() }}</p>
+    <div class="state-message is-error">{{ eventStore.error() }}</div>
   }
   @if (checkoutStore.error()) {
-    <p class="page-subtitle">{{ checkoutStore.error() }}</p>
+    <div class="state-message is-error">{{ checkoutStore.error() }}</div>
   }
 
-  <div class="main-grid">
-    <div class="arena-map">
-      <div class="map-stage">PALCO</div>
-      @for (sector of eventStore.sectors(); track sector.id) {
-        <button type="button" class="map-sector zone-pista" (click)="addSector(sector)">
-          {{ sector.name }}
-        </button>
-      }
-    </div>
+  <div class="main-grid" [class.has-selection]="selectedSector()">
+    @if (eventStore.loading()) {
+      <app-skeleton-loader variant="cards" [count]="2" />
+    } @else {
+    <section class="arena-panel" aria-label="Selecao visual de setores">
+      <div class="panel-heading">
+        <div>
+          <span class="section-kicker">Mapa de setores</span>
+          <h2>Escolha a area</h2>
+        </div>
+        <span class="panel-pill">{{ checkoutStore.totalTickets() }} no carrinho</span>
+      </div>
 
-    <div class="ticket-list">
+      <div class="stage-shell">
+        <div class="stage-light"></div>
+        <div class="map-stage">Palco</div>
+      </div>
+
+      <div class="arena-layout">
+        @for (sector of eventStore.sectors(); track sector.id) {
+          <button
+            type="button"
+            class="sector-tile"
+            [class.selected]="selectedSector()?.id === sector.id"
+            [class.in-cart]="selectedQuantityForSector(sector.id) > 0"
+            [disabled]="sector.availableQuantity === 0"
+            (click)="selectSector(sector)"
+          >
+            {{ sector.name }}
+          </button>
+        }
+      </div>
+
       @if (!eventStore.loading() && eventStore.sectors().length === 0) {
-        <div class="ticket-item">
-          <div>
-            <h3>Nenhum setor disponivel</h3>
-            <p class="ti-price">Abra esta pagina com um eventId valido para consultar setores.</p>
-          </div>
+        <div class="empty-panel">
+          <strong>Nenhum setor disponivel</strong>
+          <span>Abra esta pagina com um eventId valido para consultar setores.</span>
         </div>
       }
+    </section>
 
-      @for (sector of eventStore.sectors(); track sector.id) {
-        <article class="ticket-item">
+    @if (selectedSector(); as sector) {
+      <section class="selection-panel" aria-label="Configuracao dos ingressos">
+        <div class="panel-heading compact">
           <div>
-            <h3>{{ sector.name }}</h3>
-            <p class="ti-price">
-              Inteira <strong>{{ formatCurrency(sector.basePrice) }}</strong><br />
-              Meia <strong>{{ formatCurrency(sector.halfPrice) }}</strong>
-            </p>
-            <p class="ti-price">
-              Disponibilidade <strong>{{ sector.availableQuantity ?? 'nao informada' }}</strong>
-            </p>
+            <span class="section-kicker">Compra</span>
+            <h2>Configure seus ingressos</h2>
+          </div>
+        </div>
+
+        <article class="ticket-card" [class.selected]="selectedQuantityForSector(sector.id) > 0">
+          <div class="ticket-main">
+            <div class="ticket-title-row">
+              <h3>{{ sector.name }}</h3>
+              <span class="availability">{{ availabilityLabel(sector) }}</span>
+            </div>
+            <div class="price-grid">
+              <span>
+                <small>Inteira</small>
+                <strong>{{ formatCurrency(sector.basePrice) }}</strong>
+              </span>
+              <span>
+                <small>Meia</small>
+                <strong>{{ formatCurrency(sector.halfPrice) }}</strong>
+              </span>
+            </div>
           </div>
 
-          <div class="qty-control" aria-label="Tipo de ingresso">
-            <button type="button" class="qty-btn" [disabled]="ticketType(sector.id) === 'FULL_TICKET_PRICE'" (click)="setTicketType(sector.id, 'FULL_TICKET_PRICE')">I</button>
-            <span class="qty-value">{{ ticketType(sector.id) === 'HALF_TICKET_PRICE' ? 'Meia' : 'Inteira' }}</span>
-            <button type="button" class="qty-btn" [disabled]="ticketType(sector.id) === 'HALF_TICKET_PRICE'" (click)="setTicketType(sector.id, 'HALF_TICKET_PRICE')">M</button>
+          <div class="ticket-controls">
+            <div class="segmented-control" aria-label="Tipo de ingresso">
+              <button
+                type="button"
+                [class.active]="ticketType(sector.id) === 'FULL_TICKET_PRICE'"
+                (click)="setTicketType(sector.id, 'FULL_TICKET_PRICE')"
+              >
+                Inteira
+              </button>
+              <button
+                type="button"
+                [class.active]="ticketType(sector.id) === 'HALF_TICKET_PRICE'"
+                (click)="setTicketType(sector.id, 'HALF_TICKET_PRICE')"
+              >
+                Meia
+              </button>
+            </div>
+
+            <div class="qty-control" aria-label="Quantidade">
+              <button type="button" class="qty-btn" [disabled]="quantity(sector.id) <= 1" (click)="decrement(sector)">-</button>
+              <span class="qty-value">{{ quantity(sector.id) }}</span>
+              <button
+                type="button"
+                class="qty-btn"
+                [disabled]="sector.availableQuantity !== null && sector.availableQuantity !== undefined && quantity(sector.id) >= sector.availableQuantity"
+                (click)="increment(sector)"
+              >
+                +
+              </button>
+            </div>
           </div>
 
-          <div class="qty-control">
-            <button type="button" class="qty-btn" [disabled]="quantity(sector.id) <= 1" (click)="decrement(sector)">-</button>
-            <span class="qty-value">{{ quantity(sector.id) }}</span>
-            <button
-              type="button"
-              class="qty-btn"
-              [disabled]="sector.availableQuantity !== null && sector.availableQuantity !== undefined && quantity(sector.id) >= sector.availableQuantity"
-              (click)="increment(sector)"
-            >
-              +
-            </button>
-          </div>
-
-          <button type="button" class="btn-full" [disabled]="sector.availableQuantity === 0" (click)="addSector(sector)">
+          <button type="button" class="btn-add" [disabled]="sector.availableQuantity === 0" (click)="addSector(sector)">
             Adicionar
           </button>
         </article>
-      }
-    </div>
+      </section>
+    }
+    }
   </div>
 </main>
 
-<div class="sticky-checkout" id="checkout-bar">
-  <div class="sc-info">
-    <span class="sc-total-label">Total da Compra (<span id="total-qty">{{ checkoutStore.totalTickets() }}</span> bilhetes)</span>
-    <span class="sc-total-price">{{ formatCurrency(checkoutStore.visualSubtotal()) }}</span>
+<app-site-footer />
+
+<div class="sticky-checkout" id="checkout-bar" [class.visible]="checkoutStore.hasItems()" [class.expanded]="cartExpanded()">
+  <button
+    type="button"
+    class="cart-expand-btn"
+    aria-label="Detalhar ingressos selecionados"
+    [attr.aria-expanded]="cartExpanded()"
+    (click)="toggleCartDetails()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"></path></svg>
+  </button>
+
+  <div class="cart-preview">
+    @for (item of checkoutStore.items(); track item.sectorId + item.ticketType) {
+      <div class="cart-item">
+        <span>
+          {{ item.quantity }}x {{ item.sectorName }}
+          <small>{{ ticketTypeLabel(item.ticketType) }}</small>
+        </span>
+        <button type="button" aria-label="Remover item" (click)="removeCartItem(item.sectorId, item.ticketType)">x</button>
+      </div>
+    }
   </div>
-  <a [routerLink]="checkoutUrl()" style="text-decoration: none;">
-    <button class="btn-avancar" [disabled]="!checkoutStore.canContinue()">
+
+  @if (cartExpanded()) {
+    <div class="cart-details" aria-label="Detalhes dos ingressos selecionados">
+      @for (item of checkoutStore.items(); track item.sectorId + item.ticketType) {
+        <div class="cart-detail-row">
+          <div>
+            <strong>{{ item.sectorName }}</strong>
+            <span>{{ ticketTypeLabel(item.ticketType) }} - {{ item.quantity }} ingresso(s)</span>
+          </div>
+          <span>{{ formatCurrency(item.unitPrice * item.quantity) }}</span>
+          <button type="button" aria-label="Remover item" (click)="removeCartItem(item.sectorId, item.ticketType)">x</button>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="checkout-actions">
+    <div class="sc-info">
+      <span class="sc-total-label">Total da Compra (<span id="total-qty">{{ checkoutStore.totalTickets() }}</span> bilhetes)</span>
+      <span class="sc-total-price">{{ formatCurrency(checkoutStore.visualSubtotal()) }}</span>
+    </div>
+    <button class="btn-avancar" [disabled]="!checkoutStore.canContinue()" (click)="continueToCheckout()">
       Avancar
       <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
     </button>
-  </a>
+  </div>
 </div>

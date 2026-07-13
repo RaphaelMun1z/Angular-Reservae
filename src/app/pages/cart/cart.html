@@ -1,0 +1,58 @@
+<app-site-navbar />
+
+<main class="cart-container">
+  <header class="page-header">
+    <span class="page-kicker">Carrinho</span>
+    <h1 class="page-title">Revise seus ingressos</h1>
+    <p class="page-subtitle">Confira setores, tipos de ingresso e quantidades antes de finalizar a compra.</p>
+  </header>
+
+  @if (!checkoutStore.hasItems()) {
+    <section class="empty-cart">
+      <h2>Seu carrinho esta vazio</h2>
+      <p>Escolha um evento e selecione os setores para continuar.</p>
+      <a routerLink="/shows">Explorar eventos</a>
+    </section>
+  } @else {
+    <div class="cart-grid">
+      <section class="cart-items" aria-label="Itens do carrinho">
+        @for (item of checkoutStore.items(); track item.sectorId + item.ticketType) {
+          <article class="cart-item">
+            <div class="item-copy">
+              <span class="item-type">{{ ticketTypeLabel(item.ticketType) }}</span>
+              <h2>{{ item.sectorName }}</h2>
+              <p>{{ formatCurrency(item.unitPrice) }} por ingresso</p>
+            </div>
+
+            <div class="qty-control" aria-label="Quantidade">
+              <button type="button" [disabled]="item.quantity <= 1" (click)="changeQuantity(item, item.quantity - 1)">-</button>
+              <strong>{{ item.quantity }}</strong>
+              <button type="button" (click)="changeQuantity(item, item.quantity + 1)">+</button>
+            </div>
+
+            <div class="item-total">
+              <span>Subtotal</span>
+              <strong>{{ formatCurrency(item.unitPrice * item.quantity) }}</strong>
+            </div>
+
+            <button class="remove-btn" type="button" aria-label="Remover item" (click)="removeItem(item)">x</button>
+          </article>
+        }
+      </section>
+
+      <aside class="summary-card" aria-label="Resumo do carrinho">
+        <span class="summary-label">Total</span>
+        <strong class="summary-total">{{ formatCurrency(checkoutStore.visualSubtotal()) }}</strong>
+        <p>{{ checkoutStore.totalTickets() }} ingresso(s) em {{ checkoutStore.selectedSectorCount() }} item(ns)</p>
+
+        <button type="button" class="primary-action" [disabled]="!checkoutStore.canContinue()" (click)="continueToCheckout()">
+          Finalizar compra
+        </button>
+        <button type="button" class="secondary-action" (click)="continueBuying()">Continuar comprando</button>
+        <button type="button" class="clear-action" (click)="clearCart()">Limpar carrinho</button>
+      </aside>
+    </div>
+  }
+</main>
+
+<app-site-footer />

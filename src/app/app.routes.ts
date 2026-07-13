@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { Cart } from './pages/cart/cart';
 import { Checkout } from './pages/checkout/checkout';
 import { ClubVip } from './pages/club-vip/club-vip';
 import { CreateEvent } from './pages/create-event/create-event';
@@ -12,7 +13,6 @@ import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { GateScanner } from './pages/gate-scanner/gate-scanner';
 import { HomePage } from './pages/home-page/home-page';
 import { Index } from './pages/index/index';
-import { Loading } from './pages/loading/loading';
 import { Login } from './pages/login/login';
 import { MyTickets } from './pages/my-tickets/my-tickets';
 import { Profile } from './pages/profile/profile';
@@ -51,8 +51,8 @@ export const routes: Routes = [
         component: Index,
       },
       {
-        path: 'carregando',
-        component: Loading,
+        path: 'carrinho',
+        component: Cart,
       },
       {
         path: 'checkout',

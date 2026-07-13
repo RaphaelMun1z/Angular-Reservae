@@ -341,18 +341,58 @@
             .summary-box {
                 position: sticky;
                 top: 40px;
+                padding: 26px;
+                border-radius: 22px;
+                background:
+                    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+                    rgba(13, 13, 13, 0.86);
+            }
+
+            .summary-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 16px;
+                margin-bottom: 18px;
+            }
+
+            .summary-kicker {
+                display: block;
+                margin-bottom: 6px;
+                color: var(--red);
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 1.4px;
+                text-transform: uppercase;
+            }
+
+            .summary-header h2 {
+                font-size: 26px;
+                font-weight: 900;
+                line-height: 1;
+            }
+
+            .summary-count {
+                flex-shrink: 0;
+                padding: 8px 10px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.05);
+                color: var(--gray);
+                font-size: 12px;
+                font-weight: 900;
             }
 
             .timer-banner {
                 background: rgba(255, 98, 77, 0.1);
                 border: 1px solid rgba(255, 98, 77, 0.2);
                 color: white;
-                padding: 15px;
+                padding: 13px;
                 border-radius: 12px;
                 display: flex;
                 align-items: center;
                 gap: 12px;
-                margin-bottom: 25px;
+                margin-bottom: 18px;
             }
 
             .timer-banner svg {
@@ -366,14 +406,211 @@
 
             .timer-text {
                 font-size: 13px;
-                font-weight: 500;
+                font-weight: 700;
                 line-height: 1.4;
+                color: var(--gray);
             }
 
             .timer-text strong {
+                display: block;
                 color: var(--red);
                 font-size: 15px;
                 font-variant-numeric: tabular-nums;
+                text-transform: uppercase;
+            }
+
+            .order-summary {
+                display: grid;
+                gap: 18px;
+            }
+
+            .empty-order {
+                padding: 18px;
+                border: 1px dashed rgba(255, 255, 255, 0.15);
+                border-radius: 14px;
+                display: grid;
+                gap: 6px;
+                background: rgba(255, 255, 255, 0.025);
+            }
+
+            .empty-order strong {
+                color: white;
+                font-size: 15px;
+                font-weight: 900;
+            }
+
+            .empty-order span {
+                color: var(--gray);
+                font-size: 13px;
+                line-height: 1.45;
+            }
+
+            .summary-items {
+                display: grid;
+                gap: 10px;
+            }
+
+            .summary-item {
+                min-width: 0;
+                padding: 14px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 16px;
+                display: grid;
+                gap: 12px;
+                background: rgba(255, 255, 255, 0.035);
+            }
+
+            .summary-item-main {
+                min-width: 0;
+                display: grid;
+                gap: 8px;
+            }
+
+            .summary-item-top,
+            .summary-item-meta,
+            .summary-item-actions,
+            .summary-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+            }
+
+            .summary-item-top strong {
+                min-width: 0;
+                overflow: hidden;
+                color: white;
+                font-size: 15px;
+                font-weight: 900;
+                line-height: 1.2;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .summary-item-top span {
+                flex-shrink: 0;
+                color: white;
+                font-size: 14px;
+                font-weight: 900;
+                font-variant-numeric: tabular-nums;
+            }
+
+            .summary-item-meta span {
+                color: var(--gray);
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            .quantity-stepper {
+                min-height: 38px;
+                padding: 4px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 999px;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                background: rgba(0, 0, 0, 0.26);
+            }
+
+            .quantity-stepper button {
+                width: 30px;
+                height: 30px;
+                border: 0;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.08);
+                color: white;
+                font: inherit;
+                font-size: 18px;
+                font-weight: 900;
+                cursor: pointer;
+            }
+
+            .quantity-stepper button:hover {
+                background: rgba(255, 98, 77, 0.18);
+            }
+
+            .quantity-stepper button:disabled {
+                color: #5f5f5f;
+                cursor: not-allowed;
+                background: transparent;
+            }
+
+            .quantity-stepper span {
+                width: 22px;
+                color: white;
+                font-size: 14px;
+                font-weight: 900;
+                text-align: center;
+                font-variant-numeric: tabular-nums;
+            }
+
+            .remove-item-btn {
+                min-height: 34px;
+                border: 0;
+                border-radius: 999px;
+                padding: 0 12px;
+                background: rgba(255, 255, 255, 0.06);
+                color: var(--gray);
+                font: inherit;
+                font-size: 12px;
+                font-weight: 900;
+                cursor: pointer;
+            }
+
+            .remove-item-btn:hover {
+                background: rgba(255, 98, 77, 0.12);
+                color: #ffb2a8;
+            }
+
+            .summary-totals {
+                padding-top: 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                display: grid;
+                gap: 11px;
+            }
+
+            .summary-row {
+                color: var(--gray);
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            .summary-row strong {
+                color: white;
+                font-weight: 900;
+                font-variant-numeric: tabular-nums;
+            }
+
+            .backend-total {
+                color: #b9d5ff;
+            }
+
+            .grand-total {
+                margin-top: 3px;
+                padding-top: 14px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
+                font-size: 17px;
+            }
+
+            .grand-total strong {
+                color: var(--red);
+                font-size: 24px;
+            }
+
+            .summary-error {
+                margin-top: 16px;
+                padding: 12px 14px;
+                border: 1px solid rgba(255, 98, 77, 0.22);
+                border-radius: 12px;
+                background: rgba(255, 98, 77, 0.08);
+                color: #ffc0b7;
+                font-size: 12px;
+                font-weight: 800;
+                line-height: 1.45;
             }
 
             /* Detalhe do Item */
@@ -443,10 +680,12 @@
 
             .btn-checkout {
                 width: 100%;
+                min-height: 52px;
+                margin-top: 18px;
                 background: var(--red);
                 color: white;
                 border: none;
-                padding: 16px;
+                padding: 0 16px;
                 border-radius: 12px;
                 font-weight: 800;
                 font-size: 15px;
@@ -462,6 +701,13 @@
                 transform: translateY(-2px);
                 background: var(--red-dark);
                 box-shadow: 0 10px 20px rgba(255, 98, 77, 0.3);
+            }
+
+            .btn-checkout:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
             }
 
             .btn-checkout svg {

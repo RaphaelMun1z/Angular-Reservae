@@ -1,12 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { AuthStore } from '../../core/state/auth.store';
 
 @Component({
   selector: 'app-profile',
-  imports: [FormsModule, RouterLink, UserMenu],
+  imports: [FormsModule, RouterLink, SiteNavbar, SiteFooter],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
 })

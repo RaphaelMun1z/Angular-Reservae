@@ -67,7 +67,7 @@
 
     <div class="result-summary">
       @if (store.loading()) {
-        <span>Carregando eventos...</span>
+        <span>Atualizando resultados...</span>
       } @else {
         <span>{{ store.totalElements() }} evento(s) encontrados</span>
       }
@@ -83,6 +83,9 @@
     </div>
 
     <div class="data-card">
+      @if (store.loading() && store.events().length === 0) {
+        <app-skeleton-loader variant="table" [count]="5" />
+      } @else {
       <table>
         <thead>
           <tr>
@@ -125,13 +128,9 @@
               </tr>
             }
           }
-          @if (store.loading() && store.events().length === 0) {
-            <tr>
-              <td colspan="5">Carregando...</td>
-            </tr>
-          }
         </tbody>
       </table>
+      }
     </div>
 
     <div class="pagination">

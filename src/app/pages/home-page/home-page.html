@@ -1,40 +1,4 @@
-<div class="sticky top-0 z-40 bg-dark-bg/80 backdrop-blur-lg border-b border-dark-border">
-  <header class="max-w-[1600px] mx-auto w-[96%] px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-10">
-      <a
-        routerLink="/inicio"
-        class="flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform"
-      >
-        <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
-      </a>
-
-      <nav class="hidden lg:block" aria-label="Navegacao principal">
-        <ul class="flex gap-6 text-sm font-semibold text-gray-400">
-          <li><a routerLink="/inicio" class="hover:text-white transition-colors">Inicio</a></li>
-          <li><a routerLink="/shows" class="hover:text-white transition-colors">Eventos</a></li>
-          <li><a routerLink="/meus-ingressos" class="hover:text-white transition-colors">Meus ingressos</a></li>
-          <li><a routerLink="/checkout" class="hover:text-white transition-colors">Meus pedidos</a></li>
-          <li><a routerLink="/perfil" class="hover:text-white transition-colors">Perfil</a></li>
-          <li><a routerLink="/suporte" class="hover:text-white transition-colors">Suporte</a></li>
-          @if (authStore.isAdmin()) {
-            <li><a routerLink="/dashboard" class="hover:text-white transition-colors">Administracao</a></li>
-          }
-        </ul>
-      </nav>
-    </div>
-
-    <div class="flex items-center gap-4">
-      <a
-        routerLink="/shows"
-        aria-label="Buscar eventos"
-        class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-dark-hover transition-colors"
-      >
-        <i class="ph-bold ph-magnifying-glass text-xl"></i>
-      </a>
-      <app-user-menu />
-    </div>
-  </header>
-</div>
+<app-site-navbar />
 
 <main class="max-w-[1600px] mx-auto w-[96%] relative z-10 py-10">
   <section class="mb-12 relative rounded-3xl overflow-hidden bg-dark-card border border-dark-border flex flex-col lg:flex-row items-center justify-between p-10 lg:p-16 gap-10">
@@ -59,7 +23,7 @@
 
     <div class="relative z-10 w-full lg:w-3/5 bg-dark-card/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 lg:p-12 shadow-2xl">
       @if (eventStore.featuredLoading()) {
-        <div class="hero-skeleton" aria-label="Carregando evento em destaque"></div>
+        <app-skeleton-loader variant="hero" />
       } @else if (featuredEvent(); as event) {
         <p class="text-xs text-brand font-black uppercase tracking-widest mb-3">Evento em destaque</p>
         <h2 class="text-3xl lg:text-5xl font-black text-white tracking-tight mb-6">
@@ -134,11 +98,7 @@
     </div>
 
     @if (eventStore.featuredLoading()) {
-      <div class="featured-list" aria-label="Carregando eventos">
-        @for (_item of skeletonItems; track _item) {
-          <div class="event-skeleton"></div>
-        }
-      </div>
+      <app-skeleton-loader variant="cards" [count]="6" />
     } @else if (eventStore.featuredError()) {
       <div class="state-panel">
         <h3>Nao foi possivel carregar os eventos</h3>
@@ -192,12 +152,7 @@
   </section>
 </main>
 
-<footer class="relative bg-[#111] pt-24 overflow-hidden border-t border-dark-border">
-  <div class="absolute -top-10 left-0 text-[160px] lg:text-[260px] font-black text-white/[0.02] tracking-tighter leading-none pointer-events-none select-none">
-    Reservae
-  </div>
-
-  <div class="max-w-[1600px] mx-auto w-[96%] relative z-10">
+<section class="newsletter-section">
     <div class="newsletter">
       <div>
         <h2>Fique por dentro</h2>
@@ -214,28 +169,6 @@
       <p class="newsletter-message">{{ newsletterMessage() }}</p>
     }
 
-    <div class="footer-card">
-      <div class="ticket-cutout ticket-cutout-left" aria-hidden="true"></div>
-      <div class="ticket-cutout ticket-cutout-right" aria-hidden="true"></div>
+</section>
 
-      <div class="footer-top">
-        <div>
-          <h2>Reservae</h2>
-          <p>Ingressos digitais para momentos que merecem sair do calendario.</p>
-        </div>
-        <a routerLink="/shows">Explorar eventos</a>
-      </div>
-
-      <div class="footer-bottom">
-        <nav aria-label="Links do rodape">
-          <a routerLink="/inicio">Sobre o Reservae</a>
-          <a routerLink="/inicio">Politica de Privacidade</a>
-          <a routerLink="/inicio">Termos de Uso</a>
-          <a routerLink="/suporte">Suporte</a>
-          <a routerLink="/suporte">Contato</a>
-        </nav>
-        <div>© 2026 Reservae. Todos os direitos reservados.</div>
-      </div>
-    </div>
-  </div>
-</footer>
+<app-site-footer />

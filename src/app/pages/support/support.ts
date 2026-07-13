@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 
 @Component({
   selector: 'app-support',
-  imports: [RouterLink, UserMenu],
+  imports: [SiteNavbar, SiteFooter],
   templateUrl: './support.html',
   styleUrl: './support.scss',
 })

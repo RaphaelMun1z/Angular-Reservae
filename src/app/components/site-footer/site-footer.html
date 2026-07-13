@@ -1,0 +1,39 @@
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <a routerLink="/inicio" class="footer-logo" aria-label="Reservae">
+        <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
+      </a>
+      <div>
+        <strong>Reservae</strong>
+        <span>Ingressos digitais para eventos, shows e experiencias ao vivo.</span>
+      </div>
+    </div>
+
+    <nav aria-label="Links principais">
+      <span>Explore</span>
+      <a routerLink="/inicio">Inicio</a>
+      <a routerLink="/shows">Eventos</a>
+      <a routerLink="/club-vip">Club VIP</a>
+      <a routerLink="/suporte">Suporte</a>
+    </nav>
+
+    <nav aria-label="Conta">
+      <span>Conta</span>
+      <a routerLink="/perfil">Perfil</a>
+      <a routerLink="/meus-ingressos">Meus ingressos</a>
+      <a routerLink="/configuracoes">Configuracoes</a>
+    </nav>
+
+    <div class="footer-note">
+      <span>Atendimento</span>
+      <strong>Suporte para compra, transferencia e acesso aos ingressos.</strong>
+      <a routerLink="/suporte">Abrir suporte</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <small>Reservae © {{ currentYear }}</small>
+    <small>Compra segura, ingressos digitais e acesso pelo navegador.</small>
+  </div>
+</footer>

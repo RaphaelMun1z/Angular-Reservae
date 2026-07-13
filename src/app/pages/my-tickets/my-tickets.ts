@@ -1,13 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
+import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { TicketStatus } from '../../core/models/ticket.model';
 import { TicketStore } from './state/ticket.store';
 import { AuthStore } from '../../core/state/auth.store';
 
 @Component({
   selector: 'app-my-tickets',
-  imports: [RouterLink, UserMenu],
+  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader],
   templateUrl: './my-tickets.html',
   styleUrl: './my-tickets.scss',
 })

@@ -27,7 +27,7 @@ describe('Success', () => {
   it('should show pending message', () => {
     component.store.setOrder({ id: 'order-1', eventId: 'event-1', status: 'PENDING', totalAmount: 10, paymentUrl: null, items: [] });
 
-    expect(component.statusMessage()).toContain('reserva ainda esta em processamento');
+    expect(component.statusMessage()).toContain('link de pagamento por e-mail');
   });
 
   it('should show confirmed message', () => {

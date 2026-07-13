@@ -35,8 +35,46 @@ describe('HttpCheckoutApi', () => {
 
     const req = http.expectOne('http://localhost:8765/order-service/api/orders/v1/checkout');
     expect(req.request.method).toBe('POST');
+    expect(req.request.responseType).toBe('text');
     expect(req.request.body).toEqual(request);
-    req.flush({ orderId: 'order-1', status: 'AWAITING_PAYMENT', totalAmount: 100 });
+    req.flush(JSON.stringify({ orderId: 'order-1', status: 'AWAITING_PAYMENT', totalAmount: 100 }));
+  });
+
+  it('should accept async checkout responses without a body', () => {
+    const request = {
+      userId: 'user-1',
+      eventId: 'event-1',
+      items: [{ sectorId: 'sector-1', ticketType: 'FULL_TICKET_PRICE' as const, quantity: 2 }],
+    };
+
+    api.startCheckout(request).subscribe((order) => {
+      expect(order.id).toBe('');
+      expect(order.status).toBe('PENDING');
+      expect(order.paymentUrl).toBeNull();
+    });
+
+    const req = http.expectOne('http://localhost:8765/order-service/api/orders/v1/checkout');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.responseType).toBe('text');
+    req.flush('', { status: 202, statusText: 'Accepted' });
+  });
+
+  it('should accept async checkout responses with plain text body', () => {
+    const request = {
+      userId: 'user-1',
+      eventId: 'event-1',
+      items: [{ sectorId: 'sector-1', ticketType: 'FULL_TICKET_PRICE' as const, quantity: 2 }],
+    };
+
+    api.startCheckout(request).subscribe((order) => {
+      expect(order.id).toBe('');
+      expect(order.status).toBe('PENDING');
+      expect(order.paymentUrl).toBeNull();
+    });
+
+    const req = http.expectOne('http://localhost:8765/order-service/api/orders/v1/checkout');
+    expect(req.request.method).toBe('POST');
+    req.flush('Pedido criado e enviado para processamento.', { status: 202, statusText: 'Accepted' });
   });
 
   it('should get order by id', () => {

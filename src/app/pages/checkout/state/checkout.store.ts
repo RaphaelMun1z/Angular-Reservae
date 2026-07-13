@@ -12,6 +12,7 @@ import {
 import { AuthStore } from '../../../core/state/auth.store';
 
 const CHECKOUT_RECOVERY_KEY = 'reservae.checkout.recovery';
+const CHECKOUT_CART_KEY = 'reservae.checkout.cart';
 const ORDER_POLLING_INTERVAL_MS = 3000;
 
 export interface CheckoutItem {
@@ -41,9 +42,16 @@ interface CheckoutRecoveryReference {
   readonly eventId: string | null;
 }
 
+interface CheckoutCartSnapshot {
+  readonly eventId: string | null;
+  readonly items: readonly CheckoutItem[];
+}
+
 export const CHECKOUT_API = new InjectionToken<CheckoutApi>('CHECKOUT_API');
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CheckoutStore {
   private readonly api = inject(CHECKOUT_API, { optional: true });
   private readonly authStore = inject(AuthStore);
@@ -86,9 +94,21 @@ export class CheckoutStore {
   );
   readonly paymentStatus = this.status;
 
+  constructor() {
+    this.restoreCart();
+  }
+
   selectEvent(eventId: string | null): void {
+    const previousEventId = this._eventId();
+
+    if (previousEventId && eventId && previousEventId !== eventId) {
+      this._items.set([]);
+      this._order.set(null);
+    }
+
     this._eventId.set(eventId);
     this.persistRecoveryReference();
+    this.persistCart();
   }
 
   addItem(item: CheckoutItem): void {
@@ -111,6 +131,7 @@ export class CheckoutStore {
       );
     });
     this._error.set(null);
+    this.persistCart();
   }
 
   changeQuantity(sectorId: string, quantity: number, ticketType?: TicketType): void {
@@ -125,17 +146,20 @@ export class CheckoutStore {
       ),
     );
     this._error.set(null);
+    this.persistCart();
   }
 
   removeItem(sectorId: string, ticketType?: TicketType): void {
     this._items.update((items) =>
       items.filter((item) => !this.isSameItem(item, sectorId, ticketType ?? item.ticketType)),
     );
+    this.persistCart();
   }
 
   clearSelection(): void {
     this._items.set([]);
     this._error.set(null);
+    this.storage.remove(CHECKOUT_CART_KEY);
   }
 
   setError(message: string): void {
@@ -287,6 +311,7 @@ export class CheckoutStore {
   finishCheckout(): void {
     this.stopOrderPolling();
     this.storage.remove(CHECKOUT_RECOVERY_KEY, sessionStorage);
+    this.storage.remove(CHECKOUT_CART_KEY);
     this._items.set([]);
     this._order.set(null);
     this._eventId.set(null);
@@ -319,8 +344,53 @@ export class CheckoutStore {
     );
   }
 
+  private restoreCart(): void {
+    const snapshot = this.storage.get<CheckoutCartSnapshot>(CHECKOUT_CART_KEY);
+
+    if (!snapshot || !this.isCheckoutCartSnapshot(snapshot)) {
+      this.storage.remove(CHECKOUT_CART_KEY);
+      return;
+    }
+
+    this._eventId.set(snapshot.eventId);
+    this._items.set(snapshot.items.map((item) => ({ ...item })));
+  }
+
+  private persistCart(): void {
+    const items = this._items();
+
+    if (items.length === 0) {
+      this.storage.remove(CHECKOUT_CART_KEY);
+      return;
+    }
+
+    this.storage.set<CheckoutCartSnapshot>(CHECKOUT_CART_KEY, {
+      eventId: this._eventId(),
+      items: items.map((item) => ({ ...item })),
+    });
+  }
+
   private isCheckoutRecoveryReference(value: CheckoutRecoveryReference): value is CheckoutRecoveryReference {
     return typeof value.orderId === 'string' && value.orderId.length > 0;
+  }
+
+  private isCheckoutCartSnapshot(value: CheckoutCartSnapshot): value is CheckoutCartSnapshot {
+    return (
+      (value.eventId === null || typeof value.eventId === 'string') &&
+      Array.isArray(value.items) &&
+      value.items.every((item) => this.isCheckoutItem(item))
+    );
+  }
+
+  private isCheckoutItem(item: CheckoutItem): item is CheckoutItem {
+    return (
+      typeof item.sectorId === 'string' &&
+      typeof item.sectorName === 'string' &&
+      typeof item.quantity === 'number' &&
+      item.quantity > 0 &&
+      (item.ticketType === 'FULL_TICKET_PRICE' || item.ticketType === 'HALF_TICKET_PRICE') &&
+      typeof item.unitPrice === 'number'
+    );
   }
 
   private isFinalOrder(order: CheckoutOrder): boolean {

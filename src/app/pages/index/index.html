@@ -10,49 +10,7 @@
             </div>
         </div>
 
-        <nav class="nav">
-            <a routerLink="/index" class="logo" aria-label="Página inicial"><img src="/assets/icon_logo_dark.png" alt="Reservaê" class="brand-logo-image" /></a>
-
-            <div class="nav-center">
-                <a routerLink="/club-vip" aria-label="Club VIP">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M9 18V5l12-2v13"></path>
-                        <circle cx="6" cy="18" r="3"></circle>
-                        <circle cx="18" cy="16" r="3"></circle>
-                    </svg>
-                </a>
-                <a routerLink="/shows" aria-label="Shows">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path>
-                    </svg>
-                </a>
-                <a routerLink="/suporte" aria-label="Suporte">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                    </svg>
-                </a>
-                <a routerLink="/meus-ingressos" aria-label="Meus ingressos">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
-                        <path d="M3 6h18"></path>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                    </svg>
-                </a>
-            </div>
-
-            <div class="nav-right">
-                <div class="location">
-                    <span class="flag"></span>
-                    <span data-event-location></span>
-                </div>
-                <app-user-menu />
-                <div class="menu" id="hamburger-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </nav>
+        <app-site-navbar />
 
         <section class="hero">
             
@@ -108,5 +66,7 @@
 
             <div class="tickets"></div>
         </section>
+
+        <app-site-footer />
 
     

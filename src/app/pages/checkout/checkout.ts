@@ -1,11 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { CheckoutItem, CheckoutStore } from './state/checkout.store';
 
 @Component({
   selector: 'app-checkout',
-  imports: [RouterLink, UserMenu],
+  imports: [SiteNavbar, SiteFooter],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
@@ -13,6 +14,7 @@ export class Checkout implements OnInit {
   readonly store = inject(CheckoutStore);
   readonly submitInProgress = signal(false);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     const eventId = this.route.snapshot.paramMap.get('eventId');
@@ -42,14 +44,11 @@ export class Checkout implements OnInit {
         return;
       }
 
-      this.store.startOrderPolling(order.id);
-
-      if (!this.isHttpUrl(order.paymentUrl)) {
-        this.store.setPaymentRedirectError();
-        return;
+      if (order.id) {
+        this.store.startOrderPolling(order.id);
       }
 
-      this.redirectToPayment(order.paymentUrl);
+      void this.router.navigateByUrl('/sucesso');
     });
   }
 
@@ -71,20 +70,4 @@ export class Checkout implements OnInit {
     return ticketType === 'HALF_TICKET_PRICE' ? 'Meia entrada' : 'Inteira';
   }
 
-  redirectToPayment(paymentUrl: string): void {
-    window.location.assign(paymentUrl);
-  }
-
-  private isHttpUrl(value: string | null): value is string {
-    if (!value) {
-      return false;
-    }
-
-    try {
-      const url = new URL(value);
-      return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }
 }

@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { EventStore } from '../events/state/event.store';
 
 @Component({
   selector: 'app-index',
-  imports: [RouterLink, UserMenu],
+  imports: [SiteNavbar, SiteFooter],
   templateUrl: './index.html',
   styleUrl: './index.scss',
 })

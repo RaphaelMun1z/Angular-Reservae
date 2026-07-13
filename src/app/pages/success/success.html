@@ -25,17 +25,21 @@
         } @else if (store.failed()) {
           Pedido nao concluido
         } @else {
-          Acompanhando pedido
+          Pedido criado
         }
       </h1>
 
       <p class="text-gray-400 font-medium mb-8">{{ statusMessage() }}</p>
 
       <div class="order-summary">
-        <p class="text-gray-400 font-medium">Pedido: {{ store.orderId() || 'nao identificado' }}</p>
-        <p class="text-gray-400 font-medium">Status: {{ store.status() || 'nao consultado' }}</p>
         @if (store.loading()) {
-          <p class="text-gray-400 font-medium">Consultando pedido...</p>
+          <app-skeleton-loader variant="list" [count]="1" />
+        } @else {
+          <p class="text-gray-400 font-medium">Pedido: {{ store.orderId() || 'nao identificado' }}</p>
+          <p class="text-gray-400 font-medium">Status: {{ store.status() || 'nao consultado' }}</p>
+          @if (store.paymentUrl()) {
+            <p class="text-gray-400 font-medium">Link de pagamento enviado para o e-mail cadastrado.</p>
+          }
         }
         @if (store.error()) {
           <p class="text-gray-400 font-medium">{{ store.error() }}</p>
@@ -62,6 +66,4 @@
   </div>
 </main>
 
-<footer class="relative z-10 pb-6 text-center">
-  <p class="text-xs text-gray-600 font-semibold uppercase tracking-widest">Transacao Concluida - Music Tour</p>
-</footer>
+<app-site-footer />

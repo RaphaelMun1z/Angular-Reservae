@@ -1,0 +1,78 @@
+@switch (variant) {
+  @case ('hero') {
+    <section class="skeleton-hero" aria-label="Carregando conteudo">
+      <div class="sk-line title"></div>
+      <div class="sk-line wide"></div>
+      <div class="sk-meta">
+        <div class="sk-line pill"></div>
+        <div class="sk-line pill"></div>
+        <div class="sk-line pill"></div>
+      </div>
+      <div class="sk-line action"></div>
+    </section>
+  }
+  @case ('list') {
+    <div class="skeleton-list" aria-label="Carregando lista">
+      @for (_item of items(); track _item) {
+        <article class="sk-list-item">
+          <div class="sk-avatar"></div>
+          <div class="sk-copy">
+            <div class="sk-line wide"></div>
+            <div class="sk-line medium"></div>
+            <div class="sk-line short"></div>
+          </div>
+          <div class="sk-line action"></div>
+        </article>
+      }
+    </div>
+  }
+  @case ('table') {
+    <div class="skeleton-table" aria-label="Carregando tabela">
+      @for (_item of items(); track _item) {
+        <div class="sk-table-row">
+          <div class="sk-line wide"></div>
+          <div class="sk-line medium"></div>
+          <div class="sk-line short"></div>
+          <div class="sk-line pill"></div>
+        </div>
+      }
+    </div>
+  }
+  @case ('detail') {
+    <section class="skeleton-detail" aria-label="Carregando detalhes">
+      <div class="sk-banner"></div>
+      <div class="sk-line title"></div>
+      <div class="sk-info-grid">
+        <div class="sk-line medium"></div>
+        <div class="sk-line medium"></div>
+        <div class="sk-line wide"></div>
+        <div class="sk-line short"></div>
+      </div>
+      <div class="sk-qr"></div>
+    </section>
+  }
+  @default {
+    <div class="skeleton-cards" aria-label="Carregando cards">
+      @for (_item of items(); track _item) {
+        <article class="sk-card">
+          <div class="sk-banner"></div>
+          <div class="sk-line title"></div>
+          <div class="sk-grid">
+            <div>
+              <div class="sk-line label"></div>
+              <div class="sk-line medium"></div>
+            </div>
+            <div>
+              <div class="sk-line label"></div>
+              <div class="sk-line short"></div>
+            </div>
+          </div>
+          <div class="sk-footer">
+            <div class="sk-line pill"></div>
+            <div class="sk-line action"></div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+}

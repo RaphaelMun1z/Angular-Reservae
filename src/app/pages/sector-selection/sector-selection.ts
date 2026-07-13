@@ -1,13 +1,15 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { UserMenu } from '../../components/user-menu/user-menu';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteNavbar } from '../../components/site-navbar/site-navbar';
+import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { CheckoutStore } from '../checkout/state/checkout.store';
 import { EventSector, EventStore } from '../events/state/event.store';
 import { TicketType } from '../../core/models/event-catalog.model';
 
 @Component({
   selector: 'app-sector-selection',
-  imports: [RouterLink, UserMenu],
+  imports: [RouterLink, SiteFooter, SiteNavbar, SkeletonLoader],
   templateUrl: './sector-selection.html',
   styleUrl: './sector-selection.scss',
 })
@@ -18,10 +20,17 @@ export class SectorSelection implements OnInit {
   private readonly router = inject(Router);
   private readonly quantities = signal<Record<string, number>>({});
   private readonly ticketTypes = signal<Record<string, TicketType>>({});
+  readonly selectedSectorId = signal<string | null>(null);
+  readonly cartExpanded = signal(false);
 
   readonly checkoutUrl = computed(() => {
     const eventId = this.checkoutStore.eventId();
     return eventId ? ['/checkout', eventId] : ['/checkout'];
+  });
+
+  readonly selectedSector = computed(() => {
+    const selectedSectorId = this.selectedSectorId();
+    return this.eventStore.sectors().find((sector) => sector.id === selectedSectorId) ?? null;
   });
 
   ngOnInit(): void {
@@ -46,6 +55,14 @@ export class SectorSelection implements OnInit {
 
   setTicketType(sectorId: string, ticketType: TicketType): void {
     this.ticketTypes.update((ticketTypes) => ({ ...ticketTypes, [sectorId]: ticketType }));
+  }
+
+  selectSector(sector: EventSector): void {
+    if (sector.availableQuantity === 0) {
+      return;
+    }
+
+    this.selectedSectorId.set(sector.id);
   }
 
   increment(sector: EventSector): void {
@@ -78,6 +95,41 @@ export class SectorSelection implements OnInit {
       ticketType,
       unitPrice,
     });
+  }
+
+  selectedQuantityForSector(sectorId: string): number {
+    return this.checkoutStore
+      .items()
+      .filter((item) => item.sectorId === sectorId)
+      .reduce((total, item) => total + item.quantity, 0);
+  }
+
+  availabilityLabel(sector: EventSector): string {
+    if (sector.availableQuantity === 0) {
+      return 'Esgotado';
+    }
+
+    if (sector.availableQuantity === null || sector.availableQuantity === undefined) {
+      return 'Disponibilidade aberta';
+    }
+
+    return `${sector.availableQuantity} disponiveis`;
+  }
+
+  ticketTypeLabel(ticketType: TicketType): string {
+    return ticketType === 'HALF_TICKET_PRICE' ? 'Meia' : 'Inteira';
+  }
+
+  removeCartItem(sectorId: string, ticketType: TicketType): void {
+    this.checkoutStore.removeItem(sectorId, ticketType);
+
+    if (!this.checkoutStore.hasItems()) {
+      this.cartExpanded.set(false);
+    }
+  }
+
+  toggleCartDetails(): void {
+    this.cartExpanded.update((expanded) => !expanded);
   }
 
   continueToCheckout(): void {

@@ -10,7 +10,7 @@ export const roleGuard: CanActivateFn = (route, state): boolean | UrlTree => {
 
   if (!authStore.authenticated()) {
     authStore.login(state.url);
-    return router.parseUrl('/carregando');
+    return false;
   }
 
   if (roles.length === 0 || roles.some((role) => authStore.hasRole(role))) {
@@ -19,4 +19,3 @@ export const roleGuard: CanActivateFn = (route, state): boolean | UrlTree => {
 
   return router.parseUrl('/403');
 };
-

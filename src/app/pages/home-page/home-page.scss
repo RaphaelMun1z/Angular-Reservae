@@ -27,8 +27,7 @@
 .featured-link,
 .event-card a,
 .state-panel button,
-.newsletter button,
-.footer-top a {
+.newsletter button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -242,30 +241,10 @@
   font-weight: 700;
 }
 
-.hero-skeleton,
-.event-skeleton {
-  position: relative;
-  overflow: hidden;
-  background: #171717;
-  border: 1px solid #242424;
-  border-radius: 22px;
-}
-
-.hero-skeleton {
-  min-height: 280px;
-}
-
-.event-skeleton {
-  min-height: 220px;
-}
-
-.hero-skeleton::after,
-.event-skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 7%), transparent);
-  animation: shimmer 1.4s infinite;
+.newsletter-section {
+  width: min(1600px, 96%);
+  margin: 0 auto;
+  padding: 18px 0 10px;
 }
 
 .newsletter {
@@ -313,89 +292,6 @@
   font-weight: 800;
 }
 
-.footer-card {
-  position: relative;
-  padding: 36px;
-  margin-bottom: 40px;
-  overflow: hidden;
-  color: #fff;
-  background: #ff624d;
-  border-radius: 28px;
-}
-
-.ticket-cutout {
-  position: absolute;
-  bottom: 46px;
-  width: 48px;
-  height: 48px;
-  background: #111;
-  border-radius: 50%;
-}
-
-.ticket-cutout-left {
-  left: 0;
-  transform: translateX(-50%);
-}
-
-.ticket-cutout-right {
-  right: 0;
-  transform: translateX(50%);
-}
-
-.footer-top,
-.footer-bottom {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.footer-top {
-  padding-bottom: 28px;
-  margin-bottom: 28px;
-  border-bottom: 1px solid rgb(255 255 255 / 24%);
-}
-
-.footer-top h2 {
-  margin: 0 0 8px;
-  font-size: 2.2rem;
-  font-weight: 900;
-}
-
-.footer-top p {
-  margin: 0;
-  color: rgb(255 255 255 / 82%);
-  font-weight: 700;
-}
-
-.footer-top a {
-  color: #111;
-  background: #fff;
-}
-
-.footer-bottom {
-  color: rgb(255 255 255 / 82%);
-  font-size: 0.88rem;
-  font-weight: 700;
-}
-
-.footer-bottom nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-}
-
-.footer-bottom a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.footer-bottom a:hover {
-  color: #fff;
-}
-
 @keyframes shimmer {
   from {
     transform: translateX(-100%);
@@ -411,9 +307,7 @@
     grid-template-columns: 1fr;
   }
 
-  .newsletter,
-  .footer-top,
-  .footer-bottom {
+  .newsletter {
     align-items: stretch;
     flex-direction: column;
   }
