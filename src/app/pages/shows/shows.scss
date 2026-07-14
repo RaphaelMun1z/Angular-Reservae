@@ -199,10 +199,56 @@
             }
 
             /* Filtros */
-            .filters {
+            .filters-card {
+                margin-bottom: 24px;
+                padding: 22px;
+                border: 1px solid rgba(255, 255, 255, 0.09);
+                border-radius: 22px;
+                background: rgba(13, 13, 13, 0.76);
+                backdrop-filter: blur(18px);
+            }
+
+            .filters-heading {
                 display: flex;
-                gap: 15px;
-                margin-bottom: 40px;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .filters-kicker {
+                display: block;
+                margin-bottom: 5px;
+                color: var(--red);
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 1.2px;
+                text-transform: uppercase;
+            }
+
+            .filters-heading h2 {
+                margin: 0;
+                font-size: 22px;
+                font-weight: 900;
+                line-height: 1.1;
+            }
+
+            .active-filter-pill {
+                flex: 0 0 auto;
+                padding: 7px 10px;
+                border: 1px solid rgba(255, 98, 77, 0.24);
+                border-radius: 999px;
+                background: rgba(255, 98, 77, 0.12);
+                color: #ffb2a8;
+                font-size: 11px;
+                font-weight: 900;
+                text-transform: uppercase;
+            }
+
+            .quick-filters {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 16px;
                 flex-wrap: wrap;
             }
 
@@ -228,11 +274,162 @@
                 border-color: var(--red);
             }
 
+            .filters-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .filters-grid label {
+                min-width: 0;
+                display: grid;
+                gap: 7px;
+            }
+
+            .filters-grid label span {
+                color: var(--gray);
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 0.7px;
+                text-transform: uppercase;
+            }
+
+            .filters-grid input,
+            .filters-grid select {
+                width: 100%;
+                min-height: 43px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 0 12px;
+                background: rgba(255, 255, 255, 0.05);
+                color: white;
+                font: inherit;
+                font-size: 13px;
+                font-weight: 700;
+                outline: none;
+            }
+
+            .filters-grid input:focus,
+            .filters-grid select:focus {
+                border-color: rgba(255, 98, 77, 0.52);
+            }
+
+            .filters-grid select option {
+                background: #111;
+                color: white;
+            }
+
+            .filter-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 16px;
+            }
+
+            .apply-btn,
+            .clear-btn,
+            .pagination button {
+                min-height: 42px;
+                border-radius: 999px;
+                padding: 0 18px;
+                font-family: inherit;
+                font-size: 13px;
+                font-weight: 900;
+                cursor: pointer;
+                transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            }
+
+            .apply-btn {
+                border: 0;
+                background: var(--red);
+                color: white;
+            }
+
+            .apply-btn:hover,
+            .pagination button:hover:not(:disabled) {
+                transform: translateY(-1px);
+            }
+
+            .apply-btn:hover {
+                background: var(--red-dark);
+            }
+
+            .clear-btn,
+            .pagination button {
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: rgba(255, 255, 255, 0.05);
+                color: white;
+            }
+
+            .clear-btn:hover,
+            .pagination button:hover:not(:disabled) {
+                border-color: rgba(255, 98, 77, 0.4);
+            }
+
+            .apply-btn:disabled,
+            .clear-btn:disabled,
+            .pagination button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .result-summary {
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                margin: 0 0 22px;
+                color: var(--gray);
+                font-size: 13px;
+                font-weight: 800;
+            }
+
+            .state-card {
+                min-height: 180px;
+                margin-bottom: 30px;
+                padding: 28px;
+                border: 1px solid rgba(255, 255, 255, 0.09);
+                border-radius: 20px;
+                display: grid;
+                place-items: center;
+                align-content: center;
+                gap: 8px;
+                background: rgba(13, 13, 13, 0.76);
+                text-align: center;
+            }
+
+            .state-card strong {
+                font-size: 20px;
+                font-weight: 900;
+            }
+
+            .state-card p {
+                max-width: 520px;
+                color: var(--gray);
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1.5;
+            }
+
             /* Grid de Shows */
             .shows-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
                 gap: 30px;
+            }
+
+            .pagination {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 14px;
+                margin-top: 30px;
+            }
+
+            .pagination span {
+                color: var(--gray);
+                font-size: 13px;
+                font-weight: 800;
             }
 
             /* Card de Show Individual */
@@ -557,6 +754,18 @@
                 }
 
                 .shows-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .filters-heading,
+                .filter-actions,
+                .result-summary,
+                .pagination {
+                    align-items: stretch;
+                    flex-direction: column;
+                }
+
+                .filters-grid {
                     grid-template-columns: 1fr;
                 }
             }

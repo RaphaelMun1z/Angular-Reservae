@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { CheckoutStore } from '../checkout/state/checkout.store';
+import { orderStatusLabel } from '../../shared/presentation-labels';
 
 @Component({
   selector: 'app-success',
@@ -50,5 +51,9 @@ export class Success implements OnInit {
       default:
         return 'Seu pedido foi recebido. Confira seu e-mail para acompanhar a confirmacao e o link de pagamento.';
     }
+  }
+
+  statusLabel(): string {
+    return orderStatusLabel(this.store.status());
   }
 }

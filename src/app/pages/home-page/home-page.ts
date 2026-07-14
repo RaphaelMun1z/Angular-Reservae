@@ -4,6 +4,7 @@ import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { EventListItem, EventStore } from '../events/state/event.store';
+import { eventStatusLabel } from '../../shared/presentation-labels';
 
 const DEFAULT_EVENT_IMAGE =
   'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=1400';
@@ -115,6 +116,10 @@ export class HomePage implements OnInit {
   protected eventLocation(event: EventListItem): string {
     const cityState = [event.city, event.state].filter(Boolean).join('/');
     return [event.venueName, cityState].filter(Boolean).join(' - ') || 'Local a confirmar';
+  }
+
+  protected statusLabel(status: string | null | undefined): string {
+    return eventStatusLabel(status);
   }
 
   protected retryEvents(): void {

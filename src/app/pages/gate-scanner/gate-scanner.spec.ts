@@ -27,7 +27,7 @@ describe('GateScanner', () => {
   it('should reject an empty manual code', () => {
     component.validateManualCode();
 
-    expect(component.store.error()).toContain('Informe o qrCodeHash');
+    expect(component.store.error()).toContain('codigo de validacao');
   });
 
   it('should surface missing gateId for manual validation', () => {
@@ -36,6 +36,6 @@ describe('GateScanner', () => {
 
     component.validateManualCode();
 
-    expect(component.store.error()).toContain('GateId');
+    expect(component.store.error()).toContain('Portao');
   });
 });

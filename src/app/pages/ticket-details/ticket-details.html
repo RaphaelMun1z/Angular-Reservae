@@ -1,50 +1,138 @@
 <app-site-navbar />
 
-<main class="single-ticket-view">
+<main class="ticket-page">
   <a routerLink="/meus-ingressos" class="back-link">
-    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
-    Voltar aos ingressos
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+    Meus ingressos
   </a>
+
+  <header class="page-header">
+    <span class="page-kicker">Carteira digital</span>
+    <h1>Detalhes do ingresso</h1>
+    <p>Confira as informacoes do seu ingresso e apresente o QR Code na entrada do evento.</p>
+  </header>
 
   @if (store.loading()) {
     <app-skeleton-loader variant="detail" />
   } @else if (store.error()) {
-    <p>{{ store.error() }}</p>
-  } @else if (store.selectedTicket(); as ticket) {
-    <section class="super-ticket">
-      <div class="ticket-header">
-        <span class="status-badge">{{ ticket.status }}</span>
-        <h1>{{ ticket.eventId || 'Evento nao informado' }}</h1>
-        <p class="st-ticket-id">Ingresso: {{ ticket.id }}</p>
-      </div>
-
-      <div class="ticket-info-grid">
-        <div>
-          <span>Setor</span>
-          <strong>{{ ticket.sectorId || 'nao informado' }}</strong>
-        </div>
-        <div>
-          <span>Tipo</span>
-          <strong>{{ ticket.ticketType || 'nao informado' }}</strong>
-        </div>
-        <div>
-          <span>Pedido</span>
-          <strong>{{ ticket.orderId || 'nao informado' }}</strong>
-        </div>
-        <div>
-          <span>Criado em</span>
-          <strong>{{ ticket.createdAt || 'nao informado' }}</strong>
-        </div>
-      </div>
-
-      <div class="qr-code-box">
-        <p>QR Code ainda nao esta disponivel nesta versao do frontend.</p>
-      </div>
-
-      <div class="ticket-actions">
-        <a class="btn-action btn-transfer" routerLink="/transferir-ingresso">Transferir</a>
-      </div>
+    <section class="empty-state">
+      <div class="empty-state__icon">!</div>
+      <h2>Ingresso indisponivel</h2>
+      <p>{{ store.error() }}</p>
+      <a routerLink="/meus-ingressos" class="button button--primary">Voltar aos ingressos</a>
     </section>
+  } @else if (store.selectedTicket(); as ticket) {
+    <div class="details-layout">
+      <section class="main-card" [class]="'ticket-status--' + statusTone(ticket.status)">
+        <div class="event-heading">
+          <div>
+            <span class="section-kicker">Evento</span>
+            <h2>{{ eventName(ticket.eventId) }}</h2>
+            <p>{{ eventMeta() }}</p>
+            @if (eventDetailsError()) {
+              <span class="load-note">Nao foi possivel carregar todos os detalhes do evento.</span>
+            }
+          </div>
+
+          <span class="status-badge">
+            <span class="status-dot" aria-hidden="true"></span>
+            {{ statusLabel(ticket.status) }}
+          </span>
+        </div>
+
+        <div class="info-grid" aria-label="Informacoes principais do ingresso">
+          <article class="info-card">
+            <span>Setor</span>
+            <strong>{{ sectorName(ticket.sectorId) }}</strong>
+          </article>
+          <article class="info-card">
+            <span>Tipo de ingresso</span>
+            <strong>{{ ticketTypeLabel(ticket.ticketType) }}</strong>
+          </article>
+          <article class="info-card">
+            <span>Data do evento</span>
+            <strong>{{ eventDateLabel() }}</strong>
+          </article>
+          <article class="info-card">
+            <span>Local</span>
+            <strong>{{ eventLocationLabel() }}</strong>
+          </article>
+        </div>
+
+        <section class="technical-card" aria-labelledby="technical-title">
+          <div class="technical-heading">
+            <span class="section-kicker">Informacoes do pedido</span>
+            <h3 id="technical-title">Dados secundarios</h3>
+          </div>
+
+          <dl class="technical-list">
+            <div>
+              <dt>ID do pedido</dt>
+              <dd>{{ ticket.orderId || 'Nao informado' }}</dd>
+            </div>
+            <div>
+              <dt>ID do ingresso</dt>
+              <dd>{{ ticket.id || 'Nao informado' }}</dd>
+            </div>
+            <div>
+              <dt>ID do evento</dt>
+              <dd>{{ ticket.eventId || 'Nao informado' }}</dd>
+            </div>
+            <div>
+              <dt>ID do setor</dt>
+              <dd>{{ ticket.sectorId || 'Nao informado' }}</dd>
+            </div>
+            <div>
+              <dt>Criado em</dt>
+              <dd>{{ formatDate(ticket.createdAt) }}</dd>
+            </div>
+          </dl>
+        </section>
+      </section>
+
+      <aside class="side-column">
+        <section class="qr-card" aria-labelledby="qr-title">
+          <span class="section-kicker">Entrada no evento</span>
+          <h2 id="qr-title">QR Code</h2>
+
+          @if (ticket.qrCodeHash) {
+            <div class="qr-box">
+              <qrcode
+                [qrdata]="ticket.qrCodeHash"
+                [width]="220"
+                [margin]="2"
+                [errorCorrectionLevel]="'M'"
+                [elementType]="'svg'"
+                [ariaLabel]="'QR Code do ingresso'"
+                [alt]="'QR Code do ingresso'"
+              />
+            </div>
+            <p class="qr-description">Apresente este QR Code na entrada para validacao do ingresso.</p>
+            <code class="qr-hash">{{ ticket.qrCodeHash }}</code>
+          } @else {
+            <div class="qr-empty">
+              <div class="qr-empty__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z"></path><path d="M14 14h3v3h-3zM19 14h2M19 18v3M14 19h3"></path></svg>
+              </div>
+              <strong>QR Code ainda nao disponivel</strong>
+              <p>O codigo de validacao deste ingresso aparecera aqui quando estiver pronto.</p>
+            </div>
+          }
+        </section>
+
+        <section class="actions-card" aria-label="Acoes do ingresso">
+          @if (isTransferable(ticket.status)) {
+            <a routerLink="/transferir-ingresso" class="button button--primary">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M21 3l-9 9"></path><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"></path></svg>
+              Transferir ingresso
+            </a>
+          } @else {
+            <p class="transfer-note">{{ transferRestrictionMessage(ticket.status) }}</p>
+          }
+          <a routerLink="/meus-ingressos" class="button button--secondary">Voltar para meus ingressos</a>
+        </section>
+      </aside>
+    </div>
   }
 </main>
 

@@ -16,12 +16,36 @@
   } @else {
     <div class="cart-grid">
       <section class="cart-items" aria-label="Itens do carrinho">
+        @if (detailsLoading()) {
+          <div class="details-state">Carregando detalhes do evento...</div>
+        }
+        @if (detailsError()) {
+          <div class="details-state is-error">{{ detailsError() }} Alguns dados podem aparecer de forma resumida.</div>
+        }
+
         @for (item of checkoutStore.items(); track item.sectorId + item.ticketType) {
           <article class="cart-item">
-            <div class="item-copy">
-              <span class="item-type">{{ ticketTypeLabel(item.ticketType) }}</span>
-              <h2>{{ item.sectorName }}</h2>
-              <p>{{ formatCurrency(item.unitPrice) }} por ingresso</p>
+            <div class="item-main">
+              <div class="item-event">
+                <span class="item-kicker">Evento</span>
+                <h2>{{ eventName() }}</h2>
+                <p>{{ eventMeta() }}</p>
+              </div>
+
+              <div class="item-details">
+                <span>
+                  <small>Setor</small>
+                  <strong>{{ sectorName(item) }}</strong>
+                </span>
+                <span>
+                  <small>Tipo</small>
+                  <strong class="item-type">{{ ticketTypeLabel(item.ticketType) }}</strong>
+                </span>
+                <span>
+                  <small>Valor unitario</small>
+                  <strong>{{ formatCurrency(item.unitPrice) }}</strong>
+                </span>
+              </div>
             </div>
 
             <div class="qty-control" aria-label="Quantidade">

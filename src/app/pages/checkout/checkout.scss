@@ -172,7 +172,7 @@
             .checkout-container {
                 position: relative;
                 z-index: 10;
-                max-width: 1200px;
+                max-width: 1280px;
                 margin: 0 auto;
                 padding: 20px 48px 60px 48px;
             }
@@ -197,13 +197,13 @@
 
             .checkout-grid {
                 display: grid;
-                grid-template-columns: 1.5fr 1fr;
+                grid-template-columns: minmax(0, 0.85fr) minmax(620px, 1.15fr);
                 gap: 40px;
                 align-items: start;
             }
 
             /* =========================================
-               Checkout Left: Formulário e Pagamento
+               Checkout Left: Revisao
                ========================================= */
             .glass-box {
                 background: rgba(15, 15, 15, 0.6);
@@ -231,108 +231,49 @@
                 fill: none;
             }
 
-            .form-grid {
+            .account-readonly {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-                margin-bottom: 30px;
+                gap: 12px;
+                margin-bottom: 34px;
             }
 
-            .form-group.full {
-                grid-column: 1 / -1;
-            }
-
-            .input-field {
-                width: 100%;
+            .account-field {
                 padding: 14px 16px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                display: grid;
+                gap: 5px;
                 background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                color: white;
-                font-family: inherit;
-                font-size: 14px;
-                outline: none;
-                transition: border 0.2s, background 0.2s;
             }
 
-            .input-field:focus {
-                border-color: var(--red);
-                background: rgba(255, 255, 255, 0.06);
-            }
-
-            .input-field::placeholder {
-                color: #666;
-            }
-
-            /* Abas de Pagamento */
-            .payment-tabs {
-                display: flex;
-                gap: 10px;
-                margin-bottom: 25px;
-            }
-
-            .pay-tab {
-                flex: 1;
-                padding: 14px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
+            .account-field span,
+            .account-note {
                 color: var(--gray);
-                font-weight: 600;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 8px;
+                font-size: 12px;
+                font-weight: 800;
             }
 
-            .pay-tab svg {
-                width: 18px;
-                height: 18px;
-                stroke: currentColor;
-                stroke-width: 2;
-                fill: none;
+            .account-field span {
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
             }
 
-            .pay-tab.active {
-                background: rgba(255, 98, 77, 0.1);
-                border-color: var(--red);
+            .account-field strong {
+                min-width: 0;
+                overflow: hidden;
                 color: white;
-            }
-            
-            .pay-tab.active svg {
-                stroke: var(--red);
-            }
-
-            .payment-content {
-                display: none;
+                font-size: 14px;
+                font-weight: 900;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
-            .payment-content.active {
-                display: block;
-                animation: fadeIn 0.3s ease forwards;
-            }
-
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(5px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-
-            .pix-box {
-                text-align: center;
-                padding: 20px;
-                background: rgba(255, 255, 255, 0.02);
+            .account-note {
+                padding: 12px 14px;
+                border: 1px solid rgba(255, 98, 77, 0.18);
                 border-radius: 12px;
-                border: 1px dashed rgba(255, 255, 255, 0.15);
-            }
-
-            .pix-box p {
-                font-size: 13px;
-                color: var(--gray);
-                margin-bottom: 15px;
-                line-height: 1.5;
+                background: rgba(255, 98, 77, 0.07);
+                line-height: 1.45;
             }
 
             /* =========================================
@@ -383,40 +324,42 @@
                 font-weight: 900;
             }
 
-            .timer-banner {
-                background: rgba(255, 98, 77, 0.1);
-                border: 1px solid rgba(255, 98, 77, 0.2);
-                color: white;
-                padding: 13px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
+            .summary-event {
                 margin-bottom: 18px;
+                padding: 14px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 14px;
+                display: grid;
+                gap: 5px;
+                background: rgba(255, 255, 255, 0.035);
             }
 
-            .timer-banner svg {
-                width: 20px;
-                height: 20px;
-                stroke: var(--red);
-                fill: none;
-                stroke-width: 2;
-                flex-shrink: 0;
+            .summary-event span {
+                color: var(--red);
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 1px;
+                text-transform: uppercase;
             }
 
-            .timer-text {
+            .summary-event strong {
+                color: white;
+                font-size: 16px;
+                font-weight: 900;
+                line-height: 1.25;
+                overflow-wrap: anywhere;
+            }
+
+            .summary-event p {
+                color: var(--gray);
                 font-size: 13px;
                 font-weight: 700;
-                line-height: 1.4;
-                color: var(--gray);
+                line-height: 1.45;
+                overflow-wrap: anywhere;
             }
 
-            .timer-text strong {
-                display: block;
-                color: var(--red);
-                font-size: 15px;
-                font-variant-numeric: tabular-nums;
-                text-transform: uppercase;
+            .summary-event .summary-event-error {
+                color: #ffb2a8;
             }
 
             .order-summary {
@@ -446,123 +389,64 @@
             }
 
             .summary-items {
-                display: grid;
-                gap: 10px;
+                overflow-x: auto;
             }
 
-            .summary-item {
-                min-width: 0;
-                padding: 14px;
+            .summary-table {
+                width: 100%;
+                min-width: 620px;
+                border-collapse: separate;
+                border-spacing: 0;
                 border: 1px solid rgba(255, 255, 255, 0.08);
-                border-radius: 16px;
-                display: grid;
-                gap: 12px;
+                border-radius: 14px;
                 background: rgba(255, 255, 255, 0.035);
+                overflow: hidden;
             }
 
-            .summary-item-main {
-                min-width: 0;
-                display: grid;
-                gap: 8px;
+            .summary-table th,
+            .summary-table td {
+                padding: 12px 14px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+                color: white;
+                font-size: 13px;
+                font-weight: 800;
+                text-align: left;
+                vertical-align: middle;
             }
 
-            .summary-item-top,
-            .summary-item-meta,
-            .summary-item-actions,
+            .summary-table th {
+                background: rgba(0, 0, 0, 0.22);
+                color: var(--gray);
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 0.8px;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .summary-table tbody tr:last-child td {
+                border-bottom: 0;
+            }
+
+            .summary-table td:nth-child(3),
+            .summary-table td:nth-child(4),
+            .summary-table td:nth-child(5) {
+                font-variant-numeric: tabular-nums;
+                white-space: nowrap;
+            }
+
+            .summary-table td:first-child {
+                max-width: 220px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
             .summary-row {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 12px;
-            }
-
-            .summary-item-top strong {
-                min-width: 0;
-                overflow: hidden;
-                color: white;
-                font-size: 15px;
-                font-weight: 900;
-                line-height: 1.2;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .summary-item-top span {
-                flex-shrink: 0;
-                color: white;
-                font-size: 14px;
-                font-weight: 900;
-                font-variant-numeric: tabular-nums;
-            }
-
-            .summary-item-meta span {
-                color: var(--gray);
-                font-size: 12px;
-                font-weight: 700;
-            }
-
-            .quantity-stepper {
-                min-height: 38px;
-                padding: 4px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 999px;
-                display: flex;
-                align-items: center;
-                gap: 7px;
-                background: rgba(0, 0, 0, 0.26);
-            }
-
-            .quantity-stepper button {
-                width: 30px;
-                height: 30px;
-                border: 0;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(255, 255, 255, 0.08);
-                color: white;
-                font: inherit;
-                font-size: 18px;
-                font-weight: 900;
-                cursor: pointer;
-            }
-
-            .quantity-stepper button:hover {
-                background: rgba(255, 98, 77, 0.18);
-            }
-
-            .quantity-stepper button:disabled {
-                color: #5f5f5f;
-                cursor: not-allowed;
-                background: transparent;
-            }
-
-            .quantity-stepper span {
-                width: 22px;
-                color: white;
-                font-size: 14px;
-                font-weight: 900;
-                text-align: center;
-                font-variant-numeric: tabular-nums;
-            }
-
-            .remove-item-btn {
-                min-height: 34px;
-                border: 0;
-                border-radius: 999px;
-                padding: 0 12px;
-                background: rgba(255, 255, 255, 0.06);
-                color: var(--gray);
-                font: inherit;
-                font-size: 12px;
-                font-weight: 900;
-                cursor: pointer;
-            }
-
-            .remove-item-btn:hover {
-                background: rgba(255, 98, 77, 0.12);
-                color: #ffb2a8;
             }
 
             .summary-totals {
@@ -827,7 +711,6 @@
                 .nav-center { display: none; }
                 .checkout-container { padding: 20px; }
                 .glass-box { padding: 25px; }
-                .form-grid { grid-template-columns: 1fr; }
                 
                 #login-modal { display: flex; }
                 #login-modal .modal-content {

@@ -74,7 +74,7 @@ export class ScannerStore {
     const gateId = this._gateId();
 
     if (!gateId) {
-      this._error.set('GateId nao informado para validar o ingresso.');
+      this._error.set('Portao nao informado para validar o ingresso.');
       return;
     }
 

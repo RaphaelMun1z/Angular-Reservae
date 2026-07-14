@@ -6,6 +6,7 @@ import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader
 import { CheckoutStore } from '../checkout/state/checkout.store';
 import { EventSector, EventStore } from '../events/state/event.store';
 import { TicketType } from '../../core/models/event-catalog.model';
+import { ticketTypeLabel } from '../../shared/presentation-labels';
 
 @Component({
   selector: 'app-sector-selection',
@@ -117,7 +118,7 @@ export class SectorSelection implements OnInit {
   }
 
   ticketTypeLabel(ticketType: TicketType): string {
-    return ticketType === 'HALF_TICKET_PRICE' ? 'Meia' : 'Inteira';
+    return ticketTypeLabel(ticketType);
   }
 
   removeCartItem(sectorId: string, ticketType: TicketType): void {

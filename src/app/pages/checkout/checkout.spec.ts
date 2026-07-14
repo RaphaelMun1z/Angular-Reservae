@@ -83,6 +83,7 @@ describe('Checkout', () => {
     component.payNow();
 
     expect(api.calls).toBe(1);
+    expect(component.store.totalTickets()).toBe(0);
     expect(navigateSpy).toHaveBeenCalledWith('/order-created');
   });
 

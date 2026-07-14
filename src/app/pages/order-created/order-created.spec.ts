@@ -23,7 +23,7 @@ describe('OrderCreated', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should label awaiting payment orders', () => {
+  it('should label awaiting payment orders without payment link as reservation confirmed', () => {
     component.store.setOrder({
       id: 'order-1',
       eventId: 'event-1',
@@ -33,7 +33,20 @@ describe('OrderCreated', () => {
       items: [],
     });
 
-    expect(component.orderStatusLabel()).toBe('Aguardando pagamento');
+    expect(component.orderStatusLabel()).toBe('Reserva confirmada');
+  });
+
+  it('should label awaiting payment orders with payment link as payment available', () => {
+    component.store.setOrder({
+      id: 'order-1',
+      eventId: 'event-1',
+      status: 'AWAITING_PAYMENT',
+      totalAmount: 10,
+      paymentUrl: 'https://pay.test/order-1',
+      items: [],
+    });
+
+    expect(component.orderStatusLabel()).toBe('Pagamento disponivel');
   });
 
   it('should retry when orderId exists', () => {

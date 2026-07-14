@@ -6,22 +6,135 @@
     <p class="page-subtitle">Selecione uma data e garanta seu ingresso exclusivo.</p>
   </header>
 
-  <div class="filters">
-    <button class="filter-btn" [class.active]="!store.filters().city" type="button" (click)="filterCity(null)">Todos</button>
-    <button class="filter-btn" [class.active]="store.filters().city === 'Sao Paulo'" type="button" (click)="filterCity('Sao Paulo')">Sao Paulo</button>
-    <button class="filter-btn" [class.active]="store.filters().city === 'Rio de Janeiro'" type="button" (click)="filterCity('Rio de Janeiro')">Rio de Janeiro</button>
-    <button class="filter-btn" [class.active]="store.filters().city === 'Curitiba'" type="button" (click)="filterCity('Curitiba')">Curitiba</button>
+  <section class="filters-card" aria-label="Filtros de eventos">
+    <div class="filters-heading">
+      <div>
+        <span class="filters-kicker">Filtros</span>
+        <h2>Encontre o evento ideal</h2>
+      </div>
+      @if (hasActiveFilters()) {
+        <span class="active-filter-pill">Filtros ativos</span>
+      }
+    </div>
+
+    <div class="quick-filters" aria-label="Filtros rapidos por cidade">
+      <button class="filter-btn" [class.active]="!store.filters().city" type="button" (click)="filterCity(null)">Todos</button>
+      @for (city of quickCities; track city) {
+        <button class="filter-btn" [class.active]="store.filters().city === city" type="button" (click)="filterCity(city)">
+          {{ city }}
+        </button>
+      }
+    </div>
+
+    <div class="filters-grid">
+      <label>
+        <span>Nome do evento</span>
+        <input
+          type="search"
+          placeholder="Buscar por nome"
+          [ngModel]="draftFilters().search"
+          (ngModelChange)="updateDraft('search', $event)"
+        />
+      </label>
+
+      <label>
+        <span>Cidade</span>
+        <input
+          type="text"
+          placeholder="Ex.: Sao Paulo"
+          [ngModel]="draftFilters().city"
+          (ngModelChange)="updateDraft('city', $event)"
+        />
+      </label>
+
+      <label>
+        <span>Estado/UF</span>
+        <input
+          type="text"
+          maxlength="2"
+          placeholder="SP"
+          [ngModel]="draftFilters().state"
+          (ngModelChange)="updateDraft('state', $event)"
+        />
+      </label>
+
+      <label>
+        <span>Status</span>
+        <select [ngModel]="draftFilters().status" (ngModelChange)="updateDraft('status', $event)">
+          <option value="">Todos</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ statusLabel(status) }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>Data inicial</span>
+        <input
+          type="date"
+          [ngModel]="draftFilters().startDate"
+          (ngModelChange)="updateDraft('startDate', $event)"
+        />
+      </label>
+
+      <label>
+        <span>Data final</span>
+        <input
+          type="date"
+          [ngModel]="draftFilters().endDate"
+          (ngModelChange)="updateDraft('endDate', $event)"
+        />
+      </label>
+
+      <label>
+        <span>Ordenacao</span>
+        <select [ngModel]="draftFilters().sort" (ngModelChange)="updateDraft('sort', $event)">
+          @for (option of sortOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>Itens por pagina</span>
+        <select [ngModel]="store.pageSize()" (ngModelChange)="updatePageSize($event)">
+          @for (size of pageSizes; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <div class="filter-actions">
+      <button class="apply-btn" type="button" [disabled]="store.loading()" (click)="applyFilters()">Aplicar filtros</button>
+      <button class="clear-btn" type="button" [disabled]="store.loading()" (click)="clearFilters()">Limpar filtros</button>
+    </div>
+  </section>
+
+  <div class="result-summary">
+    @if (store.loading()) {
+      <span>Carregando eventos...</span>
+    } @else {
+      <span>{{ store.totalElements() }} evento(s) encontrados</span>
+    }
+    <span>Pagina {{ store.currentUiPage() }} de {{ store.totalPages() || 1 }}</span>
   </div>
 
   @if (store.loading()) {
     <app-skeleton-loader variant="cards" [count]="3" />
   } @else if (store.error()) {
-    <p class="page-subtitle">{{ store.error() }}</p>
+    <section class="state-card">
+      <strong>Nao foi possivel carregar eventos</strong>
+      <p>{{ store.error() }}</p>
+    </section>
   } @else if (store.empty()) {
-    <p class="page-subtitle">Nenhum evento encontrado para os filtros selecionados.</p>
+    <section class="state-card">
+      <strong>Nenhum evento encontrado</strong>
+      <p>Tente ajustar os filtros ou limpar a busca para ver todos os eventos disponiveis.</p>
+    </section>
   }
 
-  @if (!store.loading()) {
+  @if (!store.loading() && !store.error() && !store.empty()) {
     <section class="shows-grid">
       @for (event of store.events(); track event.id) {
         <article class="show-card">
@@ -30,7 +143,7 @@
               src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=900"
               [alt]="event.name"
             />
-            <span class="sc-badge">{{ event.status || 'SHOW' }}</span>
+            <span class="sc-badge">{{ statusLabel(event.status) }}</span>
           </div>
           <div class="sc-content">
             <div class="sc-date">{{ formatDate(event.date) }}</div>
@@ -50,6 +163,12 @@
         </article>
       }
     </section>
+
+    <nav class="pagination" aria-label="Paginacao de eventos">
+      <button type="button" [disabled]="store.first() || store.loading()" (click)="previousPage()">Anterior</button>
+      <span>Pagina {{ store.currentUiPage() }} de {{ store.totalPages() || 1 }}</span>
+      <button type="button" [disabled]="store.last() || store.loading()" (click)="nextPage()">Proxima</button>
+    </nav>
   }
 </main>
 

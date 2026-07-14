@@ -212,7 +212,13 @@ export class CheckoutStore {
         })),
       })
       .pipe(
-        tap((order) => this.setOrder(order)),
+        tap((order) => {
+          this.setOrder(order);
+
+          if (order.id) {
+            this.clearSubmittedCart();
+          }
+        }),
         catchError((error: unknown) => {
           this._error.set(this.errorMessage(error, 'Nao foi possivel iniciar o checkout.'));
           return of(null);
@@ -368,6 +374,11 @@ export class CheckoutStore {
       eventId: this._eventId(),
       items: items.map((item) => ({ ...item })),
     });
+  }
+
+  private clearSubmittedCart(): void {
+    this._items.set([]);
+    this.storage.remove(CHECKOUT_CART_KEY);
   }
 
   private isCheckoutRecoveryReference(value: CheckoutRecoveryReference): value is CheckoutRecoveryReference {

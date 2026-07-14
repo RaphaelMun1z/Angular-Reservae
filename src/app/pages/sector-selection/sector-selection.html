@@ -64,7 +64,7 @@
       @if (!eventStore.loading() && eventStore.sectors().length === 0) {
         <div class="empty-panel">
           <strong>Nenhum setor disponivel</strong>
-          <span>Abra esta pagina com um eventId valido para consultar setores.</span>
+          <span>Abra esta pagina a partir de um evento valido para consultar setores.</span>
         </div>
       }
     </section>
@@ -151,30 +151,34 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"></path></svg>
   </button>
 
-  <div class="cart-preview">
-    @for (item of checkoutStore.items(); track item.sectorId + item.ticketType) {
-      <div class="cart-item">
-        <span>
-          {{ item.quantity }}x {{ item.sectorName }}
-          <small>{{ ticketTypeLabel(item.ticketType) }}</small>
-        </span>
-        <button type="button" aria-label="Remover item" (click)="removeCartItem(item.sectorId, item.ticketType)">x</button>
-      </div>
-    }
-  </div>
-
   @if (cartExpanded()) {
     <div class="cart-details" aria-label="Detalhes dos ingressos selecionados">
-      @for (item of checkoutStore.items(); track item.sectorId + item.ticketType) {
-        <div class="cart-detail-row">
-          <div>
-            <strong>{{ item.sectorName }}</strong>
-            <span>{{ ticketTypeLabel(item.ticketType) }} - {{ item.quantity }} ingresso(s)</span>
-          </div>
-          <span>{{ formatCurrency(item.unitPrice * item.quantity) }}</span>
-          <button type="button" aria-label="Remover item" (click)="removeCartItem(item.sectorId, item.ticketType)">x</button>
-        </div>
-      }
+      <table class="cart-details-table">
+        <thead>
+          <tr>
+            <th scope="col">Setor</th>
+            <th scope="col">Tipo do ingresso</th>
+            <th scope="col">Quantidade</th>
+            <th scope="col">Valor unitario</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Acao</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of checkoutStore.items(); track item.sectorId + item.ticketType) {
+            <tr>
+              <td>{{ item.sectorName }}</td>
+              <td>{{ ticketTypeLabel(item.ticketType) }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ formatCurrency(item.unitPrice) }}</td>
+              <td>{{ formatCurrency(item.unitPrice * item.quantity) }}</td>
+              <td>
+                <button type="button" aria-label="Remover item" (click)="removeCartItem(item.sectorId, item.ticketType)">x</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   }
 

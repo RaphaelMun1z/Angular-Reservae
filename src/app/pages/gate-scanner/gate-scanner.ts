@@ -1,8 +1,11 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AdminShell } from '../../components/admin-shell/admin-shell';
 import { ScannerStore } from './state/scanner.store';
+import { accessResultLabel } from '../../shared/presentation-labels';
+import { EventDisplayDataService } from '../../shared/event-display-data.service';
 
 @Component({
   selector: 'app-gate-scanner',
@@ -13,16 +16,31 @@ import { ScannerStore } from './state/scanner.store';
 export class GateScanner implements OnInit, OnDestroy {
   readonly store = inject(ScannerStore);
   readonly eventId = signal<string | null>(null);
+  readonly eventName = signal('Evento nao informado');
   readonly qrCodeHash = signal('');
   private readonly route = inject(ActivatedRoute);
+  private readonly eventDisplayData = inject(EventDisplayDataService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
     this.store.startCamera();
   }
 
   ngOnInit(): void {
-    this.eventId.set(this.route.snapshot.paramMap.get('eventId'));
+    const eventId = this.route.snapshot.paramMap.get('eventId');
+    this.eventId.set(eventId);
     this.store.setGateId(this.route.snapshot.queryParamMap.get('gateId'));
+
+    if (eventId) {
+      this.eventName.set('Carregando evento...');
+      this.eventDisplayData
+        .getEventData(eventId)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (eventData) => this.eventName.set(eventData.event?.name || 'Evento nao identificado'),
+          error: () => this.eventName.set('Evento nao identificado'),
+        });
+    }
   }
 
   ngOnDestroy(): void {
@@ -39,7 +57,7 @@ export class GateScanner implements OnInit, OnDestroy {
     const code = this.qrCodeHash().trim();
 
     if (!code) {
-      this.store.setError('Informe o qrCodeHash para validar.');
+      this.store.setError('Informe o codigo de validacao para validar.');
       return;
     }
 
@@ -51,17 +69,6 @@ export class GateScanner implements OnInit, OnDestroy {
   }
 
   resultMessage(status: string | null | undefined): string {
-    switch (status) {
-      case 'GRANTED':
-        return 'Acesso permitido';
-      case 'DENIED_USED':
-        return 'Ingresso ja utilizado';
-      case 'DENIED_REVOKED':
-        return 'Ingresso revogado';
-      case 'DENIED_INVALID':
-        return 'Ingresso invalido';
-      default:
-        return 'Aguardando validacao';
-    }
+    return accessResultLabel(status);
   }
 }

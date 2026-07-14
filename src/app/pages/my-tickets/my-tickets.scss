@@ -298,18 +298,26 @@
   overflow-wrap: anywhere;
 }
 
-.ticket-type {
+.ticket-event-meta {
   margin-bottom: 18px;
 
-  color: var(--red);
+  color: var(--gray);
 
   font-size: 12px;
 
-  font-weight: 900;
+  font-weight: 700;
 
-  text-transform: uppercase;
+  line-height: 1.5;
 
-  letter-spacing: 1px;
+  overflow-wrap: anywhere;
+}
+
+.ticket-load-note {
+  margin: -10px 0 16px;
+  color: #ffb2a8;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .ticket-details {

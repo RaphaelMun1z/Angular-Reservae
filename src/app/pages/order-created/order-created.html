@@ -1,99 +1,188 @@
 <app-site-navbar />
 
-<main class="order-created-page">
-  <section class="confirmation-layout" aria-labelledby="order-created-title">
-    <div class="confirmation-copy-panel">
+<main class="order-created-page" [class.is-success]="isPaymentConfirmed()">
+  <section class="order-shell" aria-labelledby="order-created-title">
+    <div
+      class="status-panel"
+      [class.tone-info]="statusTone() === 'info'"
+      [class.tone-warning]="statusTone() === 'warning'"
+      [class.tone-success]="statusTone() === 'success'"
+      [class.tone-danger]="statusTone() === 'danger'"
+    >
       <div class="status-pill">
-        <i class="ph-bold ph-check-circle"></i>
-        Pedido criado
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="statusIconPath()"></path></svg>
+        {{ orderStatusLabel() }}
       </div>
 
-      <h1 id="order-created-title">Seu pedido foi reservado</h1>
-      <p class="lead">
-        A Reservae gerou seu pedido e enviou o link de pagamento para o e-mail cadastrado.
-        Abra a mensagem, toque no link seguro e finalize a compra em ate 30 minutos para
-        manter sua reserva.
-      </p>
+      <h1 id="order-created-title">
+        @if (isPaymentConfirmed()) {
+          Pagamento confirmado!
+        } @else {
+          Acompanhe seu pedido
+        }
+      </h1>
+      <p class="lead">{{ orderStatusDescription() }}</p>
 
-      <div class="reservation-alert">
-        <i class="ph-bold ph-clock-countdown"></i>
-        <span>Se o pagamento nao for realizado em 30 minutos, a reserva sera cancelada automaticamente.</span>
-      </div>
+      @if (store.loading()) {
+        <div class="status-loading">
+          <app-skeleton-loader variant="list" [count]="1" />
+        </div>
+      }
 
-      <div class="timeline" aria-label="Linha do tempo do pedido">
-        <div class="timeline-item active">
-          <span>1</span>
-          <div>
-            <strong>Pedido registrado</strong>
-            <p>Guardamos sua selecao enquanto o pagamento fica pendente.</p>
-          </div>
+      @if (store.error()) {
+        <div class="status-message is-error">
+          {{ store.error() }}
         </div>
-        <div class="timeline-item active">
-          <span>2</span>
-          <div>
-            <strong>Link enviado por e-mail</strong>
-            <p>Procure pela mensagem na entrada, spam, lixo eletronico ou promocoes.</p>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <span>3</span>
-          <div>
-            <strong>Prazo de 30 minutos</strong>
-            <p>Conclua o pagamento antes do prazo para confirmar seus ingressos.</p>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <span>4</span>
-          <div>
-            <strong>Ingressos liberados</strong>
-            <p>Apos a confirmacao, acompanhe tudo em Meus ingressos.</p>
-          </div>
-        </div>
-      </div>
+      }
 
-      <div class="confirmation-actions">
-        <a routerLink="/meus-ingressos" class="primary-action">
-          <i class="ph-bold ph-ticket"></i>
-          Meus ingressos
-        </a>
-        <a routerLink="/suporte" class="secondary-action">
-          <i class="ph-bold ph-chat-circle-text"></i>
-          Falar com suporte
-        </a>
+      @if (store.paymentUrl() && !isPaymentConfirmed()) {
+        <div class="status-message is-payment">
+          <strong>Link de pagamento disponivel</strong>
+          <span>Finalize pelo ambiente seguro para confirmar seus ingressos.</span>
+        </div>
+      }
+
+      <div class="status-actions" aria-label="Acoes do pedido">
+        @if (store.paymentUrl() && store.status() !== 'CONFIRMED' && !store.failed()) {
+          <a class="primary-action" [href]="store.paymentUrl()" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg>
+            Pagar agora
+          </a>
+        } @else if (store.status() === 'CONFIRMED') {
+          <a routerLink="/meus-ingressos" class="primary-action">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"></path><path d="M13 5v14"></path></svg>
+            Ver meus ingressos
+          </a>
+        } @else if (store.failed()) {
+          <a routerLink="/shows" class="primary-action">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+            Escolher ingressos novamente
+          </a>
+        } @else {
+          <button type="button" class="primary-action" [disabled]="store.loading()" (click)="retry()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path></svg>
+            Atualizar status
+          </button>
+        }
+
+        @if (store.failed()) {
+          <button type="button" class="secondary-action" [disabled]="store.loading()" (click)="retry()">
+            Atualizar status
+          </button>
+        } @else if (isPaymentConfirmed()) {
+          <a routerLink="/shows" class="secondary-action">Voltar aos eventos</a>
+        } @else if (store.status() !== 'CONFIRMED') {
+          <a routerLink="/shows" class="secondary-action">Voltar para eventos</a>
+        }
       </div>
     </div>
 
-    <aside class="order-card" aria-label="Resumo do pedido criado">
-      <div class="mail-badge" aria-hidden="true">
-        <i class="ph-bold ph-envelope-simple"></i>
+    <aside class="summary-panel" aria-label="Dados principais do pedido">
+      <div class="summary-header">
+        <div>
+          <span class="summary-kicker">Pedido</span>
+          <h2>Resumo atual</h2>
+        </div>
+        <span
+          class="summary-status"
+          [class.tone-info]="statusTone() === 'info'"
+          [class.tone-warning]="statusTone() === 'warning'"
+          [class.tone-success]="statusTone() === 'success'"
+          [class.tone-danger]="statusTone() === 'danger'"
+        >
+          {{ orderStatusLabel() }}
+        </span>
       </div>
 
-      <h2>Confira seu e-mail</h2>
-      <p class="card-copy">
-        Nao encontrou a mensagem? Veja tambem spam, lixo eletronico e promocoes. Sua reserva
-        expira em 30 minutos se o pagamento nao for concluido.
-      </p>
-
-      <div class="order-summary">
-        @if (store.loading()) {
-          <app-skeleton-loader variant="list" [count]="1" />
-        } @else {
+      <dl class="order-facts">
+        <div class="order-facts__event">
+          <dt>Evento</dt>
+          <dd>{{ eventName() }}</dd>
+          <small>{{ eventMeta() }}</small>
+          @if (eventDetailsError()) {
+            <small class="event-load-note">Nao foi possivel carregar todos os detalhes do evento.</small>
+          }
+        </div>
+        <div>
+          <dt>ID do pedido</dt>
+          <dd>{{ store.orderId() || 'Nao identificado' }}</dd>
+        </div>
+        <div>
+          <dt>Status atual</dt>
+          <dd>{{ orderStatusLabel() }}</dd>
+        </div>
+        <div>
+          <dt>Total</dt>
+          <dd>{{ formatCurrency(store.totalAmount() ?? store.visualSubtotal()) }}</dd>
+        </div>
+        @if (store.paymentUrl()) {
           <div>
-            <span>Numero do pedido</span>
-            <strong>{{ store.orderId() || 'nao identificado' }}</strong>
+            <dt>Link de pagamento</dt>
+            <dd><a [href]="store.paymentUrl()" target="_blank" rel="noopener noreferrer">Abrir link seguro</a></dd>
           </div>
-          <div>
-            <span>Status</span>
-            <strong>{{ orderStatusLabel() }}</strong>
-          </div>
-          <p class="status-description">{{ orderStatusDescription() }}</p>
         }
+      </dl>
 
-        @if (store.error()) {
-          <p class="order-error">{{ store.error() }}</p>
-        }
-      </div>
+      @if (displayItems().length > 0) {
+        <div class="items-table-wrap">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th scope="col">Setor</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Qtd.</th>
+                <th scope="col">Unitario</th>
+                <th scope="col">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of displayItems(); track $index) {
+                <tr>
+                  <td>{{ item.sector }}</td>
+                  <td>{{ item.ticketType }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ formatCurrency(item.unitPrice) }}</td>
+                  <td>{{ formatCurrency(item.subtotal) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
     </aside>
+
+    <section class="timeline-panel" aria-label="Linha do tempo do pedido">
+      <div class="timeline-heading">
+        <span class="summary-kicker">Fluxo</span>
+        <h2>Etapas do pedido</h2>
+      </div>
+
+      <div class="timeline">
+        @for (step of timelineSteps(); track step.key) {
+          <article
+            class="timeline-item"
+            [class.is-done]="step.state === 'done'"
+            [class.is-current]="step.state === 'current'"
+            [class.is-pending]="step.state === 'pending'"
+            [class.is-error]="step.state === 'error'"
+          >
+            <span class="timeline-marker">
+              @if (step.state === 'done') {
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              } @else if (step.state === 'error') {
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+              } @else {
+                {{ $index + 1 }}
+              }
+            </span>
+            <div>
+              <strong>{{ step.title }}</strong>
+              <p>{{ step.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
   </section>
 </main>
 

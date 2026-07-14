@@ -47,6 +47,7 @@ describe('CheckoutStore', () => {
   let api: FakeCheckoutApi;
 
   beforeEach(() => {
+    localStorage.clear();
     sessionStorage.clear();
     api = new FakeCheckoutApi();
 
@@ -126,6 +127,9 @@ describe('CheckoutStore', () => {
 
     expect(store.orderId()).toBe('order-1');
     expect(store.status()).toBe('AWAITING_PAYMENT');
+    expect(store.hasItems()).toBe(false);
+    expect(store.totalTickets()).toBe(0);
+    expect(localStorage.getItem('reservae.checkout.cart')).toBeNull();
     expect(api.lastRequest).toEqual({
       userId: 'user-1',
       eventId: 'event-1',
@@ -177,6 +181,7 @@ describe('CheckoutStore', () => {
     store.startCheckout();
 
     expect(store.error()).toContain('offline');
+    expect(store.hasItems()).toBe(true);
   });
 
   it('should restore a pending order reference', () => {

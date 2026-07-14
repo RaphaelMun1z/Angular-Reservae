@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 import {
   EventDetailsResponseDTO,
   EventSummaryResponse,
@@ -29,6 +29,7 @@ export class HttpEventApi implements EventApi {
 
   private readonly http = inject(HttpClient);
   private readonly apiUrl = inject(ApiUrlService);
+  private readonly eventDetailsCache = new Map<string, Observable<EventDetailsResponseDTO>>();
 
   listEvents(filters: EventFilters): Observable<EventListResponse> {
     return this.http
@@ -39,18 +40,14 @@ export class HttpEventApi implements EventApi {
   }
 
   getEvent(eventId: string): Observable<EventListItem> {
-    return this.http
-      .get<EventDetailsResponseDTO>(this.apiUrl.url(`${EVENT_CATALOG_EVENTS_PATH}/${eventId}`))
-      .pipe(map((event) => this.toEventListItem(event)));
+    return this.getEventDetails(eventId).pipe(map((event) => this.toEventListItem(event)));
   }
 
   listSectors(eventId: string): Observable<readonly EventSector[]> {
-    return this.http
-      .get<EventDetailsResponseDTO>(this.apiUrl.url(`${EVENT_CATALOG_EVENTS_PATH}/${eventId}`))
-      .pipe(
-        map((event) => (event.sectorsDetails ?? []).map((sector) => this.toEventSector(sector))),
-        switchMap((sectors) => this.enrichSectorsWithAvailability(eventId, sectors)),
-      );
+    return this.getEventDetails(eventId).pipe(
+      map((event) => (event.sectorsDetails ?? []).map((sector) => this.toEventSector(sector))),
+      switchMap((sectors) => this.enrichSectorsWithAvailability(eventId, sectors)),
+    );
   }
 
   consultTicketPrices(
@@ -97,6 +94,25 @@ export class HttpEventApi implements EventApi {
       last: page.last ?? true,
       empty: page.empty ?? (page.content ?? []).length === 0,
     };
+  }
+
+  private getEventDetails(eventId: string): Observable<EventDetailsResponseDTO> {
+    const cachedDetails = this.eventDetailsCache.get(eventId);
+
+    if (cachedDetails) {
+      return cachedDetails;
+    }
+
+    const request = this.http.get<EventDetailsResponseDTO>(this.apiUrl.url(`${EVENT_CATALOG_EVENTS_PATH}/${eventId}`)).pipe(
+      catchError((error: unknown) => {
+        this.eventDetailsCache.delete(eventId);
+        return throwError(() => error);
+      }),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+
+    this.eventDetailsCache.set(eventId, request);
+    return request;
   }
 
   private toEventListItem(event: EventDetailsResponseDTO | EventSummaryResponse): EventListItem {

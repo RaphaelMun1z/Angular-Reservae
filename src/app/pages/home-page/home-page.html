@@ -118,7 +118,7 @@
             <img [src]="eventImage(event)" [alt]="event.name || 'Evento Reservae'" />
             <div class="event-content">
               <div>
-                <span class="event-status">{{ event.status || 'EVENTO' }}</span>
+                <span class="event-status">{{ statusLabel(event.status) }}</span>
                 <h3>{{ event.name || 'Evento sem titulo' }}</h3>
               </div>
               <div class="event-details">

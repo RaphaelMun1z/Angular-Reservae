@@ -43,7 +43,7 @@ describe('ScannerStore', () => {
     store.validateCode('qr-1');
 
     expect(api.calls).toBe(0);
-    expect(store.error()).toContain('GateId nao informado');
+    expect(store.error()).toContain('Portao nao informado');
   });
 
   it('should expose granted result', () => {

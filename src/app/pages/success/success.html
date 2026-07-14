@@ -36,7 +36,7 @@
           <app-skeleton-loader variant="list" [count]="1" />
         } @else {
           <p class="text-gray-400 font-medium">Pedido: {{ store.orderId() || 'nao identificado' }}</p>
-          <p class="text-gray-400 font-medium">Status: {{ store.status() || 'nao consultado' }}</p>
+          <p class="text-gray-400 font-medium">Status: {{ statusLabel() }}</p>
           @if (store.paymentUrl()) {
             <p class="text-gray-400 font-medium">Link de pagamento enviado para o e-mail cadastrado.</p>
           }

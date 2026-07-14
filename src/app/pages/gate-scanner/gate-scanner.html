@@ -3,9 +3,9 @@
     <div class="page-heading">
       <div>
         <h1>Scanner de Portaria</h1>
-        <p>{{ eventId() || 'Evento nao informado' }}</p>
+        <p>{{ eventName() }}</p>
       </div>
-      <span class="gate-pill">{{ store.gateId() || 'gateId ausente' }}</span>
+      <span class="gate-pill">{{ store.gateId() || 'Portao nao informado' }}</span>
     </div>
 
     <div class="scanner-grid">
@@ -24,10 +24,10 @@
       <div class="scanner-controls">
         <div class="manual-card">
           <h2>Validacao manual</h2>
-          <p>Cole o hash do QR Code para validar o ingresso no portao selecionado.</p>
+          <p>Cole o codigo de validacao do QR Code para validar o ingresso no portao selecionado.</p>
           <input
             type="text"
-            placeholder="Cole o qrCodeHash"
+            placeholder="Cole o codigo de validacao"
             [value]="qrCodeHash()"
             (input)="updateQrCodeHash($event)"
           />
@@ -36,7 +36,7 @@
           </button>
 
           @if (!store.gateId()) {
-            <p class="error-text">Informe gateId na URL para validar ingressos.</p>
+            <p class="error-text">Informe o portao na URL para validar ingressos.</p>
           }
           @if (store.error()) {
             <p class="error-text">{{ store.error() }}</p>
@@ -46,7 +46,7 @@
         <div class="feedback-card">
           @if (!store.hasResult()) {
             <div class="idle-state">
-              <p>Cole um qrCodeHash para validar</p>
+              <p>Cole um codigo de validacao para validar</p>
             </div>
           }
 

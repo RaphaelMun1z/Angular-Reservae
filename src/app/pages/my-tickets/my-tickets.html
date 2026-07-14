@@ -2,64 +2,35 @@
 
 <main class="wallet-container">
   <header class="page-header">
-    <span class="page-kicker"> Carteira </span>
-
+    <span class="page-kicker">Carteira</span>
     <h1 class="page-title">Meus ingressos</h1>
-
-    <p class="page-subtitle">Consulte seus ingressos digitais emitidos pelo ticket-service.</p>
+    <p class="page-subtitle">Consulte seus ingressos digitais e confira os detalhes de cada evento.</p>
   </header>
 
   @if (!authStore.userId()) {
     <section class="empty-wallet">
-      <h2>Autenticação necessária</h2>
-
-      <p>Faça login para consultar seus ingressos.</p>
+      <h2>Autenticacao necessaria</h2>
+      <p>Faca login para consultar seus ingressos.</p>
     </section>
   } @else if (store.loading()) {
     <app-skeleton-loader variant="list" [count]="3" />
   } @else if (store.error()) {
     <section class="empty-wallet">
-      <h2>Não foi possível carregar seus ingressos</h2>
-
-      <p>
-        {{ store.error() }}
-      </p>
+      <h2>Nao foi possivel carregar seus ingressos</h2>
+      <p>{{ store.error() }}</p>
     </section>
   } @else {
     <nav class="tabs">
-      <button
-        type="button"
-        class="tab"
-        [class.active]="store.statusFilter() === null"
-        (click)="setFilter(null)"
-      >
+      <button type="button" class="tab" [class.active]="store.statusFilter() === null" (click)="setFilter(null)">
         Todos
       </button>
-
-      <button
-        type="button"
-        class="tab"
-        [class.active]="store.statusFilter() === 'VALID'"
-        (click)="setFilter('VALID')"
-      >
-        Válidos
+      <button type="button" class="tab" [class.active]="store.statusFilter() === 'VALID'" (click)="setFilter('VALID')">
+        Validos
       </button>
-
-      <button
-        type="button"
-        class="tab"
-        [class.active]="store.statusFilter() === 'USED'"
-        (click)="setFilter('USED')"
-      >
+      <button type="button" class="tab" [class.active]="store.statusFilter() === 'USED'" (click)="setFilter('USED')">
         Usados
       </button>
-
-      <button
-        type="button"
-        class="tab"
-        [class.active]="store.statusFilter() === 'REVOKED'"
-        (click)="setFilter('REVOKED')"
-      >
+      <button type="button" class="tab" [class.active]="store.statusFilter() === 'REVOKED'" (click)="setFilter('REVOKED')">
         Revogados
       </button>
     </nav>
@@ -67,8 +38,7 @@
     @if (store.filteredTickets().length === 0) {
       <section class="empty-wallet">
         <h2>Nenhum ingresso encontrado</h2>
-
-        <p>Quando seus ingressos forem emitidos, eles aparecerão aqui.</p>
+        <p>Quando seus ingressos forem emitidos, eles aparecerao aqui.</p>
       </section>
     } @else {
       <section class="ticket-list" aria-label="Ingressos">
@@ -81,38 +51,29 @@
                 [class.used]="ticket.status === 'USED'"
                 [class.revoked]="ticket.status === 'REVOKED'"
               >
-                {{ ticket.status }}
+                {{ statusLabel(ticket.status) }}
               </span>
 
-              <h2>
-                {{ ticket.eventId || 'Evento não informado' }}
-              </h2>
-
-              <p class="ticket-type">Ingresso digital</p>
+              <h2>{{ eventName(ticket) }}</h2>
+              <p class="ticket-event-meta">{{ eventMeta(ticket) }}</p>
+              @if (hasEventLoadFailed(ticket.eventId)) {
+                <p class="ticket-load-note">Nao foi possivel carregar todos os detalhes do evento.</p>
+              }
 
               <div class="ticket-details">
                 <div>
-                  <span> Setor </span>
-
-                  <strong>
-                    {{ ticket.sectorId || 'Não informado' }}
-                  </strong>
+                  <span>Setor</span>
+                  <strong>{{ sectorName(ticket) }}</strong>
                 </div>
 
                 <div>
-                  <span> Tipo </span>
-
-                  <strong>
-                    {{ ticket.ticketType || 'Não informado' }}
-                  </strong>
+                  <span>Tipo</span>
+                  <strong>{{ ticketTypeLabel(ticket.ticketType) }}</strong>
                 </div>
 
                 <div>
-                  <span> Código </span>
-
-                  <strong class="ticket-code">
-                    {{ ticket.id }}
-                  </strong>
+                  <span>Codigo do ingresso</span>
+                  <strong class="ticket-code">{{ ticket.id || 'Nao informado' }}</strong>
                 </div>
               </div>
             </div>
