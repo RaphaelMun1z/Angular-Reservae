@@ -15,6 +15,7 @@ import { HomePage } from './pages/home-page/home-page';
 import { Index } from './pages/index/index';
 import { Login } from './pages/login/login';
 import { MyTickets } from './pages/my-tickets/my-tickets';
+import { OrderCreated } from './pages/order-created/order-created';
 import { Profile } from './pages/profile/profile';
 import { Register } from './pages/register/register';
 import { Review } from './pages/review/review';
@@ -162,6 +163,10 @@ export const routes: Routes = [
       {
         path: 'sucesso',
         component: Success,
+      },
+      {
+        path: 'order-created',
+        component: OrderCreated,
       },
       {
         path: 'suporte',

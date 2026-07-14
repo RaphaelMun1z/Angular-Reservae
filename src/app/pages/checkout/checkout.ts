@@ -48,7 +48,7 @@ export class Checkout implements OnInit {
         this.store.startOrderPolling(order.id);
       }
 
-      void this.router.navigateByUrl('/sucesso');
+      void this.router.navigateByUrl('/order-created');
     });
   }
 

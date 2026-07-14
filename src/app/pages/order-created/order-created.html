@@ -1,0 +1,100 @@
+<app-site-navbar />
+
+<main class="order-created-page">
+  <section class="confirmation-layout" aria-labelledby="order-created-title">
+    <div class="confirmation-copy-panel">
+      <div class="status-pill">
+        <i class="ph-bold ph-check-circle"></i>
+        Pedido criado
+      </div>
+
+      <h1 id="order-created-title">Seu pedido foi reservado</h1>
+      <p class="lead">
+        A Reservae gerou seu pedido e enviou o link de pagamento para o e-mail cadastrado.
+        Abra a mensagem, toque no link seguro e finalize a compra em ate 30 minutos para
+        manter sua reserva.
+      </p>
+
+      <div class="reservation-alert">
+        <i class="ph-bold ph-clock-countdown"></i>
+        <span>Se o pagamento nao for realizado em 30 minutos, a reserva sera cancelada automaticamente.</span>
+      </div>
+
+      <div class="timeline" aria-label="Linha do tempo do pedido">
+        <div class="timeline-item active">
+          <span>1</span>
+          <div>
+            <strong>Pedido registrado</strong>
+            <p>Guardamos sua selecao enquanto o pagamento fica pendente.</p>
+          </div>
+        </div>
+        <div class="timeline-item active">
+          <span>2</span>
+          <div>
+            <strong>Link enviado por e-mail</strong>
+            <p>Procure pela mensagem na entrada, spam, lixo eletronico ou promocoes.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span>3</span>
+          <div>
+            <strong>Prazo de 30 minutos</strong>
+            <p>Conclua o pagamento antes do prazo para confirmar seus ingressos.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span>4</span>
+          <div>
+            <strong>Ingressos liberados</strong>
+            <p>Apos a confirmacao, acompanhe tudo em Meus ingressos.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="confirmation-actions">
+        <a routerLink="/meus-ingressos" class="primary-action">
+          <i class="ph-bold ph-ticket"></i>
+          Meus ingressos
+        </a>
+        <a routerLink="/suporte" class="secondary-action">
+          <i class="ph-bold ph-chat-circle-text"></i>
+          Falar com suporte
+        </a>
+      </div>
+    </div>
+
+    <aside class="order-card" aria-label="Resumo do pedido criado">
+      <div class="mail-badge" aria-hidden="true">
+        <i class="ph-bold ph-envelope-simple"></i>
+      </div>
+
+      <h2>Confira seu e-mail</h2>
+      <p class="card-copy">
+        Nao encontrou a mensagem? Veja tambem spam, lixo eletronico e promocoes. Sua reserva
+        expira em 30 minutos se o pagamento nao for concluido.
+      </p>
+
+      <div class="order-summary">
+        @if (store.loading()) {
+          <app-skeleton-loader variant="list" [count]="1" />
+        } @else {
+          <div>
+            <span>Numero do pedido</span>
+            <strong>{{ store.orderId() || 'nao identificado' }}</strong>
+          </div>
+          <div>
+            <span>Status</span>
+            <strong>{{ orderStatusLabel() }}</strong>
+          </div>
+          <p class="status-description">{{ orderStatusDescription() }}</p>
+        }
+
+        @if (store.error()) {
+          <p class="order-error">{{ store.error() }}</p>
+        }
+      </div>
+    </aside>
+  </section>
+</main>
+
+<app-site-footer />

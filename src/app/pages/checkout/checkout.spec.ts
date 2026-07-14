@@ -57,7 +57,7 @@ describe('Checkout', () => {
     expect(component.store.error()).toContain('Selecione');
   });
 
-  it('should create an async checkout and navigate to the order tracking page', () => {
+  it('should create an async checkout and navigate to the order created page', () => {
     const authStore = TestBed.inject(AuthStore);
     const router = TestBed.inject(Router);
     const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
@@ -83,7 +83,7 @@ describe('Checkout', () => {
     component.payNow();
 
     expect(api.calls).toBe(1);
-    expect(navigateSpy).toHaveBeenCalledWith('/sucesso');
+    expect(navigateSpy).toHaveBeenCalledWith('/order-created');
   });
 
   it('should accept checkout creation without an immediate paymentUrl', () => {
@@ -113,6 +113,6 @@ describe('Checkout', () => {
     component.payNow();
 
     expect(component.store.error()).toBeNull();
-    expect(navigateSpy).toHaveBeenCalledWith('/sucesso');
+    expect(navigateSpy).toHaveBeenCalledWith('/order-created');
   });
 });

@@ -2,54 +2,130 @@
 
 <main class="wallet-container">
   <header class="page-header">
-    <h1 class="page-title">MINHA <span>CARTEIRA</span></h1>
-    <p class="page-subtitle">Consulte seus ingressos emitidos pelo ticket-service.</p>
+    <span class="page-kicker"> Carteira </span>
+
+    <h1 class="page-title">Meus ingressos</h1>
+
+    <p class="page-subtitle">Consulte seus ingressos digitais emitidos pelo ticket-service.</p>
   </header>
 
-  <div class="tabs">
-    <button type="button" class="tab" [class.active]="store.statusFilter() === null" (click)="setFilter(null)">Todos</button>
-    <button type="button" class="tab" [class.active]="store.statusFilter() === 'VALID'" (click)="setFilter('VALID')">Validos</button>
-    <button type="button" class="tab" [class.active]="store.statusFilter() === 'USED'" (click)="setFilter('USED')">Usados</button>
-    <button type="button" class="tab" [class.active]="store.statusFilter() === 'REVOKED'" (click)="setFilter('REVOKED')">Revogados</button>
-  </div>
-
   @if (!authStore.userId()) {
-    <p class="page-subtitle">Autenticacao real necessaria para consultar ingressos.</p>
-  }
-  @if (store.loading()) {
+    <section class="empty-wallet">
+      <h2>Autenticação necessária</h2>
+
+      <p>Faça login para consultar seus ingressos.</p>
+    </section>
+  } @else if (store.loading()) {
     <app-skeleton-loader variant="list" [count]="3" />
-  }
-  @if (store.error()) {
-    <p class="page-subtitle">{{ store.error() }}</p>
-  }
+  } @else if (store.error()) {
+    <section class="empty-wallet">
+      <h2>Não foi possível carregar seus ingressos</h2>
 
-  @if (!store.loading()) {
-  <section class="ticket-list">
-    @if (!store.loading() && authStore.userId() && store.filteredTickets().length === 0) {
-      <article class="e-ticket">
-        <div>
-          <h2>Nenhum ingresso encontrado</h2>
-          <p>Quando o backend emitir ingressos, eles aparecerao aqui.</p>
-        </div>
-      </article>
-    }
+      <p>
+        {{ store.error() }}
+      </p>
+    </section>
+  } @else {
+    <nav class="tabs">
+      <button
+        type="button"
+        class="tab"
+        [class.active]="store.statusFilter() === null"
+        (click)="setFilter(null)"
+      >
+        Todos
+      </button>
 
-    @for (ticket of store.filteredTickets(); track ticket.id) {
-      <article class="e-ticket">
-        <div>
-          <span class="status-badge">{{ ticket.status }}</span>
-          <h2>{{ ticket.eventId || 'Evento nao informado' }}</h2>
-          <p>Setor: {{ ticket.sectorId || 'nao informado' }}</p>
-          <p>Tipo: {{ ticket.ticketType || 'nao informado' }}</p>
-          <p class="ticket-id">Ingresso: {{ ticket.id }}</p>
-        </div>
-        <div class="qr-area">
-          <div class="qr-placeholder"></div>
-          <a class="btn-download" [routerLink]="['/detalhes-ingresso', ticket.id]">Detalhes</a>
-        </div>
-      </article>
+      <button
+        type="button"
+        class="tab"
+        [class.active]="store.statusFilter() === 'VALID'"
+        (click)="setFilter('VALID')"
+      >
+        Válidos
+      </button>
+
+      <button
+        type="button"
+        class="tab"
+        [class.active]="store.statusFilter() === 'USED'"
+        (click)="setFilter('USED')"
+      >
+        Usados
+      </button>
+
+      <button
+        type="button"
+        class="tab"
+        [class.active]="store.statusFilter() === 'REVOKED'"
+        (click)="setFilter('REVOKED')"
+      >
+        Revogados
+      </button>
+    </nav>
+
+    @if (store.filteredTickets().length === 0) {
+      <section class="empty-wallet">
+        <h2>Nenhum ingresso encontrado</h2>
+
+        <p>Quando seus ingressos forem emitidos, eles aparecerão aqui.</p>
+      </section>
+    } @else {
+      <section class="ticket-list" aria-label="Ingressos">
+        @for (ticket of store.filteredTickets(); track ticket.id) {
+          <article class="ticket-card">
+            <div class="ticket-info">
+              <span
+                class="ticket-status"
+                [class.valid]="ticket.status === 'VALID'"
+                [class.used]="ticket.status === 'USED'"
+                [class.revoked]="ticket.status === 'REVOKED'"
+              >
+                {{ ticket.status }}
+              </span>
+
+              <h2>
+                {{ ticket.eventId || 'Evento não informado' }}
+              </h2>
+
+              <p class="ticket-type">Ingresso digital</p>
+
+              <div class="ticket-details">
+                <div>
+                  <span> Setor </span>
+
+                  <strong>
+                    {{ ticket.sectorId || 'Não informado' }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span> Tipo </span>
+
+                  <strong>
+                    {{ ticket.ticketType || 'Não informado' }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span> Código </span>
+
+                  <strong class="ticket-code">
+                    {{ ticket.id }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <aside class="ticket-action">
+              <a class="primary-action" [routerLink]="['/detalhes-ingresso', ticket.id]">
+                Ver detalhes
+              </a>
+            </aside>
+          </article>
+        }
+      </section>
     }
-  </section>
   }
 </main>
 

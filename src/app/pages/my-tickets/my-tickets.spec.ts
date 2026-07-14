@@ -11,9 +11,8 @@ describe('MyTickets', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MyTickets],
-      providers: [provideRouter([]), TicketStore]
-    })
-    .compileComponents();
+      providers: [provideRouter([]), TicketStore],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MyTickets);
     component = fixture.componentInstance;
