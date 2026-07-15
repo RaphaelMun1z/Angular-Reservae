@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
-import { AuthStore } from '../../core/state/auth.store';
 import { CheckoutStore, type CheckoutItem } from './state/checkout.store';
 import { ticketTypeLabel } from '../../shared/presentation-labels';
 import { EventDisplayData, EventDisplayDataService } from '../../shared/event-display-data.service';
@@ -16,7 +15,6 @@ import { EventDisplayData, EventDisplayDataService } from '../../shared/event-di
 })
 export class Checkout implements OnInit {
   readonly store = inject(CheckoutStore);
-  readonly authStore = inject(AuthStore);
   readonly submitInProgress = signal(false);
   readonly eventData = signal<EventDisplayData | null>(null);
   readonly eventDetailsLoading = signal(false);
@@ -77,6 +75,18 @@ export class Checkout implements OnInit {
 
   ticketTypeLabel(ticketType: CheckoutItem['ticketType']): string {
     return ticketTypeLabel(ticketType);
+  }
+
+  decreaseQuantity(item: CheckoutItem): void {
+    if (item.quantity <= 1) {
+      return;
+    }
+
+    this.store.changeQuantity(item.sectorId, item.quantity - 1, item.ticketType);
+  }
+
+  increaseQuantity(item: CheckoutItem): void {
+    this.store.changeQuantity(item.sectorId, item.quantity + 1, item.ticketType);
   }
 
   eventName(): string {

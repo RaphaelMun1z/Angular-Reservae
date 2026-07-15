@@ -43,12 +43,12 @@
       }
 
       <div class="status-actions" aria-label="Acoes do pedido">
-        @if (store.paymentUrl() && store.status() !== 'CONFIRMED' && !store.failed()) {
+        @if (store.paymentUrl() && !isPaymentConfirmed() && !store.failed()) {
           <a class="primary-action" [href]="store.paymentUrl()" target="_blank" rel="noopener noreferrer">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg>
             Pagar agora
           </a>
-        } @else if (store.status() === 'CONFIRMED') {
+        } @else if (isPaymentConfirmed()) {
           <a routerLink="/meus-ingressos" class="primary-action">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"></path><path d="M13 5v14"></path></svg>
             Ver meus ingressos
@@ -71,7 +71,7 @@
           </button>
         } @else if (isPaymentConfirmed()) {
           <a routerLink="/shows" class="secondary-action">Voltar aos eventos</a>
-        } @else if (store.status() !== 'CONFIRMED') {
+        } @else if (!isPaymentConfirmed()) {
           <a routerLink="/shows" class="secondary-action">Voltar para eventos</a>
         }
       </div>
@@ -105,8 +105,14 @@
         </div>
         <div>
           <dt>ID do pedido</dt>
-          <dd>{{ store.orderId() || 'Nao identificado' }}</dd>
+          <dd>{{ displayOrderId() || 'Nao identificado' }}</dd>
         </div>
+        @if (paymentSessionId()) {
+          <div>
+            <dt>Sessao de pagamento</dt>
+            <dd>{{ paymentSessionId() }}</dd>
+          </div>
+        }
         <div>
           <dt>Status atual</dt>
           <dd>{{ orderStatusLabel() }}</dd>

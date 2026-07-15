@@ -30,6 +30,12 @@ export class HttpCheckoutApi implements CheckoutApi {
       .pipe(map((order) => this.fromOrderResponse(order)));
   }
 
+  findOrdersByUserId(userId: string): Observable<readonly CheckoutOrder[]> {
+    return this.http
+      .get<readonly OrderSummaryResponseDTO[]>(this.apiUrl.url(`${ORDER_PATH}/user/${encodeURIComponent(userId)}/orders`))
+      .pipe(map((orders) => orders.map((order) => this.fromOrderSummaryResponse(order))));
+  }
+
   private fromCheckoutResponse(response: HttpResponse<string>, eventId: string): CheckoutOrder {
     const order = this.parseOrderSummary(response.body);
 
@@ -37,6 +43,7 @@ export class HttpCheckoutApi implements CheckoutApi {
       id: order?.orderId ?? '',
       eventId,
       status: order?.status ?? (response.status === 202 ? 'PENDING' : null),
+      createdAt: null,
       totalAmount: order?.totalAmount ?? null,
       paymentUrl: order?.paymentUrl ?? null,
       items: [],
@@ -48,9 +55,22 @@ export class HttpCheckoutApi implements CheckoutApi {
       id: order?.orderId ?? '',
       eventId,
       status: order?.status ?? 'PENDING',
+      createdAt: null,
       totalAmount: order?.totalAmount ?? null,
       paymentUrl: order?.paymentUrl ?? null,
       items: [],
+    };
+  }
+
+  private fromOrderSummaryResponse(order: OrderSummaryResponseDTO): CheckoutOrder {
+    return {
+      id: order.orderId ?? '',
+      eventId: order.eventId ?? null,
+      status: order.status ?? null,
+      createdAt: order.createdAt ?? null,
+      totalAmount: order.totalAmount ?? null,
+      paymentUrl: order.paymentUrl ?? null,
+      items: order.itens ?? order.items ?? [],
     };
   }
 
@@ -74,11 +94,12 @@ export class HttpCheckoutApi implements CheckoutApi {
   private fromOrderResponse(order: OrderResponseDTO): CheckoutOrder {
     return {
       id: order.orderId ?? '',
-      eventId: null,
+      eventId: order.eventId ?? null,
       status: order.status ?? null,
+      createdAt: order.createdAt ?? null,
       totalAmount: order.totalAmount ?? null,
       paymentUrl: order.paymentUrl ?? null,
-      items: order.itens ?? [],
+      items: order.itens ?? order.items ?? [],
     };
   }
 }

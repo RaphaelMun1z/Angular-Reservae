@@ -80,6 +80,7 @@ describe('HttpCheckoutApi', () => {
   it('should get order by id', () => {
     api.getOrder('order-1').subscribe((order) => {
       expect(order.id).toBe('order-1');
+      expect(order.eventId).toBe('event-1');
       expect(order.items.length).toBe(1);
     });
 
@@ -87,9 +88,30 @@ describe('HttpCheckoutApi', () => {
     expect(req.request.method).toBe('GET');
     req.flush({
       orderId: 'order-1',
+      eventId: 'event-1',
       status: 'CONFIRMED',
       totalAmount: 100,
       itens: [{ orderItemId: 'item-1', sectorId: 'sector-1' }],
     });
+  });
+
+  it('should find orders by user id', () => {
+    api.findOrdersByUserId('user-1').subscribe((orders) => {
+      expect(orders.length).toBe(1);
+      expect(orders[0]?.id).toBe('order-1');
+      expect(orders[0]?.createdAt).toBe('2026-07-15T10:00:00Z');
+    });
+
+    const req = http.expectOne('http://localhost:8765/order-service/api/orders/v1/user/user-1/orders');
+    expect(req.request.method).toBe('GET');
+    req.flush([
+      {
+        orderId: 'order-1',
+        eventId: 'event-1',
+        status: 'AWAITING_PAYMENT',
+        createdAt: '2026-07-15T10:00:00Z',
+        totalAmount: 100,
+      },
+    ]);
   });
 });

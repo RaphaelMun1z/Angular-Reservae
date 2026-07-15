@@ -1,4 +1,5 @@
 import { computed, DestroyRef, inject, Injectable, InjectionToken, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, of, Subscription, timer } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
@@ -27,6 +28,7 @@ export interface CheckoutOrder {
   readonly id: string;
   readonly eventId: string | null;
   readonly status: OrderStatus | null;
+  readonly createdAt?: string | null;
   readonly totalAmount: number | null;
   readonly paymentUrl: string | null;
   readonly items: readonly OrderItemResponseDTO[];
@@ -35,6 +37,7 @@ export interface CheckoutOrder {
 export interface CheckoutApi {
   startCheckout(request: CheckoutRequestDTO): Observable<CheckoutOrder>;
   getOrder(orderId: string): Observable<CheckoutOrder>;
+  findOrdersByUserId(userId: string): Observable<readonly CheckoutOrder[]>;
 }
 
 interface CheckoutRecoveryReference {
@@ -85,11 +88,19 @@ export class CheckoutStore {
   );
   readonly canContinue = computed(() => this._eventId() !== null && this.hasItems() && !this._loading());
   readonly processing = computed(() => this._loading() || this.isProcessingStatus(this.status()));
-  readonly succeeded = computed(() => this.status() === 'CONFIRMED');
+  readonly succeeded = computed(
+    () =>
+      this.status() === 'CONFIRMED' ||
+      this.status() === 'PAYMENT_APPROVED' ||
+      this.status() === 'APPROVED' ||
+      this.status() === 'PAID',
+  );
   readonly failed = computed(
     () =>
       this.status() === 'RESERVATION_FAILED' ||
+      this.status() === 'RESERVATION_REJECTED' ||
       this.status() === 'PAYMENT_FAILED' ||
+      this.status() === 'FAILED' ||
       this.status() === 'CANCELLED',
   );
   readonly paymentStatus = this.status;
@@ -407,14 +418,19 @@ export class CheckoutStore {
   private isFinalOrder(order: CheckoutOrder): boolean {
     return (
       order.status === 'CONFIRMED' ||
+      order.status === 'PAYMENT_APPROVED' ||
+      order.status === 'APPROVED' ||
+      order.status === 'PAID' ||
       order.status === 'RESERVATION_FAILED' ||
+      order.status === 'RESERVATION_REJECTED' ||
       order.status === 'PAYMENT_FAILED' ||
+      order.status === 'FAILED' ||
       order.status === 'CANCELLED'
     );
   }
 
   private isProcessingStatus(status: OrderStatus | null): boolean {
-    return status === 'PENDING' || status === 'AWAITING_PAYMENT';
+    return status === 'PENDING' || status === 'PROCESSING' || status === 'AWAITING_PAYMENT' || status === 'PAYMENT_PENDING';
   }
 
   private moneyToNumber(value: number): number {
@@ -426,6 +442,19 @@ export class CheckoutStore {
   }
 
   private errorMessage(error: unknown, fallback: string): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 403) {
+        return 'Voce nao tem permissao para acessar este pedido.';
+      }
+
+      if (error.status === 404) {
+        return 'Pedido nao encontrado.';
+      }
+
+      const message = typeof error.error?.message === 'string' ? error.error.message : error.message;
+      return message ? `${fallback} ${message}` : fallback;
+    }
+
     if (error instanceof Error && error.message) {
       return `${fallback} ${error.message}`;
     }

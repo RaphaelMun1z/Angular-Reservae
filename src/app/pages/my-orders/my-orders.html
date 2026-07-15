@@ -1,0 +1,101 @@
+<app-site-navbar />
+
+<main class="orders-container">
+  <header class="page-header">
+    <span class="page-kicker">Compras</span>
+    <h1 class="page-title">Meus pedidos</h1>
+    <p class="page-subtitle">Acompanhe suas compras, pagamentos e pedidos em processamento.</p>
+  </header>
+
+  @if (store.loading()) {
+    <app-skeleton-loader variant="list" [count]="3" />
+  } @else if (store.error()) {
+    <section class="empty-orders">
+      <h2>Nao foi possivel carregar seus pedidos</h2>
+      <p>{{ store.error() }}</p>
+      <button type="button" class="secondary-action" (click)="store.loadOrders()">Tentar novamente</button>
+    </section>
+  } @else {
+    <nav class="tabs" aria-label="Filtrar pedidos por status">
+      @for (filter of filters; track filter.value) {
+        <button type="button" class="tab" [class.active]="store.statusFilter() === filter.value" (click)="setFilter(filter.value)">
+          {{ filter.label }}
+        </button>
+      }
+    </nav>
+
+    @if (store.filteredOrders().length === 0) {
+      <section class="empty-orders">
+        <h2>Nenhum pedido encontrado</h2>
+        <p>Quando voce criar uma compra, o acompanhamento aparecera aqui.</p>
+      </section>
+    } @else {
+      <section class="orders-list" aria-label="Pedidos">
+        @for (order of store.filteredOrders(); track order.id) {
+          <article class="order-card">
+            <div class="order-info">
+              <div class="order-topline">
+                <span
+                  class="order-status"
+                  [class.paid]="statusTone(order.status) === 'paid'"
+                  [class.warning]="statusTone(order.status) === 'warning'"
+                  [class.danger]="statusTone(order.status) === 'danger'"
+                  [class.processing]="statusTone(order.status) === 'processing'"
+                >
+                  {{ statusLabel(order.status) }}
+                </span>
+                <span class="order-code">#{{ shortOrderId(order) }}</span>
+              </div>
+
+              <h2>{{ eventName(order) }}</h2>
+              <p class="order-event-meta">{{ eventMeta(order) }}</p>
+
+              <div class="order-details">
+                <div>
+                  <span>Criado em</span>
+                  <strong>{{ orderDate(order) }}</strong>
+                </div>
+                <div>
+                  <span>Total</span>
+                  <strong>{{ formatCurrency(order.totalAmount) }}</strong>
+                </div>
+                <div>
+                  <span>Ingressos</span>
+                  <strong>{{ totalTickets(order) }}</strong>
+                </div>
+                <div>
+                  <span>Itens</span>
+                  <strong>{{ itemSummary(order) }}</strong>
+                </div>
+              </div>
+
+              <small class="technical-id">ID tecnico: {{ fullOrderId(order) }}</small>
+            </div>
+
+            <aside class="order-action">
+              @if (isPaymentPending(order.status) && order.paymentUrl) {
+                <a class="primary-action" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">
+                  Continuar pagamento
+                </a>
+              } @else if (isPaid(order.status)) {
+                <a class="primary-action" routerLink="/meus-ingressos">Ver ingressos</a>
+              } @else if (isFailed(order.status)) {
+                <a class="primary-action" routerLink="/shows">Comprar novamente</a>
+              } @else {
+                <span class="processing-note">Pedido em processamento</span>
+              }
+
+              @if (order.id) {
+                <a class="secondary-action" [routerLink]="['/order-created']" [queryParams]="{ orderId: order.id }">
+                  Ver detalhes
+                </a>
+              }
+            </aside>
+          </article>
+        }
+      </section>
+    }
+  }
+</main>
+
+<app-site-footer />

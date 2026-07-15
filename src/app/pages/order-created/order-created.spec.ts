@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, ParamMap, convertToParamMap, provideRouter } from '@angular/router';
+import { Subject } from 'rxjs';
 
 import { CheckoutStore } from '../checkout/state/checkout.store';
 import { OrderCreated } from './order-created';
@@ -7,11 +8,23 @@ import { OrderCreated } from './order-created';
 describe('OrderCreated', () => {
   let component: OrderCreated;
   let fixture: ComponentFixture<OrderCreated>;
+  let queryParamMap: Subject<ParamMap>;
 
   beforeEach(async () => {
+    queryParamMap = new Subject<ParamMap>();
+
     await TestBed.configureTestingModule({
       imports: [OrderCreated],
-      providers: [provideRouter([]), CheckoutStore],
+      providers: [
+        provideRouter([]),
+        CheckoutStore,
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            queryParamMap: queryParamMap.asObservable(),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OrderCreated);
@@ -63,5 +76,30 @@ describe('OrderCreated', () => {
     component.retry();
 
     expect(loadSpy).toHaveBeenCalledWith('order-1');
+  });
+
+  it('should load the order from payment return query params', () => {
+    const loadSpy = vi.spyOn(component.store, 'loadOrder');
+    const pollingSpy = vi.spyOn(component.store, 'startOrderPolling');
+
+    fixture.detectChanges();
+    queryParamMap.next(convertToParamMap({ orderId: 'order-from-url', sessionId: 'cs_test_123' }));
+
+    expect(loadSpy).toHaveBeenCalledWith('order-from-url');
+    expect(pollingSpy).toHaveBeenCalledWith('order-from-url');
+    expect(component.displayOrderId()).toBe('order-from-url');
+    expect(component.paymentSessionId()).toBe('cs_test_123');
+  });
+
+  it('should retry using the order id received in the URL', () => {
+    const loadSpy = vi.spyOn(component.store, 'loadOrder');
+
+    fixture.detectChanges();
+    queryParamMap.next(convertToParamMap({ orderId: 'order-from-url' }));
+
+    loadSpy.mockClear();
+    component.retry();
+
+    expect(loadSpy).toHaveBeenCalledWith('order-from-url');
   });
 });

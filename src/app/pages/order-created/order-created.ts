@@ -1,13 +1,13 @@
 import { Component, DestroyRef, OnInit, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import confetti from 'canvas-confetti';
 import { OrderItemResponseDTO, OrderStatus } from '../../core/models/order.model';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { CheckoutItem, CheckoutStore } from '../checkout/state/checkout.store';
-import { ticketTypeLabel } from '../../shared/presentation-labels';
+import { orderStatusLabel as friendlyOrderStatusLabel, ticketTypeLabel } from '../../shared/presentation-labels';
 import { EventDisplayData, EventDisplayDataService } from '../../shared/event-display-data.service';
 
 type StatusTone = 'info' | 'warning' | 'success' | 'danger';
@@ -36,9 +36,12 @@ interface DisplayItem {
 })
 export class OrderCreated implements OnInit {
   readonly store = inject(CheckoutStore);
+  private readonly route = inject(ActivatedRoute);
   private readonly eventDisplayData = inject(EventDisplayDataService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly eventData = signal<EventDisplayData | null>(null);
+  private readonly queryOrderId = signal<string | null>(null);
+  readonly paymentSessionId = signal<string | null>(null);
   readonly eventDetailsLoading = signal(false);
   readonly eventDetailsError = signal(false);
   private confettiLaunched = false;
@@ -60,6 +63,36 @@ export class OrderCreated implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const orderId = this.normalizeQueryParam(params.get('orderId'));
+      const sessionId = this.normalizeQueryParam(params.get('sessionId'));
+
+      this.queryOrderId.set(orderId);
+      this.paymentSessionId.set(sessionId);
+
+      if (orderId) {
+        this.store.loadOrder(orderId);
+        this.store.startOrderPolling(orderId);
+        return;
+      }
+
+      this.restorePreviousOrderFlow();
+    });
+  }
+
+  retry(): void {
+    const orderId = this.queryOrderId() ?? this.store.orderId();
+
+    if (orderId) {
+      this.store.loadOrder(orderId);
+      this.store.startOrderPolling(orderId);
+      return;
+    }
+
+    this.restorePreviousOrderFlow();
+  }
+
+  private restorePreviousOrderFlow(): void {
     const restoredOrderId = this.store.restorePendingOrder();
     const orderId = restoredOrderId ?? this.store.orderId();
 
@@ -68,26 +101,24 @@ export class OrderCreated implements OnInit {
     }
   }
 
-  retry(): void {
-    const orderId = this.store.orderId();
-
-    if (orderId) {
-      this.store.loadOrder(orderId);
-      this.store.startOrderPolling(orderId);
-      return;
-    }
-
-    this.store.restorePendingOrder();
+  displayOrderId(): string | null {
+    return this.store.orderId() ?? this.queryOrderId();
   }
 
   statusTone(): StatusTone {
     switch (this.store.status()) {
       case 'CONFIRMED':
+      case 'PAYMENT_APPROVED':
+      case 'APPROVED':
+      case 'PAID':
         return 'success';
       case 'AWAITING_PAYMENT':
+      case 'PAYMENT_PENDING':
         return 'warning';
       case 'RESERVATION_FAILED':
+      case 'RESERVATION_REJECTED':
       case 'PAYMENT_FAILED':
+      case 'FAILED':
       case 'CANCELLED':
         return 'danger';
       default:
@@ -109,41 +140,56 @@ export class OrderCreated implements OnInit {
   }
 
   isPaymentConfirmed(): boolean {
-    return this.store.status() === 'CONFIRMED';
+    return this.store.succeeded();
   }
 
   orderStatusLabel(): string {
     switch (this.store.status()) {
       case 'PENDING':
         return 'Reserva em processamento';
+      case 'PROCESSING':
+        return 'Pedido em processamento';
       case 'AWAITING_PAYMENT':
+      case 'PAYMENT_PENDING':
         return this.store.paymentUrl() ? 'Pagamento disponivel' : 'Reserva confirmada';
       case 'CONFIRMED':
+      case 'PAYMENT_APPROVED':
+      case 'APPROVED':
+      case 'PAID':
         return 'Pagamento confirmado';
       case 'RESERVATION_FAILED':
+      case 'RESERVATION_REJECTED':
         return 'Reserva nao concluida';
       case 'PAYMENT_FAILED':
+      case 'FAILED':
         return 'Pagamento nao confirmado';
       case 'CANCELLED':
         return 'Pedido cancelado';
       default:
-        return 'Pedido criado';
+        return friendlyOrderStatusLabel(this.store.status());
     }
   }
 
   orderStatusDescription(): string {
     switch (this.store.status()) {
       case 'PENDING':
+      case 'PROCESSING':
         return 'Recebemos seu pedido e estamos validando a reserva dos ingressos selecionados.';
       case 'AWAITING_PAYMENT':
+      case 'PAYMENT_PENDING':
         return this.store.paymentUrl()
           ? 'Sua reserva foi confirmada. Acesse o link seguro para finalizar o pagamento.'
           : 'Sua reserva foi confirmada e o pagamento esta sendo preparado. Atualize o status em alguns instantes.';
       case 'CONFIRMED':
+      case 'PAYMENT_APPROVED':
+      case 'APPROVED':
+      case 'PAID':
         return 'Seu pedido foi confirmado com sucesso. Seus ingressos serao disponibilizados em breve em Meus ingressos.';
       case 'RESERVATION_FAILED':
+      case 'RESERVATION_REJECTED':
         return 'Nao foi possivel reservar os ingressos. Voce pode voltar aos eventos e selecionar ingressos novamente.';
       case 'PAYMENT_FAILED':
+      case 'FAILED':
         return 'O pagamento nao foi confirmado. Verifique o pedido ou tente escolher os ingressos novamente.';
       case 'CANCELLED':
         return 'Este pedido foi cancelado. Para continuar, escolha os ingressos novamente.';
@@ -239,14 +285,21 @@ export class OrderCreated implements OnInit {
   private currentTimelineIndex(status: OrderStatus | null, paymentAvailable: boolean): number {
     switch (status) {
       case 'PENDING':
+      case 'PROCESSING':
         return 1;
       case 'AWAITING_PAYMENT':
+      case 'PAYMENT_PENDING':
         return paymentAvailable ? 3 : 2;
       case 'CONFIRMED':
+      case 'PAYMENT_APPROVED':
+      case 'APPROVED':
+      case 'PAID':
         return 5;
       case 'RESERVATION_FAILED':
+      case 'RESERVATION_REJECTED':
         return 1;
       case 'PAYMENT_FAILED':
+      case 'FAILED':
         return 4;
       case 'CANCELLED':
         return 3;
@@ -258,8 +311,10 @@ export class OrderCreated implements OnInit {
   private errorTimelineIndex(status: OrderStatus | null): number | null {
     switch (status) {
       case 'RESERVATION_FAILED':
+      case 'RESERVATION_REJECTED':
         return 1;
       case 'PAYMENT_FAILED':
+      case 'FAILED':
         return 4;
       case 'CANCELLED':
         return 3;
@@ -367,6 +422,11 @@ export class OrderCreated implements OnInit {
       hour: '2-digit',
       minute: '2-digit',
     });
+  }
+
+  private normalizeQueryParam(value: string | null): string | null {
+    const normalizedValue = value?.trim();
+    return normalizedValue ? normalizedValue : null;
   }
 
   private launchSuccessConfetti(): void {

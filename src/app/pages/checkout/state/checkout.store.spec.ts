@@ -40,6 +40,10 @@ class FakeCheckoutApi implements CheckoutApi {
     this.getOrderCalls += 1;
     return of(response);
   }
+
+  findOrdersByUserId(): Observable<readonly CheckoutOrder[]> {
+    return of(this.orderResponses);
+  }
 }
 
 describe('CheckoutStore', () => {

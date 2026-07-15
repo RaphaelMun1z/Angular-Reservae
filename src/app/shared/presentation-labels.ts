@@ -31,15 +31,28 @@ export function ticketStatusLabel(status?: string | null): string {
 export function orderStatusLabel(status?: OrderStatus | string | null): string {
   switch (status) {
     case 'PENDING':
-      return 'Em processamento';
+      return 'Pendente';
     case 'AWAITING_PAYMENT':
+    case 'PAYMENT_PENDING':
       return 'Aguardando pagamento';
+    case 'PAYMENT_APPROVED':
+      return 'Pagamento aprovado';
+    case 'APPROVED':
+      return 'Aprovado';
+    case 'PAID':
+      return 'Pago';
+    case 'PROCESSING':
+      return 'Em processamento';
     case 'RESERVATION_FAILED':
       return 'Reserva nao concluida';
+    case 'RESERVATION_REJECTED':
+      return 'Reserva recusada';
     case 'CONFIRMED':
       return 'Confirmado';
     case 'PAYMENT_FAILED':
-      return 'Pagamento nao confirmado';
+      return 'Pagamento recusado';
+    case 'FAILED':
+      return 'Falhou';
     case 'CANCELLED':
       return 'Cancelado';
     default:

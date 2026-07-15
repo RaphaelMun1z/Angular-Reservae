@@ -1,5 +1,6 @@
 import { Component, DestroyRef, OnInit, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { SiteFooter } from '../../components/site-footer/site-footer';
@@ -17,6 +18,7 @@ import { EventDisplayData, EventDisplayDataService } from '../../shared/event-di
 })
 export class TicketDetails implements OnInit {
   readonly store = inject(TicketStore);
+  private readonly title = inject(Title);
   private readonly route = inject(ActivatedRoute);
   private readonly eventDisplayData = inject(EventDisplayDataService);
   private readonly destroyRef = inject(DestroyRef);
@@ -30,6 +32,11 @@ export class TicketDetails implements OnInit {
 
       if (eventId) {
         queueMicrotask(() => this.loadEventData(eventId));
+        return;
+      }
+
+      if (this.store.selectedTicket()) {
+        this.title.setTitle('Reservae | Ingresso');
       }
     });
   }
@@ -158,11 +165,14 @@ export class TicketDetails implements OnInit {
         next: (eventData) => {
           this.eventData.set(eventData);
           this.eventDetailsLoading.set(false);
+          const eventName = eventData.event?.name?.trim();
+          this.title.setTitle(eventName ? `Reservae | Ingresso - ${eventName}` : 'Reservae | Ingresso');
         },
         error: () => {
           this.eventData.set(null);
           this.eventDetailsLoading.set(false);
           this.eventDetailsError.set(true);
+          this.title.setTitle('Reservae | Ingresso');
         },
       });
   }

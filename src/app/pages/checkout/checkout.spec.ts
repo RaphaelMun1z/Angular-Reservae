@@ -26,6 +26,10 @@ class FakeCheckoutApi implements CheckoutApi {
   getOrder(): Observable<CheckoutOrder> {
     return of(this.response);
   }
+
+  findOrdersByUserId(): Observable<readonly CheckoutOrder[]> {
+    return of([this.response]);
+  }
 }
 
 describe('Checkout', () => {
@@ -115,5 +119,25 @@ describe('Checkout', () => {
 
     expect(component.store.error()).toBeNull();
     expect(navigateSpy).toHaveBeenCalledWith('/order-created');
+  });
+
+  it('should update item quantity before creating checkout', () => {
+    component.store.selectEvent('event-1');
+    component.store.addItem({
+      sectorId: 'sector-1',
+      sectorName: 'Pista',
+      quantity: 2,
+      ticketType: 'FULL_TICKET_PRICE',
+      unitPrice: 100,
+    });
+
+    const item = component.store.items()[0];
+    component.increaseQuantity(item);
+    expect(component.store.items()[0]?.quantity).toBe(3);
+    expect(component.store.visualSubtotal()).toBe(300);
+
+    component.decreaseQuantity(component.store.items()[0]);
+    expect(component.store.items()[0]?.quantity).toBe(2);
+    expect(component.store.visualSubtotal()).toBe(200);
   });
 });

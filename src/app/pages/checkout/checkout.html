@@ -15,15 +15,7 @@
 
       <div class="account-readonly">
         <div class="account-note">
-          Confira os ingressos selecionados antes de criar seu pedido.
-        </div>
-        <div class="account-field">
-          <span>Comprador</span>
-          <strong>{{ authStore.displayName() }}</strong>
-        </div>
-        <div class="account-field">
-          <span>E-mail</span>
-          <strong>{{ authStore.email() || 'E-mail nao informado' }}</strong>
+          Confira os ingressos selecionados, ajuste as quantidades e crie seu pedido para seguir ao pagamento.
         </div>
       </div>
     </div>
@@ -71,7 +63,13 @@
                   <tr>
                     <td>{{ sectorName(item) }}</td>
                     <td>{{ ticketTypeLabel(item.ticketType) }}</td>
-                    <td>{{ item.quantity }}</td>
+                    <td>
+                      <div class="quantity-control" aria-label="Alterar quantidade">
+                        <button type="button" [disabled]="item.quantity <= 1" (click)="decreaseQuantity(item)">-</button>
+                        <span>{{ item.quantity }}</span>
+                        <button type="button" (click)="increaseQuantity(item)">+</button>
+                      </div>
+                    </td>
                     <td>{{ formatCurrency(item.unitPrice) }}</td>
                     <td>{{ formatCurrency(item.unitPrice * item.quantity) }}</td>
                   </tr>

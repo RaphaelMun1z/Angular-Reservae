@@ -1,4 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
@@ -17,6 +18,7 @@ import { ticketTypeLabel } from '../../shared/presentation-labels';
 export class SectorSelection implements OnInit {
   readonly checkoutStore = inject(CheckoutStore);
   readonly eventStore = inject(EventStore);
+  private readonly title = inject(Title);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly quantities = signal<Record<string, number>>({});
@@ -33,6 +35,18 @@ export class SectorSelection implements OnInit {
     const selectedSectorId = this.selectedSectorId();
     return this.eventStore.sectors().find((sector) => sector.id === selectedSectorId) ?? null;
   });
+
+  constructor() {
+    effect(() => {
+      const eventName = this.eventStore.selectedEvent()?.name?.trim();
+
+      if (eventName) {
+        this.title.setTitle(`Reservae | ${eventName}`);
+      } else if (this.eventStore.error()) {
+        this.title.setTitle('Reservae | Evento nao encontrado');
+      }
+    });
+  }
 
   ngOnInit(): void {
     const eventId = this.route.snapshot.paramMap.get('eventId');
