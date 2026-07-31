@@ -37,24 +37,32 @@ export function orderStatusLabel(status?: OrderStatus | string | null): string {
       return 'Aguardando pagamento';
     case 'PAYMENT_APPROVED':
       return 'Pagamento aprovado';
+    case 'PAYMENT_NOT_CONFIRMED':
+    case 'PAYMENT_DECLINED':
+      return 'Pagamento nao confirmado';
     case 'APPROVED':
       return 'Aprovado';
     case 'PAID':
       return 'Pago';
     case 'PROCESSING':
       return 'Em processamento';
+    case 'RESERVATION_CONFIRMED':
+    case 'RESERVED':
+      return 'Reserva confirmada';
     case 'RESERVATION_FAILED':
       return 'Reserva nao concluida';
     case 'RESERVATION_REJECTED':
       return 'Reserva recusada';
     case 'CONFIRMED':
-      return 'Confirmado';
+      return 'Pagamento confirmado';
     case 'PAYMENT_FAILED':
       return 'Pagamento recusado';
     case 'FAILED':
       return 'Falhou';
     case 'CANCELLED':
       return 'Cancelado';
+    case 'EXPIRED':
+      return 'Expirado';
     default:
       return status || 'Status nao informado';
   }

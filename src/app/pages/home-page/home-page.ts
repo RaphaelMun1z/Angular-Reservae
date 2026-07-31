@@ -35,7 +35,6 @@ interface CityDestination {
 export class HomePage implements OnInit {
   readonly eventStore = inject(EventStore);
   protected readonly newsletterMessage = signal<string | null>(null);
-  protected readonly featuredEvent = computed(() => this.eventStore.featuredEvents()[0] ?? null);
   protected readonly visibleEvents = computed(() => this.eventStore.featuredEvents().slice(0, 6));
 
   protected readonly platformNotices: readonly PlatformNotice[] = [
@@ -77,7 +76,7 @@ export class HomePage implements OnInit {
     {
       name: 'Belo Horizonte',
       description: 'Shows, festivais e experiencias em Minas Gerais.',
-      imageUrl: 'https://images.unsplash.com/photo-1539020140153-e8c237112e53?auto=format&fit=crop&q=80&w=900',
+      imageUrl: 'https://blog.123milhas.com/wp-content/uploads/2022/12/aniversario-de-belo-horizonte-conheca-a-historia-e-curiosidades-sobre-a-capital-de-minas-gerais-conexao123.jpg',
       queryParams: { city: 'Belo Horizonte' },
     },
   ];

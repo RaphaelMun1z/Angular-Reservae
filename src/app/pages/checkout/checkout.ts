@@ -1,11 +1,13 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { CheckoutStore, type CheckoutItem } from './state/checkout.store';
+import { TicketType } from '../../core/models/event-catalog.model';
 import { ticketTypeLabel } from '../../shared/presentation-labels';
 import { EventDisplayData, EventDisplayDataService } from '../../shared/event-display-data.service';
+import { AuthStore } from '../../core/state/auth.store';
 
 @Component({
   selector: 'app-checkout',
@@ -15,6 +17,17 @@ import { EventDisplayData, EventDisplayDataService } from '../../shared/event-di
 })
 export class Checkout implements OnInit {
   readonly store = inject(CheckoutStore);
+  readonly authStore = inject(AuthStore);
+  readonly userInitials = computed(() =>
+    this.authStore
+      .displayName()
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase(),
+  );
   readonly submitInProgress = signal(false);
   readonly eventData = signal<EventDisplayData | null>(null);
   readonly eventDetailsLoading = signal(false);
@@ -89,6 +102,26 @@ export class Checkout implements OnInit {
     this.store.changeQuantity(item.sectorId, item.quantity + 1, item.ticketType);
   }
 
+  changeTicketType(item: CheckoutItem, ticketType: TicketType): void {
+    if (item.ticketType === ticketType) {
+      return;
+    }
+
+    const sector = this.eventData()?.sectors.find((currentSector) => currentSector.id === item.sectorId);
+    const unitPrice = ticketType === 'HALF_TICKET_PRICE' ? sector?.halfPrice : sector?.basePrice;
+
+    if (unitPrice === null || unitPrice === undefined) {
+      this.store.setError('Preco indisponivel para o tipo de ingresso selecionado.');
+      return;
+    }
+
+    this.store.changeTicketType(item.sectorId, item.ticketType, ticketType, unitPrice);
+  }
+
+  removeItem(item: CheckoutItem): void {
+    this.store.removeItem(item.sectorId, item.ticketType);
+  }
+
   eventName(): string {
     const eventId = this.store.eventId();
 
@@ -99,16 +132,32 @@ export class Checkout implements OnInit {
     return this.eventData()?.event?.name || (this.eventDetailsLoading() ? 'Carregando evento...' : 'Evento nao identificado');
   }
 
-  eventMeta(): string {
+  eventDate(): string {
     const event = this.eventData()?.event;
-    const date = this.formatDate(event?.date);
-    const location = this.eventLocation(event);
+    return this.formatDate(event?.date);
+  }
 
-    if (date && location) {
-      return `${date} - ${location}`;
+  eventTime(): string {
+    const value = this.eventData()?.event?.date;
+
+    if (!value) {
+      return '';
     }
 
-    return date || location || (this.eventDetailsError() ? 'Detalhes do evento indisponiveis' : 'Detalhes do evento em carregamento');
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  eventLocation(): string {
+    return this.formatEventLocation(this.eventData()?.event);
   }
 
   sectorName(item: CheckoutItem): string {
@@ -140,7 +189,7 @@ export class Checkout implements OnInit {
       });
   }
 
-  private eventLocation(event: EventDisplayData['event'] | undefined): string {
+  private formatEventLocation(event: EventDisplayData['event'] | undefined): string {
     const cityState = [event?.city, event?.state].filter(Boolean).join(', ');
     return [event?.venueName, cityState].filter(Boolean).join(' - ');
   }
@@ -160,8 +209,6 @@ export class Checkout implements OnInit {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
     });
   }
 }

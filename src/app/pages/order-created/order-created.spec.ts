@@ -62,8 +62,23 @@ describe('OrderCreated', () => {
     expect(component.orderStatusLabel()).toBe('Pagamento disponivel');
   });
 
+  it('should treat confirmed orders as completed payments', () => {
+    component.store.setOrder({
+      id: 'order-1',
+      eventId: 'event-1',
+      status: 'CONFIRMED',
+      totalAmount: 10,
+      paymentUrl: null,
+      items: [],
+    });
+
+    expect(component.orderStatusLabel()).toBe('Pagamento confirmado');
+    expect(component.isPaymentConfirmed()).toBe(true);
+    expect(component.timelineSteps().every((step) => step.state === 'done')).toBe(true);
+  });
+
   it('should retry when orderId exists', () => {
-    const loadSpy = vi.spyOn(component.store, 'loadOrder');
+    const pollingSpy = vi.spyOn(component.store, 'startOrderPolling');
     component.store.setOrder({
       id: 'order-1',
       eventId: 'event-1',
@@ -75,31 +90,29 @@ describe('OrderCreated', () => {
 
     component.retry();
 
-    expect(loadSpy).toHaveBeenCalledWith('order-1');
+    expect(pollingSpy).toHaveBeenCalledWith('order-1');
   });
 
-  it('should load the order from payment return query params', () => {
-    const loadSpy = vi.spyOn(component.store, 'loadOrder');
+  it('should start polling the order from payment return query params', () => {
     const pollingSpy = vi.spyOn(component.store, 'startOrderPolling');
 
     fixture.detectChanges();
     queryParamMap.next(convertToParamMap({ orderId: 'order-from-url', sessionId: 'cs_test_123' }));
 
-    expect(loadSpy).toHaveBeenCalledWith('order-from-url');
     expect(pollingSpy).toHaveBeenCalledWith('order-from-url');
     expect(component.displayOrderId()).toBe('order-from-url');
     expect(component.paymentSessionId()).toBe('cs_test_123');
   });
 
   it('should retry using the order id received in the URL', () => {
-    const loadSpy = vi.spyOn(component.store, 'loadOrder');
+    const pollingSpy = vi.spyOn(component.store, 'startOrderPolling');
 
     fixture.detectChanges();
     queryParamMap.next(convertToParamMap({ orderId: 'order-from-url' }));
 
-    loadSpy.mockClear();
+    pollingSpy.mockClear();
     component.retry();
 
-    expect(loadSpy).toHaveBeenCalledWith('order-from-url');
+    expect(pollingSpy).toHaveBeenCalledWith('order-from-url');
   });
 });

@@ -200,6 +200,31 @@ describe('CheckoutStore', () => {
     expect(store.orderId()).toBe('order-1');
   });
 
+  it('should preserve the event reference when a later order response omits it', () => {
+    store.setOrder({
+      id: 'order-1',
+      eventId: 'event-1',
+      status: 'AWAITING_PAYMENT',
+      totalAmount: 10,
+      paymentUrl: null,
+      items: [],
+    });
+
+    store.finishCheckout();
+
+    store.setOrder({
+      id: 'order-1',
+      eventId: null,
+      status: 'CONFIRMED',
+      totalAmount: 10,
+      paymentUrl: null,
+      items: [],
+    });
+
+    expect(store.order()?.eventId).toBe('event-1');
+    expect(store.eventId()).toBe('event-1');
+  });
+
   it('should remove invalid checkout recovery reference', () => {
     sessionStorage.setItem('reservae.checkout.recovery', JSON.stringify({ eventId: 'event-1' }));
 

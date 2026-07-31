@@ -5,15 +5,20 @@ export type OrderStatus =
   | 'AWAITING_PAYMENT'
   | 'PAYMENT_PENDING'
   | 'PAYMENT_APPROVED'
+  | 'PAYMENT_NOT_CONFIRMED'
+  | 'PAYMENT_DECLINED'
   | 'APPROVED'
   | 'PAID'
   | 'PROCESSING'
+  | 'RESERVATION_CONFIRMED'
+  | 'RESERVED'
   | 'RESERVATION_FAILED'
   | 'RESERVATION_REJECTED'
   | 'CONFIRMED'
   | 'PAYMENT_FAILED'
   | 'FAILED'
-  | 'CANCELLED';
+  | 'CANCELLED'
+  | 'EXPIRED';
 
 export interface OrderItemRequestDTO {
   readonly sectorId: string;

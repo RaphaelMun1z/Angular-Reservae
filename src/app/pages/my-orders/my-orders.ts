@@ -129,7 +129,14 @@ export class MyOrders implements OnInit {
   }
 
   isFailed(status: OrderStatus | string | null): boolean {
-    return status === 'RESERVATION_FAILED' || status === 'RESERVATION_REJECTED' || status === 'PAYMENT_FAILED' || status === 'FAILED' || status === 'CANCELLED';
+    return status === 'RESERVATION_FAILED' ||
+      status === 'RESERVATION_REJECTED' ||
+      status === 'PAYMENT_FAILED' ||
+      status === 'PAYMENT_NOT_CONFIRMED' ||
+      status === 'PAYMENT_DECLINED' ||
+      status === 'FAILED' ||
+      status === 'CANCELLED' ||
+      status === 'EXPIRED';
   }
 
   private isEventLoading(eventId: string): boolean {

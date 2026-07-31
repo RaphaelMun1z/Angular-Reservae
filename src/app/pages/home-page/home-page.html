@@ -1,52 +1,19 @@
 <app-site-navbar />
 
 <main class="max-w-[1600px] mx-auto w-[96%] relative z-10 py-10">
-  <section class="mb-12 relative rounded-3xl overflow-hidden bg-dark-card border border-dark-border flex flex-col lg:flex-row items-center justify-between p-10 lg:p-16 gap-10">
-    <div class="absolute inset-0 z-0">
-      <img [src]="eventImage(featuredEvent())" alt="Publico em show ao vivo" class="w-full h-full object-cover" />
-      <div class="absolute inset-0 bg-dark-bg/90 backdrop-blur-sm"></div>
-    </div>
+  <section class="home-hero">
+    <img [src]="eventImage(null)" alt="Publico em show ao vivo" class="hero-image" />
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <img src="assets/artist-natanzinho.png" alt="Natanzinho Lima" class="hero-artist" />
 
-    <div class="relative z-10 w-full lg:w-2/5 text-center lg:text-left">
-      <p class="text-gray-400 font-medium mb-4">Shows, festivais e experiencias perto de voce</p>
-      <h1 class="text-5xl lg:text-7xl font-black text-brand tracking-tighter mb-5 drop-shadow-lg">
-        Viva seus melhores momentos
-      </h1>
-      <p class="text-white font-bold text-lg leading-relaxed mb-7">
-        Encontre eventos inesqueciveis, escolha seu setor e receba seus ingressos digitais com seguranca.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+    <div class="hero-content">
+      <h1>Viva seus<br /><em>melhores momentos.</em></h1>
+      <div class="hero-actions">
         <a routerLink="/shows" class="home-action primary">Explorar eventos</a>
         <a routerLink="/shows" [queryParams]="{ status: 'SCHEDULED' }" class="home-action secondary">Ver proximos shows</a>
       </div>
     </div>
 
-    <div class="relative z-10 w-full lg:w-3/5 bg-dark-card/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 lg:p-12 shadow-2xl">
-      @if (eventStore.featuredLoading()) {
-        <app-skeleton-loader variant="hero" />
-      } @else if (featuredEvent(); as event) {
-        <p class="text-xs text-brand font-black uppercase tracking-widest mb-3">Evento em destaque</p>
-        <h2 class="text-3xl lg:text-5xl font-black text-white tracking-tight mb-6">
-          {{ event.name }}
-        </h2>
-        <div class="featured-meta">
-          <span>{{ formatDate(event.date) }}</span>
-          <span>{{ formatTime(event.date) }}</span>
-          <span>{{ event.venueName || 'Local a confirmar' }}</span>
-          <span>{{ event.city || 'Cidade' }}/{{ event.state || 'UF' }}</span>
-        </div>
-        <a [routerLink]="['/selecionar-setor', event.id]" class="featured-link">Ver evento</a>
-      } @else {
-        <p class="text-xs text-brand font-black uppercase tracking-widest mb-3">Reservae</p>
-        <h2 class="text-3xl lg:text-5xl font-black text-white tracking-tight mb-6">
-          Seu ingresso digital, do seu jeito
-        </h2>
-        <p class="text-gray-300 font-semibold mb-6">
-          Novos eventos serao adicionados em breve. Enquanto isso, explore o catalogo e acompanhe as novidades.
-        </p>
-        <a routerLink="/shows" class="featured-link">Ir para eventos</a>
-      }
-    </div>
   </section>
 
   <section class="flex flex-col lg:flex-row items-start lg:items-center gap-6 mb-16">
@@ -68,9 +35,6 @@
 
     <div class="text-center md:text-left z-10">
       <h2 class="text-3xl lg:text-4xl font-black tracking-tight text-white mb-3">Seu proximo show comeca aqui</h2>
-      <p class="text-gray-300 font-semibold max-w-2xl">
-        Descubra eventos, escolha seu setor e receba seus ingressos digitais com seguranca.
-      </p>
     </div>
 
     <a routerLink="/shows" class="z-10 bg-white text-black px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-gray-200 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
@@ -78,18 +42,27 @@
     </a>
   </section>
 
-  <section class="mb-20">
-    <div class="flex flex-col lg:flex-row items-start lg:items-center gap-8 mb-10">
-      <h2 class="text-3xl font-black leading-tight tracking-tighter">
-        EVENTOS<br /><span class="text-brand">EM DESTAQUE</span>
-      </h2>
+  <section class="featured-section">
+    <div class="featured-header">
+      <div class="featured-heading">
+        <h2>Eventos <em>em destaque</em></h2>
+        <p>Uma selecao de experiencias para voce planejar o proximo momento inesquecivel.</p>
+      </div>
 
+      <a routerLink="/shows" class="featured-all-link">
+        Ver todos os eventos
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+      </a>
+    </div>
+
+    <div class="featured-filters" aria-label="Filtrar eventos em destaque">
+      <span>Explorar por</span>
       <div class="flex flex-wrap gap-3">
         @for (filter of homeFilters; track filter.label) {
           <a
             routerLink="/shows"
             [queryParams]="filter.queryParams"
-            class="px-5 py-2.5 rounded-full bg-dark-card border border-dark-border text-sm font-semibold text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+            class="featured-filter"
           >
             {{ filter.label }}
           </a>
@@ -115,17 +88,28 @@
       <div class="featured-list">
         @for (event of visibleEvents(); track event.id) {
           <article class="event-card">
-            <img [src]="eventImage(event)" [alt]="event.name || 'Evento Reservae'" />
+            <div class="event-image-wrap">
+              <img [src]="eventImage(event)" [alt]="event.name || 'Evento Reservae'" />
+              <span class="event-status">{{ statusLabel(event.status) }}</span>
+            </div>
             <div class="event-content">
               <div>
-                <span class="event-status">{{ statusLabel(event.status) }}</span>
                 <h3>{{ event.name || 'Evento sem titulo' }}</h3>
               </div>
               <div class="event-details">
-                <p>{{ formatDate(event.date) }} - {{ formatTime(event.date) }}</p>
-                <p>{{ eventLocation(event) }}</p>
+                <p>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg>
+                  {{ formatDate(event.date) }} · {{ formatTime(event.date) }}
+                </p>
+                <p>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+                  {{ eventLocation(event) }}
+                </p>
               </div>
-              <a [routerLink]="['/selecionar-setor', event.id]">Ver detalhes</a>
+              <a [routerLink]="['/selecionar-setor', event.id]">
+                Ver detalhes
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+              </a>
             </div>
           </article>
         }

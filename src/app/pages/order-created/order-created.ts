@@ -5,7 +5,6 @@ import confetti from 'canvas-confetti';
 import { OrderItemResponseDTO, OrderStatus } from '../../core/models/order.model';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
-import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
 import { CheckoutItem, CheckoutStore } from '../checkout/state/checkout.store';
 import { orderStatusLabel as friendlyOrderStatusLabel, ticketTypeLabel } from '../../shared/presentation-labels';
 import { EventDisplayData, EventDisplayDataService } from '../../shared/event-display-data.service';
@@ -30,7 +29,7 @@ interface DisplayItem {
 
 @Component({
   selector: 'app-order-created',
-  imports: [RouterLink, SiteFooter, SiteNavbar, SkeletonLoader],
+  imports: [RouterLink, SiteFooter, SiteNavbar],
   templateUrl: './order-created.html',
   styleUrl: './order-created.scss',
 })
@@ -45,6 +44,7 @@ export class OrderCreated implements OnInit {
   readonly eventDetailsLoading = signal(false);
   readonly eventDetailsError = signal(false);
   private confettiLaunched = false;
+  private eventDataRequestId: string | null = null;
 
   constructor() {
     effect(() => {
@@ -71,7 +71,6 @@ export class OrderCreated implements OnInit {
       this.paymentSessionId.set(sessionId);
 
       if (orderId) {
-        this.store.loadOrder(orderId);
         this.store.startOrderPolling(orderId);
         return;
       }
@@ -84,7 +83,6 @@ export class OrderCreated implements OnInit {
     const orderId = this.queryOrderId() ?? this.store.orderId();
 
     if (orderId) {
-      this.store.loadOrder(orderId);
       this.store.startOrderPolling(orderId);
       return;
     }
@@ -118,33 +116,28 @@ export class OrderCreated implements OnInit {
       case 'RESERVATION_FAILED':
       case 'RESERVATION_REJECTED':
       case 'PAYMENT_FAILED':
+      case 'PAYMENT_NOT_CONFIRMED':
+      case 'PAYMENT_DECLINED':
       case 'FAILED':
       case 'CANCELLED':
+      case 'EXPIRED':
         return 'danger';
       default:
         return 'info';
     }
   }
 
-  statusIconPath(): string {
-    switch (this.statusTone()) {
-      case 'success':
-        return 'M20 6 9 17l-5-5';
-      case 'danger':
-        return 'M18 6 6 18M6 6l12 12';
-      case 'warning':
-        return 'M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z';
-      default:
-        return 'M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z';
-    }
-  }
-
   isPaymentConfirmed(): boolean {
-    return this.store.succeeded();
+    return this.store.status() === 'CONFIRMED' ||
+      this.store.status() === 'PAYMENT_APPROVED' ||
+      this.store.status() === 'APPROVED' ||
+      this.store.status() === 'PAID';
   }
 
   orderStatusLabel(): string {
-    switch (this.store.status()) {
+    const status = this.store.status() as string | null;
+
+    switch (status) {
       case 'PENDING':
         return 'Reserva em processamento';
       case 'PROCESSING':
@@ -152,6 +145,9 @@ export class OrderCreated implements OnInit {
       case 'AWAITING_PAYMENT':
       case 'PAYMENT_PENDING':
         return this.store.paymentUrl() ? 'Pagamento disponivel' : 'Reserva confirmada';
+      case 'RESERVATION_CONFIRMED':
+      case 'RESERVED':
+        return 'Reserva confirmada';
       case 'CONFIRMED':
       case 'PAYMENT_APPROVED':
       case 'APPROVED':
@@ -161,40 +157,16 @@ export class OrderCreated implements OnInit {
       case 'RESERVATION_REJECTED':
         return 'Reserva nao concluida';
       case 'PAYMENT_FAILED':
+      case 'PAYMENT_NOT_CONFIRMED':
+      case 'PAYMENT_DECLINED':
       case 'FAILED':
         return 'Pagamento nao confirmado';
       case 'CANCELLED':
         return 'Pedido cancelado';
+      case 'EXPIRED':
+        return 'Pedido expirado';
       default:
         return friendlyOrderStatusLabel(this.store.status());
-    }
-  }
-
-  orderStatusDescription(): string {
-    switch (this.store.status()) {
-      case 'PENDING':
-      case 'PROCESSING':
-        return 'Recebemos seu pedido e estamos validando a reserva dos ingressos selecionados.';
-      case 'AWAITING_PAYMENT':
-      case 'PAYMENT_PENDING':
-        return this.store.paymentUrl()
-          ? 'Sua reserva foi confirmada. Acesse o link seguro para finalizar o pagamento.'
-          : 'Sua reserva foi confirmada e o pagamento esta sendo preparado. Atualize o status em alguns instantes.';
-      case 'CONFIRMED':
-      case 'PAYMENT_APPROVED':
-      case 'APPROVED':
-      case 'PAID':
-        return 'Seu pedido foi confirmado com sucesso. Seus ingressos serao disponibilizados em breve em Meus ingressos.';
-      case 'RESERVATION_FAILED':
-      case 'RESERVATION_REJECTED':
-        return 'Nao foi possivel reservar os ingressos. Voce pode voltar aos eventos e selecionar ingressos novamente.';
-      case 'PAYMENT_FAILED':
-      case 'FAILED':
-        return 'O pagamento nao foi confirmado. Verifique o pedido ou tente escolher os ingressos novamente.';
-      case 'CANCELLED':
-        return 'Este pedido foi cancelado. Para continuar, escolha os ingressos novamente.';
-      default:
-        return 'Estamos preparando as informacoes do seu pedido. Atualize o status se a pagina nao mudar automaticamente.';
     }
   }
 
@@ -254,6 +226,10 @@ export class OrderCreated implements OnInit {
     return this.store.items().map((item) => this.fromCheckoutItem(item));
   }
 
+  hasEventDetails(): boolean {
+    return this.eventData()?.event !== null && this.eventData()?.event !== undefined;
+  }
+
   eventName(): string {
     const eventId = this.store.order()?.eventId ?? this.store.eventId();
 
@@ -283,13 +259,18 @@ export class OrderCreated implements OnInit {
   }
 
   private currentTimelineIndex(status: OrderStatus | null, paymentAvailable: boolean): number {
-    switch (status) {
+    const normalizedStatus = status as string | null;
+
+    switch (normalizedStatus) {
       case 'PENDING':
       case 'PROCESSING':
         return 1;
       case 'AWAITING_PAYMENT':
       case 'PAYMENT_PENDING':
         return paymentAvailable ? 3 : 2;
+      case 'RESERVATION_CONFIRMED':
+      case 'RESERVED':
+        return 2;
       case 'CONFIRMED':
       case 'PAYMENT_APPROVED':
       case 'APPROVED':
@@ -299,9 +280,13 @@ export class OrderCreated implements OnInit {
       case 'RESERVATION_REJECTED':
         return 1;
       case 'PAYMENT_FAILED':
+      case 'PAYMENT_NOT_CONFIRMED':
+      case 'PAYMENT_DECLINED':
       case 'FAILED':
         return 4;
       case 'CANCELLED':
+        return 3;
+      case 'EXPIRED':
         return 3;
       default:
         return 0;
@@ -309,14 +294,20 @@ export class OrderCreated implements OnInit {
   }
 
   private errorTimelineIndex(status: OrderStatus | null): number | null {
-    switch (status) {
+    const normalizedStatus = status as string | null;
+
+    switch (normalizedStatus) {
       case 'RESERVATION_FAILED':
       case 'RESERVATION_REJECTED':
         return 1;
       case 'PAYMENT_FAILED':
+      case 'PAYMENT_NOT_CONFIRMED':
+      case 'PAYMENT_DECLINED':
       case 'FAILED':
         return 4;
       case 'CANCELLED':
+        return 3;
+      case 'EXPIRED':
         return 3;
       default:
         return null;
@@ -376,10 +367,11 @@ export class OrderCreated implements OnInit {
   }
 
   private loadEventData(eventId: string): void {
-    if (this.eventData()?.event?.id === eventId || this.eventDetailsLoading()) {
+    if (this.eventData()?.event?.id === eventId || this.eventDataRequestId === eventId) {
       return;
     }
 
+    this.eventDataRequestId = eventId;
     this.eventDetailsLoading.set(true);
     this.eventDetailsError.set(false);
 
@@ -388,11 +380,20 @@ export class OrderCreated implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (eventData) => {
+          if (this.eventDataRequestId !== eventId) {
+            return;
+          }
+
           this.eventData.set(eventData);
           this.eventDetailsLoading.set(false);
         },
         error: () => {
+          if (this.eventDataRequestId !== eventId) {
+            return;
+          }
+
           this.eventData.set(null);
+          this.eventDataRequestId = null;
           this.eventDetailsLoading.set(false);
           this.eventDetailsError.set(true);
         },

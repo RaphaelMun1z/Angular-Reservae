@@ -14,6 +14,7 @@ import { AuthStore } from '../../../core/state/auth.store';
 
 const CHECKOUT_RECOVERY_KEY = 'reservae.checkout.recovery';
 const CHECKOUT_CART_KEY = 'reservae.checkout.cart';
+const ORDER_EVENT_REFERENCE_KEY = 'reservae.checkout.order-events';
 const ORDER_POLLING_INTERVAL_MS = 3000;
 
 export interface CheckoutItem {
@@ -50,6 +51,8 @@ interface CheckoutCartSnapshot {
   readonly items: readonly CheckoutItem[];
 }
 
+type OrderEventReferences = Record<string, string>;
+
 export const CHECKOUT_API = new InjectionToken<CheckoutApi>('CHECKOUT_API');
 
 @Injectable({
@@ -63,6 +66,7 @@ export class CheckoutStore {
 
   private pollingSubscription: Subscription | null = null;
   private pollingOrderId: string | null = null;
+  private orderRequestVersion = 0;
 
   private readonly _eventId = signal<string | null>(null);
   private readonly _items = signal<CheckoutItem[]>([]);
@@ -100,8 +104,11 @@ export class CheckoutStore {
       this.status() === 'RESERVATION_FAILED' ||
       this.status() === 'RESERVATION_REJECTED' ||
       this.status() === 'PAYMENT_FAILED' ||
+      this.status() === 'PAYMENT_NOT_CONFIRMED' ||
+      this.status() === 'PAYMENT_DECLINED' ||
       this.status() === 'FAILED' ||
-      this.status() === 'CANCELLED',
+      this.status() === 'CANCELLED' ||
+      this.status() === 'EXPIRED',
   );
   readonly paymentStatus = this.status;
 
@@ -156,6 +163,48 @@ export class CheckoutStore {
         this.isSameItem(item, sectorId, ticketType ?? item.ticketType) ? { ...item, quantity } : item,
       ),
     );
+    this._error.set(null);
+    this.persistCart();
+  }
+
+  changeTicketType(
+    sectorId: string,
+    currentTicketType: TicketType,
+    ticketType: TicketType,
+    unitPrice: number,
+  ): void {
+    if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+      this._error.set('Preco indisponivel para o tipo de ingresso selecionado.');
+      return;
+    }
+
+    this._items.update((items) => {
+      const currentItem = items.find(
+        (item) => item.sectorId === sectorId && item.ticketType === currentTicketType,
+      );
+
+      if (!currentItem || currentTicketType === ticketType) {
+        return items;
+      }
+
+      const targetItem = items.find(
+        (item) => item.sectorId === sectorId && item.ticketType === ticketType,
+      );
+
+      if (targetItem) {
+        return items
+          .filter((item) => item !== currentItem)
+          .map((item) =>
+            item === targetItem
+              ? { ...item, quantity: item.quantity + currentItem.quantity, unitPrice }
+              : item,
+          );
+      }
+
+      return items.map((item) =>
+        item === currentItem ? { ...item, ticketType, unitPrice } : item,
+      );
+    });
     this._error.set(null);
     this.persistCart();
   }
@@ -244,18 +293,30 @@ export class CheckoutStore {
       return;
     }
 
+    this.stopOrderPolling();
+    const requestVersion = ++this.orderRequestVersion;
     this._loading.set(true);
     this._error.set(null);
 
     this.api
       .getOrder(orderId)
       .pipe(
-        tap((order) => this.setOrder(order)),
+        tap((order) => {
+          if (requestVersion === this.orderRequestVersion) {
+            this.setOrder(order);
+          }
+        }),
         catchError((error: unknown) => {
-          this._error.set(this.errorMessage(error, 'Nao foi possivel consultar o pedido.'));
+          if (requestVersion === this.orderRequestVersion) {
+            this._error.set(this.errorMessage(error, 'Nao foi possivel consultar o pedido.'));
+          }
           return of(null);
         }),
-        finalize(() => this._loading.set(false)),
+        finalize(() => {
+          if (requestVersion === this.orderRequestVersion) {
+            this._loading.set(false);
+          }
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
@@ -298,11 +359,16 @@ export class CheckoutStore {
 
     this.stopOrderPolling();
     this.pollingOrderId = orderId;
+    const requestVersion = ++this.orderRequestVersion;
 
     this.pollingSubscription = timer(0, ORDER_POLLING_INTERVAL_MS)
       .pipe(
         switchMap(() => api.getOrder(orderId)),
         tap((order) => {
+          if (requestVersion !== this.orderRequestVersion) {
+            return;
+          }
+
           this.setOrder(order);
 
           if (this.isFinalOrder(order)) {
@@ -310,8 +376,10 @@ export class CheckoutStore {
           }
         }),
         catchError((error: unknown) => {
-          this._error.set(this.errorMessage(error, 'Nao foi possivel acompanhar o pedido.'));
-          this.stopOrderPolling();
+          if (requestVersion === this.orderRequestVersion) {
+            this._error.set(this.errorMessage(error, 'Nao foi possivel acompanhar o pedido.'));
+            this.stopOrderPolling();
+          }
           return of(null);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -336,10 +404,17 @@ export class CheckoutStore {
   }
 
   setOrder(order: CheckoutOrder): void {
-    this._order.set({ ...order });
-    this._eventId.set(order.eventId ?? this._eventId());
+    const eventId = order.eventId ?? this.eventIdForOrder(order.id) ?? this._eventId();
+    const normalizedOrder = { ...order, eventId };
 
-    if (this.isFinalOrder(order)) {
+    this._order.set(normalizedOrder);
+    this._eventId.set(eventId);
+
+    if (normalizedOrder.id && eventId) {
+      this.persistOrderEventReference(normalizedOrder.id, eventId);
+    }
+
+    if (this.isFinalOrder(normalizedOrder)) {
       this.storage.remove(CHECKOUT_RECOVERY_KEY, sessionStorage);
       return;
     }
@@ -392,6 +467,24 @@ export class CheckoutStore {
     this.storage.remove(CHECKOUT_CART_KEY);
   }
 
+  private eventIdForOrder(orderId: string): string | null {
+    if (!orderId) {
+      return null;
+    }
+
+    const references = this.storage.get<OrderEventReferences>(ORDER_EVENT_REFERENCE_KEY);
+    const eventId = references?.[orderId];
+    return typeof eventId === 'string' && eventId.trim() ? eventId : null;
+  }
+
+  private persistOrderEventReference(orderId: string, eventId: string): void {
+    const references = this.storage.get<OrderEventReferences>(ORDER_EVENT_REFERENCE_KEY) ?? {};
+    this.storage.set<OrderEventReferences>(ORDER_EVENT_REFERENCE_KEY, {
+      ...references,
+      [orderId]: eventId,
+    });
+  }
+
   private isCheckoutRecoveryReference(value: CheckoutRecoveryReference): value is CheckoutRecoveryReference {
     return typeof value.orderId === 'string' && value.orderId.length > 0;
   }
@@ -424,13 +517,21 @@ export class CheckoutStore {
       order.status === 'RESERVATION_FAILED' ||
       order.status === 'RESERVATION_REJECTED' ||
       order.status === 'PAYMENT_FAILED' ||
+      order.status === 'PAYMENT_NOT_CONFIRMED' ||
+      order.status === 'PAYMENT_DECLINED' ||
       order.status === 'FAILED' ||
-      order.status === 'CANCELLED'
+      order.status === 'CANCELLED' ||
+      order.status === 'EXPIRED'
     );
   }
 
   private isProcessingStatus(status: OrderStatus | null): boolean {
-    return status === 'PENDING' || status === 'PROCESSING' || status === 'AWAITING_PAYMENT' || status === 'PAYMENT_PENDING';
+    return status === 'PENDING' ||
+      status === 'PROCESSING' ||
+      status === 'RESERVATION_CONFIRMED' ||
+      status === 'RESERVED' ||
+      status === 'AWAITING_PAYMENT' ||
+      status === 'PAYMENT_PENDING';
   }
 
   private moneyToNumber(value: number): number {
