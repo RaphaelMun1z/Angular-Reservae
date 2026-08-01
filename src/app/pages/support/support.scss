@@ -1,84 +1,60 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-            :host {
-                display: block;
-                min-height: 100vh;
-                background-color: #050505;
-                --bg: #050505; --card: #0d0d0d; --red: #ff624d;
-                --white: #fff; --gray: #a7a7a7;
-            }
+:host {
+  display: block;
+  min-height: 100vh;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  background: radial-gradient(circle at top center, #1f0b09 0%, #050505 50%, #000 100%);
+  --red: #ff624d;
+  --gray: #a7a7a7;
+}
 
-            :host {
-                min-height: 100vh;
-                background: radial-gradient(circle at top center, #1f0b09 0%, var(--bg) 50%, #000000 100%);
-                font-family: "Montserrat", sans-serif;
-                color: white;
-            }
+.support-container { width: min(1080px, calc(100% - 48px)); margin: 34px auto 0; }
+.support-header { max-width: 720px; margin-bottom: 28px; }
+.page-kicker { display: block; margin-bottom: 9px; color: var(--red); font-size: 11px; font-weight: 900; letter-spacing: 1.4px; text-transform: uppercase; }
+.page-title { margin-bottom: 10px; font-size: clamp(2rem, 4vw, 3.1rem); font-weight: 900; letter-spacing: -1.5px; }
+.support-header p { color: var(--gray); font-size: 15px; font-weight: 600; }
 
-            /* Navbar simplificada */
-            .nav {
-                display: flex; justify-content: space-between; align-items: center;
-                padding: 24px 48px;
-            }
+.search-box { display: flex; align-items: center; gap: 13px; padding: 16px 18px; margin-bottom: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 15px; background: rgba(255,255,255,.05); }
+.search-box svg, .clear-search, .faq-icon svg, .support-shortcuts svg, .contact-icon svg, .no-results svg { width: 20px; height: 20px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+.search-box svg { color: var(--red); }
+.search-box input { flex: 1; min-width: 0; border: 0; outline: 0; color: white; background: transparent; font: inherit; font-size: 15px; }
+.search-box input::placeholder { color: #777; }
+.clear-search { padding: 0; color: var(--gray); cursor: pointer; background: transparent; border: 0; font-size: 24px; line-height: 1; }
 
-            .logo {
-                width: 52px; height: 52px; border-radius: 50%; background: var(--red);
-                display: flex; justify-content: center; align-items: center; text-decoration: none;
-            }
+.support-shortcuts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 42px; }
+.support-shortcuts a { display: flex; align-items: center; gap: 12px; padding: 15px; color: white; text-decoration: none; border: 1px solid rgba(255,255,255,.08); border-radius: 15px; background: rgba(15,15,15,.65); transition: .2s; }
+.support-shortcuts a:hover { border-color: var(--red); transform: translateY(-2px); }
+.support-shortcuts svg { color: var(--red); }
+.support-shortcuts strong, .support-shortcuts small { display: block; }
+.support-shortcuts strong { font-size: 12px; font-weight: 900; }
+.support-shortcuts small { margin-top: 4px; color: var(--gray); font-size: 11px; font-weight: 600; }
 
-            .logo svg { width: 28px; height: 28px; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+.section-heading h2 { font-size: 25px; font-weight: 900; }
+.faq-count { color: var(--gray); font-size: 12px; font-weight: 800; }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.faq-card { display: flex; gap: 14px; padding: 20px; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: rgba(15,15,15,.6); transition: .2s; }
+.faq-card:hover { border-color: var(--red); }
+.faq-icon, .contact-icon { display: grid; width: 38px; height: 38px; flex: 0 0 auto; color: var(--red); border-radius: 11px; background: rgba(255,98,77,.1); place-items: center; }
+.faq-icon svg { width: 19px; height: 19px; }
+.faq-card h3 { margin-bottom: 8px; color: white; font-size: 15px; font-weight: 900; }
+.faq-card p { color: var(--gray); font-size: 13px; font-weight: 600; line-height: 1.55; }
+.no-results { display: grid; justify-items: center; gap: 9px; padding: 48px 20px; text-align: center; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: rgba(15,15,15,.6); }
+.no-results svg { color: var(--red); }
+.no-results h3 { font-size: 17px; font-weight: 900; }
+.no-results p { color: var(--gray); font-size: 13px; }
 
-            /* Suporte Container */
-            .support-container {
-                max-width: 900px; margin: 40px auto; padding: 0 20px;
-            }
+.contact-card { display: flex; align-items: center; gap: 15px; margin: 42px 0 20px; padding: 22px; border: 1px solid rgba(255,98,77,.22); border-radius: 18px; background: rgba(255,98,77,.07); }
+.contact-card h2 { margin-bottom: 4px; font-size: 18px; font-weight: 900; }
+.contact-card p { color: var(--gray); font-size: 13px; font-weight: 600; }
+.contact-button { margin-left: auto; padding: 12px 17px; color: white; border-radius: 999px; background: var(--red); font-size: 12px; font-weight: 900; text-decoration: none; white-space: nowrap; }
+.contact-button:hover { background: #e34f3d; }
 
-            .page-title {
-                font-size: 3rem; font-weight: 900; letter-spacing: -1.5px;
-                margin-bottom: 30px; text-align: center;
-            }
-
-            /* Barra de Pesquisa */
-            .search-box {
-                background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-                border-radius: 12px; padding: 20px; margin-bottom: 40px;
-                display: flex; gap: 15px; align-items: center;
-            }
-
-            .search-box input {
-                flex: 1; background: transparent; border: none; color: white;
-                font-size: 16px; outline: none;
-            }
-
-            /* Categorias */
-            .faq-grid {
-                display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-            }
-
-            .faq-card {
-                background: rgba(15, 15, 15, 0.6); backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px;
-                border-radius: 16px; transition: border 0.3s;
-            }
-
-            .faq-card:hover { border-color: var(--red); }
-            .faq-card h3 { margin-bottom: 15px; color: var(--red); font-size: 18px; }
-            .faq-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
-
-            /* Chat de Suporte */
-            .chat-widget {
-                margin-top: 50px; background: rgba(255, 255, 255, 0.03);
-                padding: 30px; border-radius: 20px; text-align: center;
-                border: 1px solid rgba(255, 255, 255, 0.05);
-            }
-
-            .btn-chat {
-                background: var(--red); color: white; border: none; padding: 14px 30px;
-                border-radius: 25px; font-weight: 800; cursor: pointer; margin-top: 20px;
-            }
-
-            @media (max-width: 768px) {
-                .faq-grid { grid-template-columns: 1fr; }
-            }
-
-
+@media (max-width: 768px) {
+  .support-container { width: min(100% - 32px, 1080px); }
+  .support-shortcuts, .faq-grid { grid-template-columns: 1fr; }
+  .contact-card { align-items: flex-start; flex-wrap: wrap; }
+  .contact-button { margin-left: 53px; }
+}

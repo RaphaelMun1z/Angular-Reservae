@@ -25,7 +25,17 @@ export class MyOrdersStore {
   readonly hasOrders = computed(() => this._orders().length > 0);
   readonly filteredOrders = computed(() => {
     const filter = this._statusFilter();
-    return filter === 'ALL' ? this._orders() : this._orders().filter((order) => order.status === filter);
+    if (filter === 'ALL') {
+      return this._orders();
+    }
+
+    if (filter === 'CANCELLED') {
+      return this._orders().filter(
+        (order) => order.status === 'CANCELLED' || order.status === 'RESERVATION_FAILED' || order.status === 'PAYMENT_FAILED',
+      );
+    }
+
+    return this._orders().filter((order) => order.status === filter);
   });
 
   loadOrders(): void {

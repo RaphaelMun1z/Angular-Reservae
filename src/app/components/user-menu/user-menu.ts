@@ -19,6 +19,17 @@ export class UserMenu {
   protected readonly isOpen = signal(false);
   protected readonly authenticated = this.authStore.authenticated;
   protected readonly isAdmin = this.authStore.isAdmin;
+  protected readonly accessRole = this.authStore.accessRole;
+  protected readonly accessRoleLabel = computed(() => {
+    const labels: Record<string, string> = {
+      ADMIN: 'Administrador',
+      ORGANIZER: 'Organizador',
+      SUPPORT: 'Suporte',
+      CUSTOMER: 'Cliente',
+    };
+    const role = this.accessRole();
+    return role ? labels[role] : 'Usuário';
+  });
   protected readonly displayName = computed(() => this.name || this.authStore.displayName());
   protected readonly displayEmail = computed(() => this.email || this.authStore.email() || 'Entre para acessar sua conta');
 

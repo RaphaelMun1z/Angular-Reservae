@@ -107,6 +107,18 @@
   white-space: nowrap;
 }
 
+.access-badge {
+  display: inline-flex;
+  margin-top: 7px;
+  padding: 4px 8px;
+  color: #ffb0a5;
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: rgb(255 98 77 / 12%);
+  border: 1px solid rgb(255 98 77 / 28%);
+  border-radius: 999px;
+}
+
 .user-summary strong {
   margin-bottom: 4px;
   font-size: 0.9rem;

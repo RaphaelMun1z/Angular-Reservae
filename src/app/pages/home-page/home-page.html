@@ -1,80 +1,53 @@
 <app-site-navbar />
 
-<main class="max-w-[1600px] mx-auto w-[96%] relative z-10 py-10">
+<main #homePageContent class="max-w-[1600px] mx-auto w-[96%] relative z-10 py-10">
   <section class="home-hero">
     <img [src]="eventImage(null)" alt="Publico em show ao vivo" class="hero-image" />
     <div class="hero-overlay" aria-hidden="true"></div>
     <img src="assets/artist-natanzinho.png" alt="Natanzinho Lima" class="hero-artist" />
 
     <div class="hero-content">
-      <h1>Viva seus<br /><em>melhores momentos.</em></h1>
+      <h1><span class="hero-phrase-lead" [class.hero-phrase-changing]="heroPhraseChanging()">{{ heroPhrases[heroPhraseIndex()].lead }}</span><br /><em [class.hero-phrase-changing]="heroPhraseChanging()">{{ heroPhrases[heroPhraseIndex()].highlight }}</em></h1>
       <div class="hero-actions">
-        <a routerLink="/shows" class="home-action primary">Explorar eventos</a>
-        <a routerLink="/shows" [queryParams]="{ status: 'SCHEDULED' }" class="home-action secondary">Ver proximos shows</a>
+        <a routerLink="/shows" class="home-action primary"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="m14.8 9.2-1.7 3.9-3.9 1.7 1.7-3.9 3.9-1.7Z"></path></svg>Explorar eventos</a>
+        <a routerLink="/shows" [queryParams]="{ status: 'SCHEDULED' }" class="home-action secondary"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg>Ver próximos shows</a>
       </div>
     </div>
 
   </section>
 
-  <section class="flex flex-col lg:flex-row items-start lg:items-center gap-6 mb-16">
-    <h2 class="text-xl font-black tracking-widest text-white flex-shrink-0">AVISOS</h2>
-    <div class="flex gap-4 overflow-x-auto no-scrollbar flex-1 pb-2 w-full">
-      @for (notice of platformNotices; track notice.title) {
-        <article class="min-w-[280px] bg-dark-card border border-dark-border p-5 rounded-2xl hover:border-gray-600 transition-colors">
-          <div class="text-xs text-brand font-bold mb-2">Reservae</div>
-          <h3 class="text-sm font-black text-white mb-2">{{ notice.title }}</h3>
-          <p class="text-sm font-semibold text-gray-400 leading-relaxed">{{ notice.description }}</p>
-        </article>
-      }
-    </div>
-  </section>
-
-  <section class="mb-20 relative bg-gradient-to-r from-brand/20 via-[#101010] to-brand/5 border border-brand/20 rounded-3xl p-8 lg:p-12 flex flex-col md:flex-row justify-between items-center gap-8 overflow-hidden">
+  <section data-scroll-reveal class="next-show-banner mb-20 relative bg-gradient-to-r from-brand/20 via-[#101010] to-brand/5 border border-brand/20 rounded-3xl p-8 lg:p-12 flex flex-col md:flex-row justify-between items-center gap-8 overflow-visible">
     <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-dark-bg rounded-full border-r border-brand/20"></div>
     <div class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-dark-bg rounded-full border-l border-brand/20"></div>
 
-    <div class="text-center md:text-left z-10">
-      <h2 class="text-3xl lg:text-4xl font-black tracking-tight text-white mb-3">Seu proximo show comeca aqui</h2>
+    <div class="promo-copy text-center md:text-left z-10">
+      <h2 class="text-3xl lg:text-4xl font-black tracking-tight text-white mb-3">Seu próximo momento ao vivo começa aqui</h2>
+      <p class="promo-description">Descubra shows, festivais e experiências inesquecíveis para viver ao lado de quem você gosta.</p>
+      <a routerLink="/shows" class="promo-action">Explorar agenda <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a>
     </div>
 
-    <a routerLink="/shows" class="z-10 bg-white text-black px-8 py-3.5 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-gray-200 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-      Ver eventos
+    <a routerLink="/shows" class="promo-artist-link" aria-label="Ver eventos de Henrique e Juliano">
+      <img src="assets/henrique%26juliano.png" alt="Henrique e Juliano" class="promo-artist-image" />
     </a>
   </section>
 
-  <section class="featured-section">
+  <section data-scroll-reveal class="featured-section">
     <div class="featured-header">
       <div class="featured-heading">
         <h2>Eventos <em>em destaque</em></h2>
-        <p>Uma selecao de experiencias para voce planejar o proximo momento inesquecivel.</p>
       </div>
 
       <a routerLink="/shows" class="featured-all-link">
-        Ver todos os eventos
+        Mais Eventos
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
       </a>
-    </div>
-
-    <div class="featured-filters" aria-label="Filtrar eventos em destaque">
-      <span>Explorar por</span>
-      <div class="flex flex-wrap gap-3">
-        @for (filter of homeFilters; track filter.label) {
-          <a
-            routerLink="/shows"
-            [queryParams]="filter.queryParams"
-            class="featured-filter"
-          >
-            {{ filter.label }}
-          </a>
-        }
-      </div>
     </div>
 
     @if (eventStore.featuredLoading()) {
       <app-skeleton-loader variant="cards" [count]="6" />
     } @else if (eventStore.featuredError()) {
       <div class="state-panel">
-        <h3>Nao foi possivel carregar os eventos</h3>
+        <h3>Não foi possível carregar os eventos</h3>
         <p>Verifique sua conexao e tente novamente.</p>
         <button type="button" (click)="retryEvents()">Tentar novamente</button>
       </div>
@@ -85,9 +58,10 @@
         <button type="button" (click)="retryEvents()">Atualizar</button>
       </div>
     } @else {
-      <div class="featured-list">
-        @for (event of visibleEvents(); track event.id) {
-          <article class="event-card">
+      <div class="featured-carousel-shell">
+        <div #featuredCarousel class="featured-list" tabindex="0" aria-label="Carrossel de eventos em destaque" (pointerdown)="startFeaturedDrag($event)" (pointermove)="dragFeatured($event)" (pointerup)="endFeaturedDrag()" (pointercancel)="endFeaturedDrag()" (scroll)="updateFeaturedIndex()">
+          @for (event of visibleEvents(); track event.id) {
+            <article class="event-card">
             <div class="event-image-wrap">
               <img [src]="eventImage(event)" [alt]="event.name || 'Evento Reservae'" />
               <span class="event-status">{{ statusLabel(event.status) }}</span>
@@ -111,28 +85,74 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
               </a>
             </div>
-          </article>
+            </article>
+          }
+        </div>
+      </div>
+      <div class="carousel-dots" aria-label="Selecionar evento em destaque">
+        @for (event of visibleEvents(); let index = $index; track event.id) {
+          <button type="button" class="carousel-dot" [class.active]="featuredIndex() === index" [attr.aria-label]="'Ir para o evento ' + (index + 1)" [attr.aria-current]="featuredIndex() === index ? 'true' : null" (click)="scrollToFeatured(index)"></button>
         }
       </div>
     }
   </section>
 
-  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-    @for (city of cityDestinations; track city.name) {
-      <a
-        routerLink="/shows"
-        [queryParams]="city.queryParams"
-        class="city-card"
-        [attr.aria-label]="'Ver eventos em ' + city.name"
-      >
-        <img [src]="city.imageUrl" [alt]="'Eventos em ' + city.name" />
-        <div class="city-overlay"></div>
-        <div class="city-copy">
-          <h3>{{ city.name }}</h3>
-          <p>{{ city.description }}</p>
+  <section data-scroll-reveal class="state-events-section" aria-labelledby="state-events-title" [style.--state-background]="'url(' + selectedStateBackground() + ')'">
+    <div class="state-events-heading">
+      <div>
+        <h2 id="state-events-title"><svg class="section-title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Encontre eventos perto de você</h2>
+        <p>Selecione um estado para ver os eventos disponíveis.</p>
+      </div>
+    </div>
+
+    <div class="state-events-content">
+      <div class="state-map-panel">
+        <svg class="interactive-brazil-map" viewBox="0 0 1000 912" role="img" aria-labelledby="brazil-map-title">
+          <title id="brazil-map-title">Mapa interativo do Brasil</title>
+        @for (state of brazilianStates; track state.code) {
+          <use [attr.href]="'assets/br.svg#BR' + state.code" [class.active]="selectedState() === state.code" [attr.aria-label]="state.name" tabindex="0" (click)="selectState(state.code)" (mouseenter)="setHoveredState(state.code)" (mouseleave)="clearHoveredState()" (focus)="setHoveredState(state.code)" (blur)="clearHoveredState()" (keydown.enter)="selectState(state.code)" (keydown.space)="$event.preventDefault(); selectState(state.code)"></use>
+        }
+        </svg>
+      </div>
+
+      <div class="state-event-results">
+        <div class="state-results-heading">
+          <h3><svg class="results-title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-9Z"></path><path d="M8 5v14M16 5v14M4 9h4M16 9h4M4 15h4M16 15h4"></path></svg>Eventos em {{ selectedStateName() }}</h3>
+          @if (eventStore.loading()) { <span class="loading-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"></path></svg>Carregando...</span> }
         </div>
-      </a>
-    }
+        @if (eventStore.error()) {
+          <div class="state-result-message">Não foi possível carregar os eventos deste estado.</div>
+        } @else if (!eventStore.loading() && stateEvents().length === 0) {
+          <div class="state-result-message">Nenhum evento encontrado neste estado.</div>
+        } @else {
+          <div class="state-event-carousel-shell">
+            <div #stateCarousel class="state-event-carousel" tabindex="0" aria-label="Carrossel de eventos do estado selecionado" (pointerdown)="startStateEventsDrag($event)" (pointermove)="dragStateEvents($event)" (pointerup)="endStateEventsDrag()" (pointercancel)="endStateEventsDrag()" (scroll)="updateStateEventIndex()">
+              @for (event of stateEvents().slice(0, 6); track event.id) {
+                <article class="event-card state-event-card">
+                  <div class="event-image-wrap">
+                    <img [src]="eventImage(event)" [alt]="event.name || 'Evento Reservae'" />
+                    <span class="event-status">{{ statusLabel(event.status) }}</span>
+                  </div>
+                  <div class="event-content">
+                    <div><h3>{{ event.name || 'Evento sem titulo' }}</h3></div>
+                    <div class="event-details">
+                      <p><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg>{{ formatDate(event.date) }} · {{ formatTime(event.date) }}</p>
+                      <p><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>{{ eventLocation(event) }}</p>
+                    </div>
+                    <a [routerLink]="['/selecionar-setor', event.id]">Ver detalhes<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a>
+                  </div>
+                </article>
+              }
+            </div>
+            <div class="carousel-dots" aria-label="Selecionar evento do estado">
+              @for (event of stateEvents().slice(0, 6); let index = $index; track event.id) {
+                <button type="button" class="carousel-dot" [class.active]="stateEventIndex() === index" [attr.aria-label]="'Ir para o evento ' + (index + 1)" [attr.aria-current]="stateEventIndex() === index ? 'true' : null" (click)="scrollToStateEvent(index)"></button>
+              }
+            </div>
+            </div>
+          }
+      </div>
+    </div>
   </section>
 </main>
 
@@ -140,7 +160,7 @@
     <div class="newsletter">
       <div>
         <h2>Fique por dentro</h2>
-        <p>Receba novidades sobre shows, festivais e eventos perto de voce.</p>
+        <p>Receba novidades sobre shows, festivais e eventos perto de você.</p>
       </div>
       <form (submit)="submitNewsletter($event)">
         <label class="sr-only" for="newsletter-email">Seu melhor e-mail</label>

@@ -6,7 +6,7 @@
   </header>
 
   <section class="timeline-panel" aria-label="Linha do tempo do pedido">
-    <div class="timeline">
+    <div class="timeline" [style.--timeline-progress]="timelineProgress()">
       @for (step of timelineSteps(); track step.key) {
         <article
           class="timeline-item"
@@ -62,13 +62,13 @@
       <div class="status-actions" aria-label="Acoes do pedido">
         @if (store.paymentUrl() && !isPaymentConfirmed() && !store.failed()) {
           <a class="primary-action" [href]="store.paymentUrl()" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg>
-            Pagar agora
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h3"></path></svg>
+            Pagar Agora
           </a>
         } @else if (isPaymentConfirmed()) {
-          <a routerLink="/meus-ingressos" class="primary-action">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"></path><path d="M13 5v14"></path></svg>
-            Ver meus ingressos
+          <a routerLink="/meus-pedidos" class="primary-action" aria-label="Meus pedidos" title="Meus pedidos">
+            <lucide-icon name="ticket" size="20" aria-hidden="true"></lucide-icon>
+            Meus Pedidos
           </a>
         } @else if (store.failed()) {
           <a routerLink="/shows" class="primary-action">
@@ -86,10 +86,10 @@
           <button type="button" class="secondary-action" [disabled]="store.loading()" (click)="retry()">
             Atualizar status
           </button>
-        } @else if (isPaymentConfirmed()) {
-          <a routerLink="/shows" class="secondary-action">Voltar aos eventos</a>
         } @else if (!isPaymentConfirmed()) {
-          <a routerLink="/shows" class="secondary-action">Voltar para eventos</a>
+          <a routerLink="/meus-pedidos" class="secondary-action ticket-action" aria-label="Meus pedidos" title="Meus pedidos">
+            <lucide-icon name="ticket" size="20" aria-hidden="true"></lucide-icon>
+          </a>
         }
       </div>
     </div>
@@ -102,8 +102,20 @@
             #{{ displayOrderId() || 'Nao identificado' }}
           </h2>
         </div>
+        <button
+          class="details-toggle"
+          type="button"
+          [attr.aria-expanded]="detailsExpanded()"
+          (click)="toggleDetails()"
+        >
+          <span>{{ detailsExpanded() ? 'Minimizar detalhes' : 'Maximizar detalhes' }}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path [attr.d]="detailsExpanded() ? 'm6 15 6-6 6 6' : 'm6 9 6 6 6-6'"></path>
+          </svg>
+        </button>
       </div>
 
+      @if (detailsExpanded()) {
       @if (hasEventDetails()) {
         <div class="order-event-context">
           <span>Evento</span>
@@ -129,7 +141,7 @@
           @for (item of displayItems(); track $index) {
             <article class="order-item-card">
               <div class="order-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V5Z"></path><path d="M13 7h.01M13 11h.01M13 15h.01"></path></svg>
+                <img src="/assets/icon_logo_light.png" alt="" />
               </div>
               <div class="order-item-info">
                 <strong>{{ item.sector }}</strong>
@@ -152,6 +164,7 @@
         <span>Total do pedido</span>
         <strong>{{ formatCurrency(store.totalAmount() ?? store.visualSubtotal()) }}</strong>
       </div>
+      }
     </aside>
 
   </section>

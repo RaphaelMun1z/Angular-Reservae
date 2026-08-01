@@ -3,68 +3,48 @@
     <div class="page-heading">
       <div>
         <h1>Meus Eventos</h1>
-        <p>Faca a gestao de shows, configure lotes e acompanhe as vendas.</p>
+        <p>Faça a gestão de shows, configure lotes e acompanhe as vendas.</p>
       </div>
-      <a routerLink="/criar-evento" class="primary-action">Criar Evento</a>
+      <a routerLink="/criar-evento" class="primary-action">Criar evento</a>
     </div>
 
-    <div class="filter-bar">
-      <label>
-        <span>Busca</span>
-        <input
-          type="search"
-          placeholder="Procurar evento pelo titulo..."
-          [ngModel]="store.filters().search"
-          (ngModelChange)="search($event)"
-        />
-      </label>
-      <label>
-        <span>Cidade</span>
-        <input
-          type="text"
-          placeholder="Santos"
-          [ngModel]="store.filters().city ?? ''"
-          (ngModelChange)="updateCity($event)"
-        />
-      </label>
-      <label>
-        <span>Estado</span>
-        <input
-          type="text"
-          maxlength="2"
-          placeholder="SP"
-          [ngModel]="store.filters().state ?? ''"
-          (ngModelChange)="updateState($event)"
-        />
-      </label>
-      <label>
-        <span>Status</span>
-        <select [ngModel]="store.filters().status ?? ''" (ngModelChange)="updateStatus($event)">
-          <option value="">Todos</option>
-          @for (status of statuses; track status) {
-            <option [value]="status">{{ statusLabel(status) }}</option>
-          }
-        </select>
-      </label>
-      <label>
-        <span>Data inicial</span>
-        <input
-          type="date"
-          [ngModel]="dateInputValue(store.filters().startDate)"
-          (ngModelChange)="updateStartDate($event)"
-        />
-      </label>
-      <label>
-        <span>Data final</span>
-        <input
-          type="date"
-          [ngModel]="dateInputValue(store.filters().endDate)"
-          (ngModelChange)="updateEndDate($event)"
-        />
-      </label>
-      <button type="button" (click)="store.clearFilters()">Limpar filtros</button>
-    </div>
+    <div class="events-layout">
+      <aside class="filters-sidebar" aria-label="Filtros de eventos">
+        <div class="filters-sidebar-heading">
+          <span>Refine sua busca</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"></path></svg>
+        </div>
+        <label>
+          <span>Busca</span>
+          <input type="search" placeholder="Procurar pelo título..." [ngModel]="store.filters().search" (ngModelChange)="search($event)" />
+        </label>
+        <label>
+          <span>Cidade</span>
+          <input type="text" placeholder="Ex.: Santos" [ngModel]="store.filters().city ?? ''" (ngModelChange)="updateCity($event)" />
+        </label>
+        <label>
+          <span>Estado/UF</span>
+          <input type="text" maxlength="2" placeholder="SP" [ngModel]="store.filters().state ?? ''" (ngModelChange)="updateState($event)" />
+        </label>
+        <label>
+          <span>Status</span>
+          <select [ngModel]="store.filters().status ?? ''" (ngModelChange)="updateStatus($event)">
+            <option value="">Todos</option>
+            @for (status of statuses; track status) { <option [value]="status">{{ statusLabel(status) }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>Data inicial</span>
+          <input type="date" [ngModel]="dateInputValue(store.filters().startDate)" (ngModelChange)="updateStartDate($event)" />
+        </label>
+        <label>
+          <span>Data final</span>
+          <input type="date" [ngModel]="dateInputValue(store.filters().endDate)" (ngModelChange)="updateEndDate($event)" />
+        </label>
+        <button class="clear-filters" type="button" (click)="store.clearFilters()">Limpar filtros</button>
+      </aside>
 
+      <section class="events-results" aria-label="Resultados de eventos">
     <div class="result-summary">
       @if (store.loading()) {
         <span>Atualizando resultados...</span>
@@ -72,6 +52,7 @@
         <span>{{ store.totalElements() }} evento(s) encontrados</span>
       }
 
+      <div class="results-tools">
       <label>
         Itens
         <select [ngModel]="store.pageSize()" (ngModelChange)="updatePageSize($event)">
@@ -80,12 +61,18 @@
           <option [value]="24">24</option>
         </select>
       </label>
+      <div class="view-toggle" aria-label="Modo de visualização">
+        <button type="button" [class.active]="viewMode() === 'list'" [attr.aria-pressed]="viewMode() === 'list'" (click)="setViewMode('list')" aria-label="Visualizar em lista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></button>
+        <button type="button" [class.active]="viewMode() === 'grid'" [attr.aria-pressed]="viewMode() === 'grid'" (click)="setViewMode('grid')" aria-label="Visualizar em grade"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></button>
+      </div>
+      </div>
     </div>
 
     <div class="data-card">
       @if (store.loading() && store.events().length === 0) {
         <app-skeleton-loader variant="table" [count]="5" />
       } @else {
+      @if (viewMode() === 'list') {
       <table>
         <thead>
           <tr>
@@ -93,7 +80,7 @@
             <th>Data & Local</th>
             <th>Cidade</th>
             <th>Status</th>
-            <th>Acoes</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -109,12 +96,12 @@
             @for (event of store.events(); track event.id) {
               <tr>
                 <td>
-                  <strong>{{ event.name || 'Evento sem titulo' }}</strong>
+                  <strong>{{ event.name || 'Evento sem título' }}</strong>
                   <small>{{ event.id }}</small>
                 </td>
                 <td>
                   <strong>{{ formatDate(event.date) }}</strong>
-                  <small>{{ event.venueName || 'Local nao informado' }} - {{ event.city || 'Cidade' }}/{{ event.state || 'UF' }}</small>
+                  <small>{{ event.venueName || 'Local não informado' }} - {{ event.city || 'Cidade' }}/{{ event.state || 'UF' }}</small>
                 </td>
                 <td>{{ event.city || '-' }}</td>
                 <td>
@@ -130,13 +117,25 @@
           }
         </tbody>
       </table>
+      } @else {
+        <div class="events-grid-view">
+          @for (event of store.events(); track event.id) {
+            <article class="event-grid-card">
+              <div class="event-grid-image"><img src="assets/showNatanzinhoLima.jpeg" [alt]="event.name || 'Evento'" /><span class="status-pill" [class.canceled]="event.status === 'CANCELED'" [class.finished]="event.status === 'FINISHED'">{{ statusLabel(event.status) }}</span></div>
+              <div class="event-grid-content"><span class="event-grid-date">{{ formatDate(event.date) }}</span><h2>{{ event.name || 'Evento sem título' }}</h2><p>{{ event.venueName || 'Local não informado' }} · {{ event.city || 'Cidade' }}/{{ event.state || 'UF' }}</p><a [routerLink]="['/selecionar-setor', event.id]">Ver detalhes <span aria-hidden="true">→</span></a></div>
+            </article>
+          }
+        </div>
+      }
       }
     </div>
 
     <div class="pagination">
       <button type="button" [disabled]="store.first() || store.loading()" (click)="previousPage()">Anterior</button>
       <span>Pagina {{ store.currentUiPage() }} de {{ store.totalPages() || 1 }}</span>
-      <button type="button" [disabled]="store.last() || store.loading()" (click)="nextPage()">Proxima</button>
+      <button type="button" [disabled]="store.last() || store.loading()" (click)="nextPage()">Próxima</button>
+    </div>
+      </section>
     </div>
   </section>
 </app-admin-shell>

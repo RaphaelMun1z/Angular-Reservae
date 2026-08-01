@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Cart } from './pages/cart/cart';
 import { Checkout } from './pages/checkout/checkout';
 import { ClubVip } from './pages/club-vip/club-vip';
 import { CreateEvent } from './pages/create-event/create-event';
@@ -12,7 +11,6 @@ import { Events } from './pages/events/events';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { GateScanner } from './pages/gate-scanner/gate-scanner';
 import { HomePage } from './pages/home-page/home-page';
-import { Index } from './pages/index/index';
 import { Login } from './pages/login/login';
 import { MyOrders } from './pages/my-orders/my-orders';
 import { MyTickets } from './pages/my-tickets/my-tickets';
@@ -50,14 +48,9 @@ export const routes: Routes = [
         title: 'Reservae | Inicio',
       },
       {
-        path: 'index',
-        component: Index,
-        title: 'Reservae | Inicio',
-      },
-      {
         path: 'carrinho',
-        component: Cart,
-        title: 'Reservae | Carrinho',
+        redirectTo: 'checkout',
+        pathMatch: 'full',
       },
       {
         path: 'checkout',
@@ -87,7 +80,7 @@ export const routes: Routes = [
         path: 'dashboard',
         component: Dashboard,
         canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
+        data: { roles: ['ADMIN', 'ORGANIZER', 'SUPPORT'] },
         title: 'Reservae | Dashboard',
       },
       {
@@ -183,7 +176,8 @@ export const routes: Routes = [
       {
         path: 'configuracoes',
         component: Settings,
-        canActivate: [authGuard],
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN', 'ORGANIZER', 'SUPPORT'] },
         title: 'Reservae | Configuracoes',
       },
       {
@@ -197,9 +191,9 @@ export const routes: Routes = [
         title: 'Reservae | Sucesso',
       },
       {
-        path: 'order-created',
+        path: 'order-track',
         component: OrderCreated,
-        title: 'Reservae | Pedido',
+        title: 'Reservae | Acompanhar pedido',
       },
       {
         path: 'suporte',

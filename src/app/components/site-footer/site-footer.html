@@ -6,7 +6,7 @@
       </a>
       <div>
         <strong>Reservae</strong>
-        <span>Ingressos digitais para eventos, shows e experiencias ao vivo.</span>
+        <span>Ingressos digitais para eventos, shows e experiências ao vivo.</span>
       </div>
     </div>
 
@@ -20,20 +20,19 @@
 
     <nav aria-label="Conta">
       <span>Conta</span>
-      <a routerLink="/perfil">Perfil</a>
-      <a routerLink="/meus-ingressos">Meus ingressos</a>
-      <a routerLink="/configuracoes">Configuracoes</a>
+      @for (link of accountLinks(); track link.path) {
+        <a [routerLink]="link.path">{{ link.label }}</a>
+      }
     </nav>
 
     <div class="footer-note">
       <span>Atendimento</span>
-      <strong>Suporte para compra, transferencia e acesso aos ingressos.</strong>
-      <a routerLink="/suporte">Abrir suporte</a>
+       <strong>Precisa de ajuda?</strong>
+       <a routerLink="/suporte">Acessar central de suporte</a>
     </div>
   </div>
 
   <div class="footer-bottom">
     <small>Reservae © {{ currentYear }}</small>
-    <small>Compra segura, ingressos digitais e acesso pelo navegador.</small>
   </div>
 </footer>

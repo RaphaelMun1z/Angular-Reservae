@@ -18,7 +18,14 @@
   </div>
 
   <div class="nav-right">
-    <a routerLink="/carrinho" routerLinkActive="active" class="cart-link" aria-label="Abrir carrinho">
+    @if (showDashboard()) {
+      <a routerLink="/dashboard" routerLinkActive="active" class="cart-link dashboard-link" aria-label="Abrir dashboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 13h6V4H4zM14 20h6v-7h-6zM14 10h6V4h-6zM4 20h6v-3H4z"></path>
+        </svg>
+      </a>
+    } @else {
+      <a routerLink="/checkout" routerLinkActive="active" class="cart-link" aria-label="Abrir checkout">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M6 6h15l-1.5 9h-12z"></path>
         <path d="M6 6 5 3H2"></path>
@@ -28,7 +35,8 @@
       @if (checkoutStore.totalTickets() > 0) {
         <span>{{ checkoutStore.totalTickets() }}</span>
       }
-    </a>
+      </a>
+    }
     <app-user-menu />
     <button
       type="button"
@@ -53,12 +61,16 @@
           {{ item.label }}
         </a>
       }
-      <a routerLink="/carrinho" routerLinkActive="active" (click)="closeMobileMenu()">
-        Carrinho
-        @if (checkoutStore.totalTickets() > 0) {
-          <span class="mobile-cart-count">{{ checkoutStore.totalTickets() }}</span>
-        }
-      </a>
+      @if (showDashboard()) {
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">Dashboard</a>
+      } @else {
+        <a routerLink="/checkout" routerLinkActive="active" (click)="closeMobileMenu()">
+          Checkout
+          @if (checkoutStore.totalTickets() > 0) {
+            <span class="mobile-cart-count">{{ checkoutStore.totalTickets() }}</span>
+          }
+        </a>
+      }
     </div>
   }
 </nav>

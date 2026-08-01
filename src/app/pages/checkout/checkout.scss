@@ -327,19 +327,14 @@
 .ticket-icon {
   width: 52px;
   height: 52px;
-  border: 1px solid rgba(255, 98, 77, 0.22);
-  border-radius: 10px;
-  background: rgba(255, 98, 77, 0.1);
+  border: 0;
+  background: transparent;
 }
 
-.ticket-icon svg {
-  width: 24px;
-  height: 24px;
-  fill: none;
-  stroke: var(--red);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.6;
+.ticket-icon img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .cart-item-info {
@@ -684,6 +679,24 @@
   width: 17px;
   height: 17px;
   stroke-width: 2;
+}
+
+.btn-continue-shopping {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .secure-note {

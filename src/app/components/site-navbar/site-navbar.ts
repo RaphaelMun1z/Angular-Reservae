@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UserMenu } from '../user-menu/user-menu';
 import { CheckoutStore } from '../../pages/checkout/state/checkout.store';
+import { AuthStore } from '../../core/state/auth.store';
 
 interface NavItem {
   readonly label: string;
@@ -17,7 +18,9 @@ interface NavItem {
 })
 export class SiteNavbar {
   protected readonly checkoutStore = inject(CheckoutStore);
+  protected readonly authStore = inject(AuthStore);
   protected readonly mobileMenuOpen = signal(false);
+  protected readonly showDashboard = this.authStore.canAccessDashboard;
 
   protected readonly navItems: readonly NavItem[] = [
     {
@@ -33,7 +36,7 @@ export class SiteNavbar {
     {
       label: 'Club VIP',
       path: '/club-vip',
-      iconPath: 'M9 18V5l12-2v13',
+      iconPath: 'M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.9L12 3.5Z',
     },
     {
       label: 'Suporte',

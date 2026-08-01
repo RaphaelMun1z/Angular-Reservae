@@ -87,7 +87,11 @@ export class AuthService implements AuthIntegration {
   }
 
   getRoles(): readonly ReservaeRole[] {
-    return this.normalizeRoles(this.keycloak.realmAccess?.roles ?? []);
+    const clientRoles = this.keycloak.resourceAccess?.[environment.auth.clientId]?.roles ?? [];
+    return this.normalizeRoles([
+      ...(this.keycloak.realmAccess?.roles ?? []),
+      ...clientRoles,
+    ]);
   }
 
   loadMyProfile(): Observable<UserProfile> {
@@ -140,9 +144,9 @@ export class AuthService implements AuthIntegration {
   private normalizeRoles(roles: readonly string[]): readonly ReservaeRole[] {
     const functionalRoles = new Set<string>(RESERVAE_FUNCTIONAL_ROLES);
 
-    return roles
+    return [...new Set(roles
       .map((role) => role.toUpperCase())
-      .filter((role): role is ReservaeRole => functionalRoles.has(role));
+      .filter((role): role is ReservaeRole => functionalRoles.has(role)))];
   }
 
   private normalizeProfile(profile: UserProfileResponse): UserProfile {
@@ -178,4 +182,3 @@ interface UserProfileResponse {
   readonly email?: string | null;
   readonly document?: string | null;
 }
-

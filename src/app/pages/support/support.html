@@ -1,38 +1,40 @@
-        <app-site-navbar />
+<app-site-navbar />
 
-        <main class="support-container">
-            <h1 class="page-title">Centro de Suporte</h1>
-            
-            <div class="search-box">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" placeholder="Como podemos ajudar hoje?">
-            </div>
+<main class="support-container">
+  <header class="support-header">
+    <span class="page-kicker">Ajuda Reservae</span>
+    <h1 class="page-title">Como podemos ajudar?</h1>
+    <p>Encontre respostas rapidas sobre pedidos, ingressos e pagamentos.</p>
+  </header>
 
-            <section class="faq-grid">
-                <article class="faq-card">
-                    <h3>Como recebo o meu bilhete?</h3>
-                    <p>Após a confirmação do pagamento, receberá o bilhete no seu e-mail e poderá consultá-lo diretamente na secção "A Minha Carteira".</p>
-                </article>
-                <article class="faq-card">
-                    <h3>Regras de Cancelamento</h3>
-                    <p>Pode solicitar o reembolso total até 48 horas antes do evento. Após este prazo, não são permitidas devoluções.</p>
-                </article>
-                <article class="faq-card">
-                    <h3>Posso transferir o bilhete?</h3>
-                    <p>Sim! Na sua carteira, selecione o bilhete e clique em "Transferir". Insira o e-mail do destinatário para enviar.</p>
-                </article>
-                <article class="faq-card">
-                    <h3>Problemas com o Pagamento</h3>
-                    <p>Verifique o limite do seu cartão ou tente utilizar um método de pagamento diferente, como PIX, para aprovação imediata.</p>
-                </article>
-            </section>
+  <label class="search-box" for="support-search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+    <input id="support-search" type="search" placeholder="Busque por um assunto..." [value]="search()" (input)="updateSearch($event)" />
+    @if (search()) {
+      <button type="button" class="clear-search" aria-label="Limpar busca" (click)="search.set('')">×</button>
+    }
+  </label>
 
-            <div class="chat-widget">
-                <h2>Ainda tens dúvidas?</h2>
-                <p>O nosso assistente inteligente está disponível 24/7 para resolver qualquer problema.</p>
-                <button class="btn-chat">Iniciar Chat com IA</button>
-            </div>
-        </main>
+  <section class="support-shortcuts" aria-label="Acessos rapidos">
+    <a routerLink="/meus-pedidos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"></path></svg><span><strong>Meus pedidos</strong><small>Acompanhe sua compra</small></span></a>
+    <a routerLink="/meus-ingressos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"></path></svg><span><strong>Meus ingressos</strong><small>Acesse sua carteira</small></span></a>
+    <a routerLink="/perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span><strong>Meu perfil</strong><small>Atualize seus dados</small></span></a>
+  </section>
 
-        <app-site-footer />
-    
+  <section class="faq-section" aria-labelledby="faq-title">
+    <div class="section-heading"><div><span class="page-kicker">Duvidas frequentes</span><h2 id="faq-title">Encontre sua resposta</h2></div><span class="faq-count">{{ filteredFaqs().length }} artigos</span></div>
+    @if (filteredFaqs().length > 0) {
+      <div class="faq-grid">
+        @for (faq of filteredFaqs(); track faq.title) {
+          <article class="faq-card"><div class="faq-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="faq.iconPath"></path></svg></div><div><h3>{{ faq.title }}</h3><p>{{ faq.text }}</p></div></article>
+        }
+      </div>
+    } @else {
+      <div class="no-results"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><h3>Nenhum artigo encontrado</h3><p>Tente buscar por outro termo ou fale com nosso suporte.</p></div>
+    }
+  </section>
+
+  <section class="contact-card"><div class="contact-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 7l8 6 8-6"></path></svg></div><div><span class="page-kicker">Ainda precisa de ajuda?</span><h2>Fale com nosso time</h2><p>Envie sua duvida e retornaremos o mais breve possivel.</p></div><a class="contact-button" href="mailto:suporte@reservae.com">Enviar mensagem</a></section>
+</main>
+
+<app-site-footer />

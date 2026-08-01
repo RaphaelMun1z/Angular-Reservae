@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthIntegration, AuthSession } from './auth.store';
-import { UpdateUserProfileRequest, UserProfile } from '../auth/auth.models';
+import { ReservaeRole, UpdateUserProfileRequest, UserProfile } from '../auth/auth.models';
 
 export interface MockAuthUser {
   readonly userId: string;
@@ -69,7 +69,9 @@ export class MockAuthIntegration implements AuthIntegration {
       username: user.username,
       fullName: user.username,
       email: user.email,
-      roles: user.roles.filter((role) => role === 'CUSTOMER' || role === 'ADMIN'),
+      roles: user.roles.filter(
+        (role): role is ReservaeRole => ['CUSTOMER', 'ADMIN', 'ORGANIZER', 'SUPPORT'].includes(role),
+      ),
       profile: {
         id: user.userId,
         fullName: user.username,

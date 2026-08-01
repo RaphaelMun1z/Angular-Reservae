@@ -76,7 +76,7 @@ export class Checkout implements OnInit {
       }
 
       this.store.startOrderPolling(order.id);
-      void this.router.navigateByUrl('/order-created');
+      void this.router.navigateByUrl(`/order-track?orderId=${encodeURIComponent(order.id)}`);
     });
   }
 
@@ -120,6 +120,11 @@ export class Checkout implements OnInit {
 
   removeItem(item: CheckoutItem): void {
     this.store.removeItem(item.sectorId, item.ticketType);
+  }
+
+  continueShopping(): void {
+    const eventId = this.store.eventId();
+    void this.router.navigate(eventId ? ['/selecionar-setor', eventId] : ['/shows']);
   }
 
   eventName(): string {

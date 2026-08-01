@@ -1,22 +1,17 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
-import { EventStatus } from '../../core/models/event-catalog.model';
 import { EventFilters, EventStore } from '../events/state/event.store';
-import { eventStatusLabel } from '../../shared/presentation-labels';
 
 interface ShowsFilterDraft {
   readonly search: string;
   readonly city: string;
   readonly state: string;
-  readonly status: EventStatus | '';
   readonly startDate: string;
   readonly endDate: string;
-  readonly size: number;
-  readonly sort: string;
 }
 
 @Component({
@@ -27,16 +22,36 @@ interface ShowsFilterDraft {
 })
 export class Shows implements OnInit {
   readonly store = inject(EventStore);
-  readonly statuses: readonly EventStatus[] = ['SCHEDULED', 'CANCELED', 'FINISHED'];
-  readonly quickCities: readonly string[] = ['Sao Paulo', 'Rio de Janeiro', 'Curitiba'];
-  readonly pageSizes: readonly number[] = [6, 12, 24];
-  readonly sortOptions: readonly { value: string; label: string }[] = [
-    { value: 'eventDate,asc', label: 'Data mais proxima' },
-    { value: 'eventDate,desc', label: 'Data mais distante' },
-    { value: 'title,asc', label: 'Nome A-Z' },
-    { value: 'title,desc', label: 'Nome Z-A' },
-  ];
+  readonly sortOptions = [
+    ['eventDate,asc', 'Data mais próxima'],
+    ['eventDate,desc', 'Data mais distante'],
+    ['title,asc', 'Nome A-Z'],
+    ['title,desc', 'Nome Z-A'],
+  ] as const;
+  readonly brazilianStates = [
+    ['AC', 'Acre'], ['AL', 'Alagoas'], ['AP', 'Amapá'], ['AM', 'Amazonas'],
+    ['BA', 'Bahia'], ['CE', 'Ceará'], ['DF', 'Distrito Federal'], ['ES', 'Espírito Santo'],
+    ['GO', 'Goiás'], ['MA', 'Maranhão'], ['MT', 'Mato Grosso'], ['MS', 'Mato Grosso do Sul'],
+    ['MG', 'Minas Gerais'], ['PA', 'Pará'], ['PB', 'Paraíba'], ['PR', 'Paraná'],
+    ['PE', 'Pernambuco'], ['PI', 'Piauí'], ['RJ', 'Rio de Janeiro'], ['RN', 'Rio Grande do Norte'],
+    ['RS', 'Rio Grande do Sul'], ['RO', 'Rondônia'], ['RR', 'Roraima'], ['SC', 'Santa Catarina'],
+    ['SP', 'São Paulo'], ['SE', 'Sergipe'], ['TO', 'Tocantins'],
+  ] as const;
   readonly draftFilters = signal<ShowsFilterDraft>(this.createDraftFromFilters(this.store.filters()));
+  readonly viewMode = signal<'list' | 'grid'>('grid');
+  readonly availableCities = computed(() => {
+    const state = this.draftFilters().state.trim().toUpperCase();
+    if (!state) {
+      return [];
+    }
+
+    const cities = this.store.events()
+      .filter((event) => event.state?.toUpperCase() === state)
+      .map((event) => event.city?.trim())
+      .filter((city): city is string => Boolean(city));
+
+    return [...new Set(cities)].sort((first, second) => first.localeCompare(second, 'pt-BR'));
+  });
   private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
@@ -44,25 +59,26 @@ export class Shows implements OnInit {
     const search = query.get('search') ?? '';
     const city = query.get('city');
     const state = query.get('state');
-    const status = query.get('status');
     const startDate = query.get('startDate');
     const endDate = query.get('endDate');
 
-    if (search || city || state || status || startDate || endDate) {
+    if (search || city || state || startDate || endDate) {
       const filters: Partial<EventFilters> = {
         search,
         city,
         state,
-        status: this.toEventStatus(status),
+        status: 'SCHEDULED',
         startDate,
         endDate,
+        size: 12,
+        sort: 'eventDate,asc',
       };
       this.store.updateFilters(filters);
       this.draftFilters.set(this.createDraftFromFilters({ ...this.store.filters(), ...filters }));
       return;
     }
 
-    this.store.loadEvents();
+    this.store.updateFilters({ status: 'SCHEDULED', size: 12, sort: 'eventDate,asc' });
   }
 
   updateDraft<K extends keyof ShowsFilterDraft>(key: K, value: ShowsFilterDraft[K]): void {
@@ -75,28 +91,30 @@ export class Shows implements OnInit {
       search: filters.search,
       city: filters.city || null,
       state: filters.state || null,
-      status: filters.status || null,
+      status: 'SCHEDULED',
       startDate: filters.startDate || null,
       endDate: filters.endDate || null,
-      size: filters.size,
-      sort: filters.sort,
+      size: 12,
+      sort: 'eventDate,asc',
     });
   }
 
   clearFilters(): void {
     this.store.clearFilters();
     this.draftFilters.set(this.createDraftFromFilters(this.store.filters()));
+    this.store.updateFilters({ status: 'SCHEDULED', size: 12, sort: 'eventDate,asc' });
   }
 
-  filterCity(city: string | null): void {
-    this.draftFilters.update((filters) => ({ ...filters, city: city ?? '' }));
-    this.applyFilters();
+  setViewMode(mode: 'list' | 'grid'): void {
+    this.viewMode.set(mode);
   }
 
-  updatePageSize(size: string): void {
-    const normalizedSize = Number(size);
-    this.draftFilters.update((filters) => ({ ...filters, size: normalizedSize }));
-    this.store.changePageSize(normalizedSize);
+  updateSort(sort: string): void {
+    this.store.updateFilters({ sort });
+  }
+
+  updateStateDraft(state: string): void {
+    this.draftFilters.update((filters) => ({ ...filters, state, city: '' }));
   }
 
   previousPage(): void {
@@ -105,11 +123,6 @@ export class Shows implements OnInit {
 
   nextPage(): void {
     this.store.changePage(this.store.currentPage() + 1);
-  }
-
-  hasActiveFilters(): boolean {
-    const filters = this.store.filters();
-    return Boolean(filters.search || filters.city || filters.state || filters.status || filters.startDate || filters.endDate);
   }
 
   dateInputValue(value: string | null): string {
@@ -128,8 +141,15 @@ export class Shows implements OnInit {
     });
   }
 
-  statusLabel(status: EventStatus | null | undefined): string {
-    return eventStatusLabel(status);
+  formatTime(value: string | null | undefined): string {
+    if (!value) {
+      return 'Horário a confirmar';
+    }
+
+    return new Date(value).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
 
   private createDraftFromFilters(filters: EventFilters | Partial<EventFilters>): ShowsFilterDraft {
@@ -137,15 +157,9 @@ export class Shows implements OnInit {
       search: filters.search ?? '',
       city: filters.city ?? '',
       state: filters.state ?? '',
-      status: filters.status ?? '',
       startDate: this.dateInputValue(filters.startDate ?? null),
       endDate: this.dateInputValue(filters.endDate ?? null),
-      size: filters.size ?? 12,
-      sort: filters.sort ?? 'eventDate,asc',
     };
   }
 
-  private toEventStatus(status: string | null): EventStatus | null {
-    return status === 'SCHEDULED' || status === 'CANCELED' || status === 'FINISHED' ? status : null;
-  }
 }

@@ -23,14 +23,14 @@ export class MyOrders implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly eventData = signal<Record<string, EventDisplayData | null>>({});
   private readonly loadingEventIds = signal<Record<string, boolean>>({});
+  readonly selectedOrder = signal<CheckoutOrder | null>(null);
 
-  readonly filters: readonly { value: OrderStatusFilter; label: string }[] = [
-    { value: 'ALL', label: 'Todos' },
-    { value: 'AWAITING_PAYMENT', label: 'Aguardando pagamento' },
-    { value: 'CONFIRMED', label: 'Confirmados' },
-    { value: 'PENDING', label: 'Pendentes' },
-    { value: 'PAYMENT_FAILED', label: 'Recusados' },
-    { value: 'CANCELLED', label: 'Cancelados' },
+  readonly filters: readonly { value: OrderStatusFilter; label: string; iconPath: string }[] = [
+    { value: 'ALL', label: 'Todos', iconPath: 'M4 5h16M4 12h16M4 19h16' },
+    { value: 'PENDING', label: 'Pendentes', iconPath: 'M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' },
+    { value: 'AWAITING_PAYMENT', label: 'Aguardando pagamento', iconPath: 'M3 6h18v12H3zM3 10h18M7 15h3' },
+    { value: 'CONFIRMED', label: 'Confirmados', iconPath: 'm5 12 4 4L19 6' },
+    { value: 'CANCELLED', label: 'Cancelados', iconPath: 'm8 8 8 8M16 8l-8 8' },
   ];
 
   constructor() {
@@ -49,6 +49,14 @@ export class MyOrders implements OnInit {
 
   setFilter(status: OrderStatusFilter): void {
     this.store.setStatusFilter(status);
+  }
+
+  openOrderDetails(order: CheckoutOrder): void {
+    this.selectedOrder.set(order);
+  }
+
+  closeOrderDetails(): void {
+    this.selectedOrder.set(null);
   }
 
   statusLabel(status: OrderStatus | string | null): string {
@@ -112,6 +120,10 @@ export class MyOrders implements OnInit {
       .slice(0, 2)
       .map((item) => `${item.quantity ?? 1}x ${ticketTypeLabel(item.ticketType)}`)
       .join(' | ');
+  }
+
+  ticketTypeLabel(ticketType: CheckoutOrder['items'][number]['ticketType'] | undefined): string {
+    return ticketTypeLabel(ticketType);
   }
 
   formatCurrency(value: number | null | undefined): string {

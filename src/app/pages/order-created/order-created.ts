@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnInit, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import confetti from 'canvas-confetti';
 import { OrderItemResponseDTO, OrderStatus } from '../../core/models/order.model';
 import { SiteFooter } from '../../components/site-footer/site-footer';
@@ -8,6 +8,7 @@ import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { CheckoutItem, CheckoutStore } from '../checkout/state/checkout.store';
 import { orderStatusLabel as friendlyOrderStatusLabel, ticketTypeLabel } from '../../shared/presentation-labels';
 import { EventDisplayData, EventDisplayDataService } from '../../shared/event-display-data.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 type StatusTone = 'info' | 'warning' | 'success' | 'danger';
 type TimelineState = 'done' | 'current' | 'pending' | 'error';
@@ -29,13 +30,14 @@ interface DisplayItem {
 
 @Component({
   selector: 'app-order-created',
-  imports: [RouterLink, SiteFooter, SiteNavbar],
+  imports: [RouterLink, SiteFooter, SiteNavbar, LucideAngularModule],
   templateUrl: './order-created.html',
   styleUrl: './order-created.scss',
 })
 export class OrderCreated implements OnInit {
   readonly store = inject(CheckoutStore);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly eventDisplayData = inject(EventDisplayDataService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly eventData = signal<EventDisplayData | null>(null);
@@ -43,6 +45,7 @@ export class OrderCreated implements OnInit {
   readonly paymentSessionId = signal<string | null>(null);
   readonly eventDetailsLoading = signal(false);
   readonly eventDetailsError = signal(false);
+  readonly detailsExpanded = signal(true);
   private confettiLaunched = false;
   private eventDataRequestId: string | null = null;
 
@@ -75,32 +78,27 @@ export class OrderCreated implements OnInit {
         return;
       }
 
-      this.restorePreviousOrderFlow();
+      void this.router.navigateByUrl('/checkout');
     });
   }
 
   retry(): void {
-    const orderId = this.queryOrderId() ?? this.store.orderId();
+    const orderId = this.queryOrderId();
 
     if (orderId) {
       this.store.startOrderPolling(orderId);
       return;
     }
 
-    this.restorePreviousOrderFlow();
+    void this.router.navigateByUrl('/checkout');
   }
 
-  private restorePreviousOrderFlow(): void {
-    const restoredOrderId = this.store.restorePendingOrder();
-    const orderId = restoredOrderId ?? this.store.orderId();
-
-    if (orderId && !this.store.succeeded() && !this.store.failed()) {
-      this.store.startOrderPolling(orderId);
-    }
+  toggleDetails(): void {
+    this.detailsExpanded.update((expanded) => !expanded);
   }
 
   displayOrderId(): string | null {
-    return this.store.orderId() ?? this.queryOrderId();
+    return this.queryOrderId();
   }
 
   statusTone(): StatusTone {
@@ -214,6 +212,14 @@ export class OrderCreated implements OnInit {
         state: this.timelineState(5, currentIndex, errorIndex),
       },
     ];
+  }
+
+  timelineProgress(): string {
+    const steps = this.timelineSteps();
+    const currentIndex = steps.findIndex((step) => step.state === 'current');
+    const isComplete = steps.length > 0 && steps.every((step) => step.state === 'done');
+    const normalizedIndex = isComplete ? steps.length - 1 : Math.max(currentIndex, 0);
+    return `${(normalizedIndex / 5) * 100}%`;
   }
 
   displayItems(): readonly DisplayItem[] {

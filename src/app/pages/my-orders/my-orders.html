@@ -2,9 +2,7 @@
 
 <main class="orders-container">
   <header class="page-header">
-    <span class="page-kicker">Compras</span>
     <h1 class="page-title">Meus pedidos</h1>
-    <p class="page-subtitle">Acompanhe suas compras, pagamentos e pedidos em processamento.</p>
   </header>
 
   @if (store.loading()) {
@@ -19,6 +17,7 @@
     <nav class="tabs" aria-label="Filtrar pedidos por status">
       @for (filter of filters; track filter.value) {
         <button type="button" class="tab" [class.active]="store.statusFilter() === filter.value" (click)="setFilter(filter.value)">
+          <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="filter.iconPath"></path></svg>
           {{ filter.label }}
         </button>
       }
@@ -86,9 +85,9 @@
               }
 
               @if (order.id) {
-                <a class="secondary-action" [routerLink]="['/order-created']" [queryParams]="{ orderId: order.id }">
+                <button class="secondary-action" type="button" (click)="openOrderDetails(order)">
                   Ver detalhes
-                </a>
+                </button>
               }
             </aside>
           </article>
@@ -97,5 +96,63 @@
     }
   }
 </main>
+
+@if (selectedOrder(); as order) {
+  <div class="order-modal-backdrop" role="presentation" (click)="closeOrderDetails()">
+    <section
+      class="order-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="order-modal-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="order-modal-header">
+        <div>
+          <span class="modal-kicker">Detalhes do pedido</span>
+          <h2 id="order-modal-title">#{{ shortOrderId(order) }}</h2>
+        </div>
+        <button class="modal-close" type="button" aria-label="Fechar detalhes" (click)="closeOrderDetails()">×</button>
+      </header>
+
+      <div class="modal-status" [class.paid]="statusTone(order.status) === 'paid'" [class.warning]="statusTone(order.status) === 'warning'" [class.danger]="statusTone(order.status) === 'danger'">
+        <span>{{ statusLabel(order.status) }}</span>
+      </div>
+
+      <div class="modal-event">
+        <span>Evento</span>
+        <strong>{{ eventName(order) }}</strong>
+        <p>{{ eventMeta(order) }}</p>
+      </div>
+
+      <dl class="modal-facts">
+        <div><dt>ID do pedido</dt><dd>{{ fullOrderId(order) }}</dd></div>
+        <div><dt>Criado em</dt><dd>{{ orderDate(order) }}</dd></div>
+        <div><dt>Total</dt><dd>{{ formatCurrency(order.totalAmount) }}</dd></div>
+        <div><dt>Ingressos</dt><dd>{{ totalTickets(order) }}</dd></div>
+      </dl>
+
+      <div class="modal-items">
+        <h3>Itens do pedido</h3>
+        @if (order.items.length === 0) {
+          <p class="modal-muted">Itens não informados pela API.</p>
+        } @else {
+          @for (item of order.items; track item.orderItemId || $index) {
+            <div class="modal-item">
+              <div>
+                <strong>{{ item.sectorId || 'Setor não informado' }}</strong>
+                <span>{{ ticketTypeLabel(item.ticketType) }} · {{ item.quantity ?? 1 }} ingresso(s)</span>
+              </div>
+              <strong>{{ formatCurrency(item.subtotal ?? item.appliedPrice) }}</strong>
+            </div>
+          }
+        }
+      </div>
+
+      @if (isPaymentPending(order.status) && order.paymentUrl) {
+        <a class="modal-payment" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">Continuar pagamento</a>
+      }
+    </section>
+  </div>
+}
 
 <app-site-footer />

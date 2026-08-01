@@ -50,11 +50,11 @@ export function orderStatusLabel(status?: OrderStatus | string | null): string {
     case 'RESERVED':
       return 'Reserva confirmada';
     case 'RESERVATION_FAILED':
-      return 'Reserva nao concluida';
+      return 'Falha na reserva';
     case 'RESERVATION_REJECTED':
       return 'Reserva recusada';
     case 'CONFIRMED':
-      return 'Pagamento confirmado';
+      return 'Pedido confirmado';
     case 'PAYMENT_FAILED':
       return 'Pagamento recusado';
     case 'FAILED':

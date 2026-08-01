@@ -84,13 +84,20 @@ export class CheckoutStore {
   readonly status = computed(() => this._order()?.status ?? null);
   readonly paymentUrl = computed(() => this._order()?.paymentUrl ?? null);
   readonly totalAmount = computed(() => this._order()?.totalAmount ?? null);
-  readonly totalTickets = computed(() => this._items().reduce((total, item) => total + item.quantity, 0));
+  readonly totalTickets = computed(() =>
+    this._items().reduce((total, item) => total + item.quantity, 0),
+  );
   readonly selectedSectorCount = computed(() => this._items().length);
   readonly hasItems = computed(() => this._items().length > 0);
   readonly visualSubtotal = computed(() =>
-    this._items().reduce((total, item) => total + this.moneyToNumber(item.unitPrice) * item.quantity, 0),
+    this._items().reduce(
+      (total, item) => total + this.moneyToNumber(item.unitPrice) * item.quantity,
+      0,
+    ),
   );
-  readonly canContinue = computed(() => this._eventId() !== null && this.hasItems() && !this._loading());
+  readonly canContinue = computed(
+    () => this._eventId() !== null && this.hasItems() && !this._loading(),
+  );
   readonly processing = computed(() => this._loading() || this.isProcessingStatus(this.status()));
   readonly succeeded = computed(
     () =>
@@ -136,7 +143,9 @@ export class CheckoutStore {
     }
 
     this._items.update((items) => {
-      const existingItem = items.find((currentItem) => this.isSameItem(currentItem, item.sectorId, item.ticketType));
+      const existingItem = items.find((currentItem) =>
+        this.isSameItem(currentItem, item.sectorId, item.ticketType),
+      );
 
       if (!existingItem) {
         return [...items, { ...item }];
@@ -160,7 +169,9 @@ export class CheckoutStore {
 
     this._items.update((items) =>
       items.map((item) =>
-        this.isSameItem(item, sectorId, ticketType ?? item.ticketType) ? { ...item, quantity } : item,
+        this.isSameItem(item, sectorId, ticketType ?? item.ticketType)
+          ? { ...item, quantity }
+          : item,
       ),
     );
     this._error.set(null);
@@ -323,7 +334,10 @@ export class CheckoutStore {
   }
 
   restorePendingOrder(): string | null {
-    const reference = this.storage.get<CheckoutRecoveryReference>(CHECKOUT_RECOVERY_KEY, sessionStorage);
+    const reference = this.storage.get<CheckoutRecoveryReference>(
+      CHECKOUT_RECOVERY_KEY,
+      sessionStorage,
+    );
 
     if (!reference) {
       return null;
@@ -353,7 +367,11 @@ export class CheckoutStore {
 
     const api = this.api;
 
-    if (this.pollingOrderId === orderId && this.pollingSubscription && !this.pollingSubscription.closed) {
+    if (
+      this.pollingOrderId === orderId &&
+      this.pollingSubscription &&
+      !this.pollingSubscription.closed
+    ) {
       return;
     }
 
@@ -485,7 +503,9 @@ export class CheckoutStore {
     });
   }
 
-  private isCheckoutRecoveryReference(value: CheckoutRecoveryReference): value is CheckoutRecoveryReference {
+  private isCheckoutRecoveryReference(
+    value: CheckoutRecoveryReference,
+  ): value is CheckoutRecoveryReference {
     return typeof value.orderId === 'string' && value.orderId.length > 0;
   }
 
@@ -526,12 +546,14 @@ export class CheckoutStore {
   }
 
   private isProcessingStatus(status: OrderStatus | null): boolean {
-    return status === 'PENDING' ||
+    return (
+      status === 'PENDING' ||
       status === 'PROCESSING' ||
       status === 'RESERVATION_CONFIRMED' ||
       status === 'RESERVED' ||
       status === 'AWAITING_PAYMENT' ||
-      status === 'PAYMENT_PENDING';
+      status === 'PAYMENT_PENDING'
+    );
   }
 
   private moneyToNumber(value: number): number {
@@ -552,7 +574,8 @@ export class CheckoutStore {
         return 'Pedido nao encontrado.';
       }
 
-      const message = typeof error.error?.message === 'string' ? error.error.message : error.message;
+      const message =
+        typeof error.error?.message === 'string' ? error.error.message : error.message;
       return message ? `${fallback} ${message}` : fallback;
     }
 

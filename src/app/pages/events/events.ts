@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminShell } from '../../components/admin-shell/admin-shell';
@@ -15,6 +15,7 @@ import { EventStore } from './state/event.store';
 export class Events implements OnInit {
   readonly store = inject(EventStore);
   readonly statuses: readonly EventStatus[] = ['SCHEDULED', 'CANCELED', 'FINISHED'];
+  readonly viewMode = signal<'list' | 'grid'>('grid');
 
   ngOnInit(): void {
     this.store.loadEvents();
@@ -46,6 +47,10 @@ export class Events implements OnInit {
 
   updatePageSize(size: string): void {
     this.store.changePageSize(Number(size));
+  }
+
+  setViewMode(mode: 'list' | 'grid'): void {
+    this.viewMode.set(mode);
   }
 
   previousPage(): void {

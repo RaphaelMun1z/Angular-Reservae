@@ -2,8 +2,7 @@
 
 <main class="profile-container">
   <header class="page-header">
-    <h1 class="page-title">A MINHA CONTA</h1>
-    <p class="page-subtitle">Gerencie suas informacoes pessoais e os dados usados no Reservae.</p>
+    <h1 class="page-title">MINHA CONTA</h1>
   </header>
 
   <div class="profile-grid">
@@ -14,66 +13,78 @@
         <p>{{ email() }}</p>
       </div>
 
-      <div class="nav-tabs">
-        <button class="nav-tab active" type="button">
-          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Dados Pessoais
-        </button>
-        <button class="nav-tab" type="button" routerLink="/meus-ingressos">
-          <svg viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"></polyline><circle cx="12" cy="12" r="10"></circle></svg>
-          Historico de Compras
-        </button>
-      </div>
     </aside>
 
     <section class="content-area">
       <div id="tab-dados" class="tab-content active">
-        <h2 class="section-title">Dados Pessoais</h2>
-
-        @if (authStore.error()) {
-          <div class="form-group full">
-            <p class="form-label">{{ authStore.error() }}</p>
-          </div>
-        }
-
-        @if (saved()) {
-          <div class="form-group full">
-            <p class="form-label">Perfil atualizado com sucesso.</p>
-          </div>
-        }
+        <div class="section-heading">
+          <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Dados Pessoais</h2>
+          <button
+            type="button"
+            class="edit-button edit-all-button"
+            [attr.aria-label]="editing() ? 'Bloquear campos editáveis' : 'Editar dados pessoais'"
+            [attr.title]="editing() ? 'Bloquear campos' : 'Editar campos'"
+            (click)="toggleEditing()"
+          >
+            @if (editing()) {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+            }
+          </button>
+        </div>
 
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Nome Completo</label>
+            <label class="form-label" for="profile-name"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Nome Completo</label>
             <input
+              id="profile-name"
               type="text"
               name="name"
               class="input-field"
+              [disabled]="!editing()"
               [ngModel]="fullName()"
               (ngModelChange)="fullName.set($event)"
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Endereco de E-mail</label>
-            <input type="email" name="email" class="input-field" [value]="email()" disabled />
+            <label class="form-label" for="profile-email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>Endereco de E-mail</label>
+            <input id="profile-email" type="email" name="email" class="input-field" [value]="email()" disabled />
           </div>
           <div class="form-group">
-            <label class="form-label">Identificador</label>
-            <input type="text" class="input-field" [value]="authStore.userId() ?? 'Nao informado'" disabled />
-          </div>
-          <div class="form-group">
-            <label class="form-label">CPF / Documento</label>
+            <label class="form-label" for="profile-document"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 7h8M8 11h8M8 15h5"></path></svg>CPF / Documento</label>
             <input
+              id="profile-document"
               type="text"
+              name="document"
               class="input-field"
+              inputmode="numeric"
+              placeholder="000.000.000-00"
+              [disabled]="!editing()"
               [ngModel]="document()"
-              (ngModelChange)="document.set($event)"
+              (ngModelChange)="formatDocument($event)"
             />
           </div>
         </div>
-        <button class="btn-action" type="button" [disabled]="authStore.loading()" (click)="saveProfile()">
-          {{ authStore.loading() ? 'Guardando...' : 'Guardar Alteracoes' }}
-        </button>
+        @if (editing()) {
+          <button class="btn-action" type="button" [disabled]="authStore.loading()" (click)="saveProfile()">
+            {{ authStore.loading() ? 'Guardando...' : 'Guardar Alteracoes' }}
+          </button>
+        }
+
+        @if (authStore.error()) {
+          <div class="form-feedback error-feedback" role="alert">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>
+            <span>{{ authStore.error() }}</span>
+          </div>
+        }
+
+        @if (saved()) {
+          <div class="form-feedback success-feedback" role="status">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 3 3 5-6"></path></svg>
+            <span>Perfil atualizado com sucesso.</span>
+          </div>
+        }
       </div>
     </section>
   </div>

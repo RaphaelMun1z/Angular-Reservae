@@ -12,7 +12,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const router = inject(Router);
 
   if (!shouldAttachToken(request.url) || !authService.isAuthenticated()) {
-    return next(request).pipe(handleAuthError(authStore, router));
+    return next(request).pipe(handleAuthError(authStore, router, request.url));
   }
 
   return authService.getAccessToken().pipe(
@@ -24,10 +24,12 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       return next(authorizedRequest);
     }),
     catchError((error: unknown) => {
-      authStore.clearSession('Sessao expirada. Entre novamente para continuar.');
+      if (!isProfileRequest(request.url)) {
+        authStore.clearSession('Sua sessao expirou. Entre novamente para continuar.');
+      }
       return throwError(() => error);
     }),
-    handleAuthError(authStore, router),
+    handleAuthError(authStore, router, request.url),
   );
 };
 
@@ -39,18 +41,26 @@ function shouldAttachToken(url: string): boolean {
   return requestUrl.origin === apiUrl.origin && requestUrl.origin !== keycloakUrl.origin;
 }
 
-function handleAuthError(authStore: AuthStore, router: Router): MonoTypeOperatorFunction<HttpEvent<unknown>> {
+function handleAuthError(authStore: AuthStore, router: Router, requestUrl: string): MonoTypeOperatorFunction<HttpEvent<unknown>> {
   return catchError((error: unknown) => {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 401) {
-        authStore.clearSession('Sessao expirada ou nao autorizada.');
+        if (!isProfileRequest(requestUrl)) {
+          authStore.clearSession('Sua sessao expirou. Entre novamente para continuar.');
+        }
       }
 
       if (error.status === 403) {
-        void router.navigateByUrl('/403');
+        if (!isProfileRequest(requestUrl)) {
+          void router.navigateByUrl('/403');
+        }
       }
     }
 
     return throwError(() => error);
   });
+}
+
+function isProfileRequest(url: string): boolean {
+  return url.includes('/user-profile-service/api/profiles/v1/me');
 }

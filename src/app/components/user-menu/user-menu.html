@@ -31,6 +31,9 @@
         <div>
           <strong>{{ displayName() }}</strong>
           <small>{{ displayEmail() }}</small>
+          @if (accessRole() !== 'CUSTOMER') {
+            <span class="access-badge">{{ accessRoleLabel() }}</span>
+          }
         </div>
       </div>
 
@@ -47,11 +50,11 @@
           <lucide-icon name="receipt-text" size="16" aria-hidden="true"></lucide-icon>
           Meus pedidos
         </a>
-        <a routerLink="/configuracoes" role="menuitem" (click)="close()">
-          <lucide-icon name="settings" size="16" aria-hidden="true"></lucide-icon>
-          Configuracoes
-        </a>
-        @if (isAdmin()) {
+        @if (accessRole() !== 'CUSTOMER') {
+          <a routerLink="/configuracoes" role="menuitem" (click)="close()">
+            <lucide-icon name="settings" size="16" aria-hidden="true"></lucide-icon>
+            Configuracoes
+          </a>
           <a routerLink="/dashboard" role="menuitem" (click)="close()">
             <lucide-icon name="gauge" size="16" aria-hidden="true"></lucide-icon>
             Administracao

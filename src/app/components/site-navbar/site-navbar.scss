@@ -30,7 +30,10 @@
 }
 
 .nav-center a {
+  position: relative;
   min-width: 92px;
+  min-height: 42px;
+  padding: 0 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,11 +43,20 @@
   text-decoration: none;
   font-size: 12px;
   font-weight: 900;
+  border: 1px solid transparent;
+  border-radius: 999px;
 }
 
 .nav-center a:hover,
 .nav-center a.active {
   opacity: 1;
+}
+
+.nav-center a.active {
+  color: #fff;
+  background: linear-gradient(135deg, rgb(255 98 77 / 18%), rgb(255 98 77 / 5%));
+  border-color: rgb(255 98 77 / 32%);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 18%);
 }
 
 .nav-center a svg {

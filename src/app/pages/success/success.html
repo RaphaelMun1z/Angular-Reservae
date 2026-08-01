@@ -1,5 +1,5 @@
 <header class="relative z-40 px-8 py-6 flex justify-between items-center">
-  <a routerLink="/index" class="inline-flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform">
+  <a routerLink="/inicio" class="inline-flex items-center justify-center w-12 h-12 bg-brand rounded-full text-white font-black text-xl tracking-tighter shadow-[0_0_15px_rgba(255,98,77,0.3)] hover:scale-105 transition-transform">
     <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
   </a>
 
@@ -57,7 +57,7 @@
           </a>
         }
         <a routerLink="/avaliacao" [queryParams]="store.orderId() ? { orderId: store.orderId() } : {}" class="flex-1 bg-dark-card border border-dark-border text-gray-300 hover:text-white hover:bg-dark-hover px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"><i class="ph-bold ph-star text-lg"></i>Avaliar</a>
-        <a routerLink="/index" class="flex-1 bg-transparent border border-dark-border text-gray-300 hover:text-white hover:bg-dark-hover px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+        <a routerLink="/inicio" class="flex-1 bg-transparent border border-dark-border text-gray-300 hover:text-white hover:bg-dark-hover px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
           <i class="ph-bold ph-house text-lg"></i>
           Inicio
         </a>

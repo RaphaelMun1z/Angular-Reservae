@@ -88,7 +88,7 @@ describe('Checkout', () => {
 
     expect(api.calls).toBe(1);
     expect(component.store.totalTickets()).toBe(0);
-    expect(navigateSpy).toHaveBeenCalledWith('/order-created');
+    expect(navigateSpy).toHaveBeenCalledWith('/order-track?orderId=order-123');
   });
 
   it('should accept checkout creation without an immediate paymentUrl', () => {
@@ -118,7 +118,7 @@ describe('Checkout', () => {
     component.payNow();
 
     expect(component.store.error()).toBeNull();
-    expect(navigateSpy).toHaveBeenCalledWith('/order-created');
+    expect(navigateSpy).toHaveBeenCalledWith('/order-track?orderId=order-123');
   });
 
   it('should update item quantity before creating checkout', () => {

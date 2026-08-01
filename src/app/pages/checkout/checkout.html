@@ -5,7 +5,7 @@
     <nav class="checkout-steps" aria-label="Etapas da compra">
       <div class="checkout-step active">
         <span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7Z"></path><path d="M13 8h.01M13 12h.01M13 16h.01"></path></svg></span>
-        <strong>Ingressos</strong>
+        <strong>Carrinho</strong>
       </div>
       <i aria-hidden="true"></i>
       <div class="checkout-step">
@@ -35,7 +35,7 @@
     </nav>
 
     <div>
-      <h1 class="page-title">Finalizar compra</h1>
+      <h1 class="page-title">Confira seu carrinho</h1>
     </div>
   </header>
 
@@ -89,7 +89,7 @@
           @for (item of store.items(); track item.sectorId + item.ticketType) {
             <article class="cart-item">
               <div class="ticket-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V5Z"></path><path d="M13 7h.01M13 11h.01M13 15h.01"></path></svg>
+                <img src="/assets/icon_logo_light.png" alt="" />
               </div>
 
               <div class="cart-item-info">
@@ -187,8 +187,11 @@
       }
 
       <button class="btn-checkout" type="button" [disabled]="!store.canContinue() || store.loading() || submitInProgress()" (click)="payNow()">
-        {{ store.loading() || submitInProgress() ? 'PROCESSANDO...' : 'CRIAR PEDIDO' }}
+        {{ store.loading() || submitInProgress() ? 'PROCESSANDO...' : 'FINALIZAR PEDIDO' }}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </button>
+      <button class="btn-continue-shopping" type="button" (click)="continueShopping()">
+        Continuar comprando
       </button>
     </aside>
   </div>
