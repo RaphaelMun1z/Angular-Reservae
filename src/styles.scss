@@ -39,3 +39,9 @@ body.admin-menu-open {
   border-radius: inherit;
   object-fit: cover;
 }
+
+/* O hover pode alterar cores e bordas, mas nunca mover ou ampliar elementos. */
+*:hover,
+*:hover * {
+  transform: none !important;
+}

@@ -34,61 +34,65 @@
           <article class="order-card">
             <div class="order-info">
               <div class="order-topline">
-                <span
-                  class="order-status"
-                  [class.paid]="statusTone(order.status) === 'paid'"
-                  [class.warning]="statusTone(order.status) === 'warning'"
-                  [class.danger]="statusTone(order.status) === 'danger'"
-                  [class.processing]="statusTone(order.status) === 'processing'"
-                >
-                  {{ statusLabel(order.status) }}
-                </span>
-                <span class="order-code">#{{ shortOrderId(order) }}</span>
+                <span class="order-code">#{{ fullOrderId(order) }}</span>
               </div>
 
-              <h2>{{ eventName(order) }}</h2>
-              <p class="order-event-meta">{{ eventMeta(order) }}</p>
+              @if (isEventDataUnavailable(order)) {
+                <div class="order-data-skeleton" aria-label="Carregando dados do evento">
+                  <span class="skeleton-line skeleton-title"></span>
+                  <span class="skeleton-line skeleton-meta"></span>
+                </div>
+              } @else {
+                <h2>{{ eventName(order) }}</h2>
+                <p class="order-event-meta">{{ eventMeta(order) }}</p>
+              }
 
               <div class="order-details">
                 <div>
                   <span>Criado em</span>
-                  <strong>{{ orderDate(order) }}</strong>
+                  @if (order.createdAt) {
+                    <strong>{{ orderDate(order) }}</strong>
+                  } @else {
+                    <span class="field-skeleton skeleton-line"></span>
+                  }
                 </div>
                 <div>
                   <span>Total</span>
-                  <strong>{{ formatCurrency(order.totalAmount) }}</strong>
-                </div>
-                <div>
-                  <span>Ingressos</span>
-                  <strong>{{ totalTickets(order) }}</strong>
-                </div>
-                <div>
-                  <span>Itens</span>
-                  <strong>{{ itemSummary(order) }}</strong>
+                  @if (hasTotal(order)) {
+                    <strong>{{ formatCurrency(order.totalAmount) }}</strong>
+                  } @else {
+                    <span class="field-skeleton skeleton-line"></span>
+                  }
                 </div>
               </div>
 
-              <small class="technical-id">ID tecnico: {{ fullOrderId(order) }}</small>
             </div>
 
             <aside class="order-action">
-              @if (isPaymentPending(order.status) && order.paymentUrl) {
-                <a class="primary-action" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">
-                  Continuar pagamento
-                </a>
-              } @else if (isPaid(order.status)) {
-                <a class="primary-action" routerLink="/meus-ingressos">Ver ingressos</a>
-              } @else if (isFailed(order.status)) {
-                <a class="primary-action" routerLink="/shows">Comprar novamente</a>
-              } @else {
-                <span class="processing-note">Pedido em processamento</span>
-              }
+              <span
+                class="order-status"
+                [class.paid]="statusTone(order.status) === 'paid'"
+                [class.warning]="statusTone(order.status) === 'warning'"
+                [class.danger]="statusTone(order.status) === 'danger'"
+                [class.processing]="statusTone(order.status) === 'processing'"
+              >
+                <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="statusIconPath(order.status)"></path></svg>
+                {{ statusLabel(order.status) }}
+              </span>
 
-              @if (order.id) {
-                <button class="secondary-action" type="button" (click)="openOrderDetails(order)">
-                  Ver detalhes
-                </button>
-              }
+              <div class="order-action-buttons">
+                @if (isPaymentPending(order.status) && order.paymentUrl) {
+                  <a class="secondary-action" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">
+                    Continuar pagamento
+                  </a>
+                }
+
+                @if (order.id) {
+                  <button class="primary-action" type="button" (click)="openOrderDetails(order)">
+                    Ver detalhes
+                  </button>
+                }
+              </div>
             </aside>
           </article>
         }
@@ -120,21 +124,28 @@
 
       <div class="modal-event">
         <span>Evento</span>
-        <strong>{{ eventName(order) }}</strong>
-        <p>{{ eventMeta(order) }}</p>
+        @if (isEventDataUnavailable(order)) {
+          <div class="order-data-skeleton" aria-label="Carregando dados do evento">
+            <span class="skeleton-line skeleton-title"></span>
+            <span class="skeleton-line skeleton-meta"></span>
+          </div>
+        } @else {
+          <strong>{{ eventName(order) }}</strong>
+          <p>{{ eventMeta(order) }}</p>
+        }
       </div>
 
       <dl class="modal-facts">
         <div><dt>ID do pedido</dt><dd>{{ fullOrderId(order) }}</dd></div>
-        <div><dt>Criado em</dt><dd>{{ orderDate(order) }}</dd></div>
-        <div><dt>Total</dt><dd>{{ formatCurrency(order.totalAmount) }}</dd></div>
-        <div><dt>Ingressos</dt><dd>{{ totalTickets(order) }}</dd></div>
+        <div><dt>Criado em</dt><dd>@if (order.createdAt) { {{ orderDate(order) }} } @else { <span class="field-skeleton skeleton-line"></span> }</dd></div>
+        <div><dt>Total</dt><dd>@if (hasTotal(order)) { {{ formatCurrency(order.totalAmount) }} } @else { <span class="field-skeleton skeleton-line"></span> }</dd></div>
+        <div><dt>Ingressos</dt><dd>@if (order.items.length > 0) { {{ totalTickets(order) }} } @else { <span class="field-skeleton skeleton-line"></span> }</dd></div>
       </dl>
 
       <div class="modal-items">
         <h3>Itens do pedido</h3>
         @if (order.items.length === 0) {
-          <p class="modal-muted">Itens não informados pela API.</p>
+          <span class="field-skeleton skeleton-line skeleton-items"></span>
         } @else {
           @for (item of order.items; track item.orderItemId || $index) {
             <div class="modal-item">

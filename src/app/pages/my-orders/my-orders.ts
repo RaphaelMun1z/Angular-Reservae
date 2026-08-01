@@ -1,6 +1,5 @@
 import { Component, DestroyRef, OnInit, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
@@ -12,7 +11,7 @@ import { MyOrdersStore, OrderStatusFilter } from './state/my-orders.store';
 
 @Component({
   selector: 'app-my-orders',
-  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader],
+  imports: [SiteNavbar, SiteFooter, SkeletonLoader],
   providers: [MyOrdersStore],
   templateUrl: './my-orders.html',
   styleUrl: './my-orders.scss',
@@ -61,6 +60,22 @@ export class MyOrders implements OnInit {
 
   statusLabel(status: OrderStatus | string | null): string {
     return orderStatusLabel(status);
+  }
+
+  statusIconPath(status: OrderStatus | string | null): string {
+    if (this.isPaid(status)) {
+      return 'm5 12 4 4L19 6';
+    }
+
+    if (this.isFailed(status)) {
+      return 'm8 8 8 8M16 8l-8 8';
+    }
+
+    if (this.isPaymentPending(status)) {
+      return 'M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z';
+    }
+
+    return 'M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z';
   }
 
   statusTone(status: OrderStatus | string | null): string {
@@ -132,6 +147,10 @@ export class MyOrders implements OnInit {
       : 'Indisponivel';
   }
 
+  hasTotal(order: CheckoutOrder): boolean {
+    return typeof order.totalAmount === 'number';
+  }
+
   isPaymentPending(status: OrderStatus | string | null): boolean {
     return status === 'AWAITING_PAYMENT' || status === 'PAYMENT_PENDING';
   }
@@ -151,8 +170,16 @@ export class MyOrders implements OnInit {
       status === 'EXPIRED';
   }
 
-  private isEventLoading(eventId: string): boolean {
+  isEventLoading(eventId: string): boolean {
     return Boolean(this.loadingEventIds()[eventId]);
+  }
+
+  isEventDataUnavailable(order: CheckoutOrder): boolean {
+    if (!order.eventId || this.isEventLoading(order.eventId)) {
+      return true;
+    }
+
+    return !this.eventData()[order.eventId]?.event;
   }
 
   private loadEventData(eventId: string): void {
