@@ -1,0 +1,1 @@
+import{a as o}from"./chunk-42FSUTZV.js";import{x as n}from"./chunk-TAH3EMTE.js";var e=class r{url(t){return`${o.apiGatewayUrl}${t}`}static \u0275fac=function(a){return new(a||r)};static \u0275prov=n({token:r,factory:r.\u0275fac,providedIn:"root"})};export{e as a};

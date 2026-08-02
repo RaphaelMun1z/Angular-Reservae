@@ -1,0 +1,1 @@
+var e={production:!0,apiGatewayUrl:"http://localhost:8765",auth:{useMock:!1,keycloakUrl:"http://localhost:8080",realm:"reservae",clientId:"reservae-web",mockUser:{userId:"",username:"",email:"",roles:[]}}};export{e as a};
