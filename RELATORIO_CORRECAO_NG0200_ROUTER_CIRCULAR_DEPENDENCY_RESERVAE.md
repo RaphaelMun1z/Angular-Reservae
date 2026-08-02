@@ -50,4 +50,3 @@ Os testes de roles continuam cobrindo organizador em rota de cliente, cliente em
 O comando de desenvolvimento foi iniciado em `127.0.0.1:4200` para validação de bootstrap. A correção remove a resolução antecipada de `Router` do interceptor, que era a causa do NG0200 durante a inicialização.
 
 Não foi possível inspecionar visualmente o console de um navegador integrado nesta execução; recomenda-se abrir `http://localhost:4200` e confirmar o console do navegador em QA manual.
-
