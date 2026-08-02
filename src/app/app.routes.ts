@@ -1,37 +1,235 @@
 import { Routes } from '@angular/router';
-import { Checkout } from './pages/checkout/checkout';
-import { ClubVip } from './pages/club-vip/club-vip';
-import { CreateEvent } from './pages/create-event/create-event';
-import { Dashboard } from './pages/dashboard/dashboard';
-import { Error403 } from './pages/errors/error403/error403';
-import { Error404 } from './pages/errors/error404/error404';
-import { Error500 } from './pages/errors/error500/error500';
-import { Error503 } from './pages/errors/error503/error503';
-import { Events } from './pages/events/events';
-import { ForgotPassword } from './pages/forgot-password/forgot-password';
-import { GateScanner } from './pages/gate-scanner/gate-scanner';
 import { HomePage } from './pages/home-page/home-page';
-import { Login } from './pages/login/login';
-import { MyOrders } from './pages/my-orders/my-orders';
-import { MyTickets } from './pages/my-tickets/my-tickets';
-import { OrderCreated } from './pages/order-created/order-created';
-import { OrderDetails } from './pages/order-details/order-details';
-import { Profile } from './pages/profile/profile';
-import { Register } from './pages/register/register';
-import { Review } from './pages/review/review';
-import { SectorSelection } from './pages/sector-selection/sector-selection';
-import { Settings } from './pages/settings/settings';
-import { Shows } from './pages/shows/shows';
-import { Success } from './pages/success/success';
-import { Support } from './pages/support/support';
-import { TicketDetails } from './pages/ticket-details/ticket-details';
-import { TicketTransfer } from './pages/ticket-transfer/ticket-transfer';
 import { CheckoutStore } from './pages/checkout/state/checkout.store';
 import { EventStore } from './pages/events/state/event.store';
 import { ScannerStore } from './pages/gate-scanner/state/scanner.store';
 import { TicketStore } from './pages/my-tickets/state/ticket.store';
 import { authGuard } from './core/auth/auth.guard';
 import { roleGuard } from './core/auth/role.guard';
+
+/** Rotas públicas que usam o shell da própria página (navbar/footer quando aplicável). */
+const publicRoutes: Routes = [
+  {
+    path: 'inicio',
+    component: HomePage,
+    title: 'Reservae | Inicio',
+  },
+  {
+    path: 'club-vip',
+    loadComponent: () => import('./pages/club-vip/club-vip').then((m) => m.ClubVip),
+    title: 'Reservae | Club VIP',
+  },
+  {
+    path: 'eventos',
+    loadComponent: () => import('./pages/events/events').then((m) => m.Events),
+    title: 'Reservae | Eventos',
+  },
+  {
+    path: 'shows',
+    loadComponent: () => import('./pages/shows/shows').then((m) => m.Shows),
+    title: 'Reservae | Eventos',
+  },
+  {
+    path: 'suporte',
+    loadComponent: () => import('./pages/support/support').then((m) => m.Support),
+    title: 'Reservae | Suporte',
+  },
+  {
+    path: 'selecionar-setor',
+    loadComponent: () => import('./pages/sector-selection/sector-selection').then((m) => m.SectorSelection),
+    title: 'Reservae | Detalhes do evento',
+  },
+  {
+    path: 'selecionar-setor/:eventId',
+    loadComponent: () => import('./pages/sector-selection/sector-selection').then((m) => m.SectorSelection),
+    title: 'Reservae | Detalhes do evento',
+  },
+];
+
+/** Rotas que exigem sessão, mantendo o authGuard no nível de cada URL. */
+const authenticatedRoutes: Routes = [
+  {
+    path: 'checkout',
+    loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout),
+    canActivate: [authGuard],
+    title: 'Reservae | Checkout',
+  },
+  {
+    path: 'checkout/:eventId',
+    loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout),
+    canActivate: [authGuard],
+    title: 'Reservae | Checkout',
+  },
+  {
+    path: 'meus-ingressos',
+    loadComponent: () => import('./pages/my-tickets/my-tickets').then((m) => m.MyTickets),
+    canActivate: [authGuard],
+    title: 'Reservae | Meus ingressos',
+  },
+  {
+    path: 'meus-pedidos',
+    loadComponent: () => import('./pages/my-orders/my-orders').then((m) => m.MyOrders),
+    canActivate: [authGuard],
+    title: 'Reservae | Meus pedidos',
+  },
+  {
+    path: 'detalhes-pedido/:orderId',
+    loadComponent: () => import('./pages/order-details/order-details').then((m) => m.OrderDetails),
+    canActivate: [authGuard],
+    title: 'Reservae | Detalhes do pedido',
+  },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./pages/profile/profile').then((m) => m.Profile),
+    canActivate: [authGuard],
+    title: 'Reservae | Perfil',
+  },
+  {
+    path: 'order-track',
+    loadComponent: () => import('./pages/order-created/order-created').then((m) => m.OrderCreated),
+    canActivate: [authGuard],
+    title: 'Reservae | Acompanhar pedido',
+  },
+  {
+    path: 'detalhes-ingresso',
+    loadComponent: () => import('./pages/ticket-details/ticket-details').then((m) => m.TicketDetails),
+    canActivate: [authGuard],
+    title: 'Reservae | Detalhes do ingresso',
+  },
+  {
+    path: 'detalhes-ingresso/:ticketId',
+    loadComponent: () => import('./pages/ticket-details/ticket-details').then((m) => m.TicketDetails),
+    canActivate: [authGuard],
+    title: 'Reservae | Detalhes do ingresso',
+  },
+  {
+    path: 'transferir-ingresso',
+    loadComponent: () => import('./pages/ticket-transfer/ticket-transfer').then((m) => m.TicketTransfer),
+    canActivate: [authGuard],
+    title: 'Reservae | Transferir ingresso',
+  },
+];
+
+/** Rotas administrativas/operacionais, com roles preservadas por URL. */
+const adminRoutes: Routes = [
+  {
+    path: 'criar-evento',
+    loadComponent: () => import('./pages/create-event/create-event').then((m) => m.CreateEvent),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN'] },
+    title: 'Reservae | Criar evento',
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN', 'ORGANIZER', 'SUPPORT'] },
+    title: 'Reservae | Dashboard',
+  },
+  {
+    path: 'clientes',
+    loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN'] },
+    title: 'Reservae | Clientes',
+  },
+  {
+    path: 'transacoes',
+    loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN'] },
+    title: 'Reservae | Transacoes',
+  },
+  {
+    path: 'relatorios',
+    loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN'] },
+    title: 'Reservae | Relatorios',
+  },
+  {
+    path: 'scanner',
+    loadComponent: () => import('./pages/gate-scanner/gate-scanner').then((m) => m.GateScanner),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN'] },
+    providers: [ScannerStore],
+    title: 'Reservae | Validacao de ingresso',
+  },
+  {
+    path: 'scanner/:eventId',
+    loadComponent: () => import('./pages/gate-scanner/gate-scanner').then((m) => m.GateScanner),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN'] },
+    providers: [ScannerStore],
+    title: 'Reservae | Validacao de ingresso',
+  },
+  {
+    path: 'configuracoes',
+    loadComponent: () => import('./pages/settings/settings').then((m) => m.Settings),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN', 'ORGANIZER', 'SUPPORT'] },
+    title: 'Reservae | Configuracoes',
+  },
+];
+
+/** Rotas isoladas, sem shell comum ou sem exigência de autenticação. */
+const specialRoutes: Routes = [
+  {
+    path: 'carrinho',
+    redirectTo: 'checkout',
+    pathMatch: 'full',
+  },
+  {
+    path: 'recuperar-senha',
+    loadComponent: () => import('./pages/forgot-password/forgot-password').then((m) => m.ForgotPassword),
+    title: 'Reservae | Recuperar senha',
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login').then((m) => m.Login),
+    title: 'Reservae | Entrar',
+  },
+  {
+    path: 'cadastro',
+    loadComponent: () => import('./pages/register/register').then((m) => m.Register),
+    title: 'Reservae | Cadastro',
+  },
+  {
+    path: 'avaliacao',
+    loadComponent: () => import('./pages/review/review').then((m) => m.Review),
+    title: 'Reservae | Avaliacao',
+  },
+  {
+    path: 'sucesso',
+    loadComponent: () => import('./pages/success/success').then((m) => m.Success),
+    title: 'Reservae | Sucesso',
+  },
+  {
+    path: '403',
+    loadComponent: () => import('./pages/errors/error403/error403').then((m) => m.Error403),
+    title: 'Reservae | Acesso negado',
+  },
+  {
+    path: '404',
+    loadComponent: () => import('./pages/errors/error404/error404').then((m) => m.Error404),
+    title: 'Reservae | Pagina nao encontrada',
+  },
+  {
+    path: '500',
+    loadComponent: () => import('./pages/errors/error500/error500').then((m) => m.Error500),
+    title: 'Reservae | Erro interno',
+  },
+  {
+    path: '503',
+    loadComponent: () => import('./pages/errors/error503/error503').then((m) => m.Error503),
+    title: 'Reservae | Servico indisponivel',
+  },
+  {
+    path: '**',
+    loadComponent: () => import('./pages/errors/error404/error404').then((m) => m.Error404),
+    title: 'Reservae | Pagina nao encontrada',
+  },
+];
 
 export const routes: Routes = [
   {
@@ -42,214 +240,6 @@ export const routes: Routes = [
   {
     path: '',
     providers: [CheckoutStore, EventStore, TicketStore],
-    children: [
-      {
-        path: 'inicio',
-        component: HomePage,
-        title: 'Reservae | Inicio',
-      },
-      {
-        path: 'carrinho',
-        redirectTo: 'checkout',
-        pathMatch: 'full',
-      },
-      {
-        path: 'checkout',
-        component: Checkout,
-        canActivate: [authGuard],
-        title: 'Reservae | Checkout',
-      },
-      {
-        path: 'checkout/:eventId',
-        component: Checkout,
-        canActivate: [authGuard],
-        title: 'Reservae | Checkout',
-      },
-      {
-        path: 'club-vip',
-        component: ClubVip,
-        title: 'Reservae | Club VIP',
-      },
-      {
-        path: 'criar-evento',
-        component: CreateEvent,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
-        title: 'Reservae | Criar evento',
-      },
-      {
-        path: 'dashboard',
-        component: Dashboard,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN', 'ORGANIZER', 'SUPPORT'] },
-        title: 'Reservae | Dashboard',
-      },
-      {
-        path: 'clientes',
-        component: Dashboard,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
-        title: 'Reservae | Clientes',
-      },
-      {
-        path: 'transacoes',
-        component: Dashboard,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
-        title: 'Reservae | Transacoes',
-      },
-      {
-        path: 'relatorios',
-        component: Dashboard,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
-        title: 'Reservae | Relatorios',
-      },
-      {
-        path: 'eventos',
-        component: Events,
-        title: 'Reservae | Eventos',
-      },
-      {
-        path: 'recuperar-senha',
-        component: ForgotPassword,
-        title: 'Reservae | Recuperar senha',
-      },
-      {
-        path: 'scanner',
-        component: GateScanner,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
-        providers: [ScannerStore],
-        title: 'Reservae | Validacao de ingresso',
-      },
-      {
-        path: 'scanner/:eventId',
-        component: GateScanner,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
-        providers: [ScannerStore],
-        title: 'Reservae | Validacao de ingresso',
-      },
-      {
-        path: 'login',
-        component: Login,
-        title: 'Reservae | Entrar',
-      },
-      {
-        path: 'meus-ingressos',	
-        component: MyTickets,
-        canActivate: [authGuard],
-        title: 'Reservae | Meus ingressos',
-      },
-      {
-        path: 'meus-pedidos',
-        component: MyOrders,
-        canActivate: [authGuard],
-        title: 'Reservae | Meus pedidos',
-      },
-      {
-        path: 'detalhes-pedido/:orderId',
-        component: OrderDetails,
-        canActivate: [authGuard],
-        title: 'Reservae | Detalhes do pedido',
-      },
-      {
-        path: 'perfil',
-        component: Profile,
-        canActivate: [authGuard],
-        title: 'Reservae | Perfil',
-      },
-      {
-        path: 'cadastro',
-        component: Register,
-        title: 'Reservae | Cadastro',
-      },
-      {
-        path: 'avaliacao',
-        component: Review,
-        title: 'Reservae | Avaliacao',
-      },
-      {
-        path: 'selecionar-setor',
-        component: SectorSelection,
-        title: 'Reservae | Detalhes do evento',
-      },
-      {
-        path: 'selecionar-setor/:eventId',
-        component: SectorSelection,
-        title: 'Reservae | Detalhes do evento',
-      },
-      {
-        path: 'configuracoes',
-        component: Settings,
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN', 'ORGANIZER', 'SUPPORT'] },
-        title: 'Reservae | Configuracoes',
-      },
-      {
-        path: 'shows',
-        component: Shows,
-        title: 'Reservae | Eventos',
-      },
-      {
-        path: 'sucesso',
-        component: Success,
-        title: 'Reservae | Sucesso',
-      },
-      {
-        path: 'order-track',
-        component: OrderCreated,
-        title: 'Reservae | Acompanhar pedido',
-      },
-      {
-        path: 'suporte',
-        component: Support,
-        title: 'Reservae | Suporte',
-      },
-      {
-        path: 'detalhes-ingresso',
-        component: TicketDetails,
-        canActivate: [authGuard],
-        title: 'Reservae | Detalhes do ingresso',
-      },
-      {
-        path: 'detalhes-ingresso/:ticketId',
-        component: TicketDetails,
-        canActivate: [authGuard],
-        title: 'Reservae | Detalhes do ingresso',
-      },
-      {
-        path: 'transferir-ingresso',
-        component: TicketTransfer,
-        canActivate: [authGuard],
-        title: 'Reservae | Transferir ingresso',
-      },
-      {
-        path: '403',
-        component: Error403,
-        title: 'Reservae | Acesso negado',
-      },
-      {
-        path: '404',
-        component: Error404,
-        title: 'Reservae | Pagina nao encontrada',
-      },
-      {
-        path: '500',
-        component: Error500,
-        title: 'Reservae | Erro interno',
-      },
-      {
-        path: '503',
-        component: Error503,
-        title: 'Reservae | Servico indisponivel',
-      },
-      {
-        path: '**',
-        component: Error404,
-        title: 'Reservae | Pagina nao encontrada',
-      },
-    ],
+    children: [...publicRoutes, ...authenticatedRoutes, ...adminRoutes, ...specialRoutes],
   },
 ];
