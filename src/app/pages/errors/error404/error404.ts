@@ -8,5 +8,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './error404.scss',
 })
 export class Error404 {
-
+  protected goBack(): void {
+    window.history.back();
+  }
 }

@@ -8,5 +8,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './error503.scss',
 })
 export class Error503 {
-
+  protected reload(): void {
+    window.location.reload();
+  }
 }

@@ -23,4 +23,20 @@ describe('Review', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should enable and submit the review after selecting a rating', () => {
+    const ratingButton = fixture.nativeElement.querySelector('[aria-label="Avaliar com 5 estrelas"]') as HTMLButtonElement;
+    const submitButton = fixture.nativeElement.querySelector('#btn-submit-feedback') as HTMLButtonElement;
+
+    expect(submitButton.disabled).toBe(true);
+    ratingButton.click();
+    fixture.detectChanges();
+
+    expect(submitButton.disabled).toBe(false);
+    submitButton.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#evaluation-card').classList.contains('hidden')).toBe(true);
+    expect(fixture.nativeElement.querySelector('#evaluation-success').classList.contains('hidden')).toBe(false);
+  });
 });
