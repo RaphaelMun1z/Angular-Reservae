@@ -1,0 +1,38 @@
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <a routerLink="/inicio" class="footer-logo" aria-label="Reservae">
+        <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
+      </a>
+      <div>
+        <strong>Reservae</strong>
+        <span>Ingressos digitais para eventos, shows e experiências ao vivo.</span>
+      </div>
+    </div>
+
+    <nav aria-label="Links principais">
+      <span>Explore</span>
+      <a routerLink="/inicio">Inicio</a>
+      <a routerLink="/shows">Eventos</a>
+      <a routerLink="/club-vip">Club VIP</a>
+      <a routerLink="/suporte">Suporte</a>
+    </nav>
+
+    <nav aria-label="Conta">
+      <span>Conta</span>
+      @for (link of accountLinks(); track link.path) {
+        <a [routerLink]="link.path">{{ link.label }}</a>
+      }
+    </nav>
+
+    <div class="footer-note">
+      <span>Atendimento</span>
+       <strong>Precisa de ajuda?</strong>
+       <a routerLink="/suporte">Acessar central de suporte</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <small>Reservae © {{ currentYear }}</small>
+  </div>
+</footer>

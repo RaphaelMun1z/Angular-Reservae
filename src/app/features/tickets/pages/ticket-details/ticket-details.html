@@ -1,0 +1,131 @@
+<app-site-navbar />
+
+<main class="ticket-page">
+  <a routerLink="/meus-ingressos" class="back-link">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+    Meus ingressos
+  </a>
+
+  <header class="page-header">
+    <h1>Detalhes do ingresso</h1>
+  </header>
+
+  @if (store.loading()) {
+    <app-skeleton-loader variant="detail" />
+  } @else if (store.error()) {
+    <section class="empty-state">
+      <div class="empty-state__icon">!</div>
+      <h2>Ingresso indisponivel</h2>
+      <p>{{ store.error() }}</p>
+      <a routerLink="/meus-ingressos" class="button button--primary">Voltar aos ingressos</a>
+    </section>
+  } @else if (store.selectedTicket(); as ticket) {
+    <div class="details-layout">
+      <section class="main-card" [class]="'ticket-status--' + statusTone(ticket.status)">
+        <div class="ticket-status-top">
+          <app-status-badge [status]="ticket.status" context="ticket" />
+        </div>
+
+        <div class="event-heading">
+          <div>
+            <span class="ticket-id-label">Código do ingresso</span>
+            <strong class="ticket-id-value">#{{ ticket.id || 'Nao informado' }}</strong>
+            <h2>{{ eventName(ticket) }}</h2>
+          </div>
+
+        </div>
+
+        <div class="info-grid" aria-label="Informacoes principais do ingresso">
+          <article class="info-card">
+            <span class="info-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 8h3v3H8zM13 8h3M13 11h3M8 14h8M8 17h4"></path></svg>Setor</span>
+            <strong>{{ sectorName(ticket) }}</strong>
+          </article>
+          <article class="info-card">
+            <span class="info-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3Z"></path><path d="M13 5v14"></path></svg>Tipo de ingresso</span>
+            <strong>{{ ticketTypeLabel(ticket.ticketType) }}</strong>
+          </article>
+          <article class="info-card">
+            <span class="info-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>Data do evento</span>
+            <strong>{{ eventDateLabel(ticket) }}</strong>
+          </article>
+          <article class="info-card">
+            <span class="info-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Horário do evento</span>
+            <strong>{{ eventTimeLabel(ticket) }}</strong>
+          </article>
+          <article class="info-card">
+            <span class="info-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Local</span>
+            <strong>{{ eventLocationLabel(ticket) }}</strong>
+          </article>
+        </div>
+
+      </section>
+
+      <aside class="side-column">
+        <section class="qr-card" aria-labelledby="qr-title">
+          <span class="section-kicker">Entrada no evento</span>
+          <h2 id="qr-title">QR Code</h2>
+
+          @if (ticket.qrCodeHash) {
+            <div
+              class="qr-box"
+              role="button"
+              tabindex="0"
+              aria-label="Mostrar QR Code"
+              (click)="toggleQrCode()"
+              (keydown.enter)="toggleQrCode()"
+              (keydown.space)="$event.preventDefault(); toggleQrCode()"
+            >
+              @if (!qrExpanded()) {
+                <span class="qr-view-hint" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
+                  <span>Clique para visualizar</span>
+                </span>
+              }
+              <qrcode
+                [qrdata]="ticket.qrCodeHash"
+                [width]="220"
+                [margin]="2"
+                [errorCorrectionLevel]="'M'"
+                [elementType]="'svg'"
+                [ariaLabel]="'QR Code do ingresso'"
+                [alt]="'QR Code do ingresso'"
+              />
+            </div>
+            <p class="qr-description">Apresente este QR Code na entrada para validacao do ingresso.</p>
+            <span class="qr-hash-label">Código de validação</span>
+            <code class="qr-hash">{{ ticket.qrCodeHash }}</code>
+          } @else {
+            <div class="qr-empty">
+              <div class="qr-empty__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z"></path><path d="M14 14h3v3h-3zM19 14h2M19 18v3M14 19h3"></path></svg>
+              </div>
+              <strong>QR Code ainda nao disponivel</strong>
+              <p>O codigo de validacao deste ingresso aparecera aqui quando estiver pronto.</p>
+            </div>
+          }
+        </section>
+
+        <section class="actions-card" aria-label="Acoes do ingresso">
+          @if (ticket.orderId) {
+            <a [routerLink]="['/detalhes-pedido', ticket.orderId]" class="button button--secondary">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"></path><path d="M14 3v4h4M9 12h6M9 16h6"></path></svg>
+              Ver pedido
+            </a>
+          }
+          <p class="transfer-note">Transferencia de ingresso ainda nao disponivel.</p>
+        </section>
+      </aside>
+    </div>
+    @if (qrExpanded()) {
+      <div class="qr-modal-backdrop" role="presentation" (click)="closeQrCode()">
+        <section class="qr-modal" role="dialog" aria-modal="true" aria-label="QR Code do ingresso" (click)="$event.stopPropagation()">
+          <button class="qr-modal-close" type="button" aria-label="Fechar QR Code" (click)="closeQrCode()">×</button>
+          <qrcode [qrdata]="ticket.qrCodeHash || ''" [width]="320" [margin]="2" [errorCorrectionLevel]="'M'" [elementType]="'svg'" [ariaLabel]="'QR Code do ingresso'" [alt]="'QR Code do ingresso'" />
+          <span>Apresente este QR Code na entrada</span>
+        </section>
+      </div>
+    }
+  }
+</main>
+
+<app-site-footer />

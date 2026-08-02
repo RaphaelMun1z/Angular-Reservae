@@ -1,0 +1,27 @@
+{
+  "root": true,
+  "ignorePatterns": ["dist", "node_modules", "**/*.spec.ts"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "tsconfig.app.json"
+      },
+      "plugins": ["@angular-eslint", "@typescript-eslint"],
+      "extends": ["plugin:@angular-eslint/recommended"],
+      "rules": {
+        "@angular-eslint/component-class-suffix": "off",
+        "@angular-eslint/directive-class-suffix": "off",
+        "@angular-eslint/prefer-inject": "off",
+        "@typescript-eslint/no-explicit-any": "error"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "plugins": ["@angular-eslint/template"],
+      "extends": ["plugin:@angular-eslint/template/recommended"]
+    }
+  ]
+}

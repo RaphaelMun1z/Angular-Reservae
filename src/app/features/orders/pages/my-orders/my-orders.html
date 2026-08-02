@@ -1,0 +1,106 @@
+<app-site-navbar />
+
+<main class="orders-container">
+  <header class="page-header">
+    <h1 class="page-title">Meus pedidos</h1>
+  </header>
+
+  @if (store.loading()) {
+    <app-skeleton-loader variant="list" [count]="3" />
+  } @else if (store.error()) {
+    <section class="empty-orders">
+      <h2>Nao foi possivel carregar seus pedidos</h2>
+      <p>{{ store.error() }}</p>
+      <button type="button" class="secondary-action" (click)="store.loadOrders()">Tentar novamente</button>
+    </section>
+  } @else {
+    <nav class="tabs" aria-label="Filtrar pedidos por status">
+      @for (filter of filters; track filter.value) {
+        <button type="button" class="tab" [class.active]="store.statusFilter() === filter.value" (click)="setFilter(filter.value)">
+          <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="filter.iconPath"></path></svg>
+          {{ filter.label }}
+        </button>
+      }
+    </nav>
+
+    @if (store.filteredOrders().length === 0) {
+      <app-empty-state
+        title="Nenhum pedido encontrado"
+        description="Quando voce criar uma compra, o acompanhamento aparecera aqui."
+      />
+    } @else {
+      <section class="orders-list" aria-label="Pedidos">
+        @for (order of store.filteredOrders(); track order.id) {
+          <article class="order-card">
+            <div class="order-info">
+              <div class="order-topline">
+                <span class="order-code">#{{ fullOrderId(order) }}</span>
+              </div>
+
+              @if (isEventDataUnavailable(order)) {
+                <div class="order-data-skeleton" aria-label="Carregando dados do evento">
+                  <span class="skeleton-line skeleton-title"></span>
+                  <span class="skeleton-line skeleton-meta"></span>
+                </div>
+              } @else {
+                <h2>{{ eventName(order) }}</h2>
+                <p class="order-event-meta">{{ eventMeta(order) }}</p>
+              }
+
+              <div class="order-details">
+                <div>
+                  <span>Criado em</span>
+                  @if (order.createdAt) {
+                    <strong>{{ orderDate(order) }}</strong>
+                  } @else {
+                    <span class="field-skeleton skeleton-line"></span>
+                  }
+                </div>
+                <div>
+                  <span>Total</span>
+                  @if (hasTotal(order)) {
+                    <strong>{{ formatCurrency(order.totalAmount) }}</strong>
+                  } @else {
+                    <span class="field-skeleton skeleton-line"></span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <aside class="order-action">
+              <span
+                class="order-status"
+                [class.paid]="statusTone(order.status) === 'paid'"
+                [class.warning]="statusTone(order.status) === 'warning'"
+                [class.danger]="statusTone(order.status) === 'danger'"
+                [class.processing]="statusTone(order.status) === 'processing'"
+              >
+                <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="statusIconPath(order.status)"></path></svg>
+                {{ statusLabel(order.status) }}
+              </span>
+
+              <div class="order-action-buttons">
+                @if (order.id) {
+                  <a class="secondary-action" [routerLink]="['/detalhes-pedido', order.id]">Ver detalhes</a>
+                }
+
+                @if (isPaymentPending(order.status) && order.paymentUrl) {
+                  <a class="primary-action" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">Continuar pagamento</a>
+                }
+
+                @if (isPaid(order.status)) {
+                  <a class="primary-action tickets-page-action" routerLink="/meus-ingressos">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3Z"></path><path d="M13 5v14"></path></svg>
+                    Meus ingressos
+                  </a>
+                }
+              </div>
+            </aside>
+          </article>
+        }
+      </section>
+    }
+  }
+</main>
+
+<app-site-footer />

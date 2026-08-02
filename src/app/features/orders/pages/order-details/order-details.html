@@ -1,0 +1,78 @@
+<app-site-navbar />
+
+<main class="order-details-page">
+  <a routerLink="/meus-pedidos" class="back-link">← Meus pedidos</a>
+  <header class="page-header"><h1>Detalhes do pedido</h1></header>
+
+  @if (loading()) {
+    <app-skeleton-loader variant="detail" />
+  } @else if (error()) {
+    <section class="order-state">
+      <h2>Pedido indisponivel</h2>
+      <p>{{ error() }}</p>
+    </section>
+  } @else if (order(); as currentOrder) {
+    <div class="order-checkout-grid">
+      <section class="order-main-panel">
+        <div class="order-event-heading">
+          <span class="order-code-label">Codigo do pedido</span>
+          <strong class="order-code">#{{ currentOrder.id }}</strong>
+          <h2>{{ currentOrder.eventTitle || 'Evento nao informado' }}</h2>
+          <p>{{ eventMeta(currentOrder) }}</p>
+        </div>
+
+        <section class="items-section">
+          <h3>Itens do pedido</h3>
+          <div class="items-header">
+            <span>Setor</span><span>Tipo</span><span>Quantidade</span><span>Preco unitario</span
+            ><span>Subtotal</span>
+          </div>
+          @for (item of currentOrder.items; track item.orderItemId || $index) {
+            <div class="order-item">
+              <strong>{{ item.sectorName || item.sectorId || 'Setor nao informado' }}</strong
+              ><span>{{ ticketTypeLabel(item.ticketType) }}</span
+              ><span>{{ item.quantity ?? 1 }}</span
+              ><span>{{ formatCurrency(item.appliedPrice) }}</span
+              ><strong>{{ formatCurrency(item.subtotal ?? item.appliedPrice) }}</strong>
+            </div>
+          }
+          <div class="order-item order-items-total">
+            <strong>Total</strong><span></span><span></span><span></span><strong>{{ formatCurrency(currentOrder.totalAmount) }}</strong>
+          </div>
+        </section>
+        @if (currentOrder.status === 'CONFIRMED') {
+          <a routerLink="/meus-ingressos" class="action primary items-action">Meus ingressos</a>
+        }
+      </section>
+
+      <aside class="order-summary-panel" aria-label="Resumo do pedido">
+        <div class="summary-heading"><h2>Resumo da compra</h2></div>
+        <app-status-badge [status]="currentOrder.status" context="order" />
+        <div class="summary-date">
+          <span>Pedido criado em</span><strong>{{ formatDate(currentOrder.createdAt) }}</strong>
+        </div>
+        <div class="order-total">
+          <span>Total do pedido:</span
+          ><strong>{{ formatCurrency(currentOrder.totalAmount) }}</strong>
+        </div>
+        <div class="order-actions">
+          @if (
+            currentOrder.paymentUrl &&
+            (currentOrder.status === 'AWAITING_PAYMENT' ||
+              currentOrder.status === 'PAYMENT_PENDING')
+          ) {
+            <a
+              class="action primary"
+              [href]="currentOrder.paymentUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Continuar pagamento</a
+            >
+          }
+        </div>
+      </aside>
+    </div>
+  }
+</main>
+
+<app-site-footer />

@@ -1,0 +1,170 @@
+<app-site-navbar />
+
+<main class="order-created-page" [class.is-success]="isPaymentConfirmed()">
+  <header class="order-page-header">
+    <h1>Acompanhe seu pedido</h1>
+  </header>
+
+  <section class="timeline-panel" aria-label="Linha do tempo do pedido">
+    <div class="timeline" [style.--timeline-progress]="timelineProgress()">
+      @for (step of timelineSteps(); track step.key) {
+        <article
+          class="timeline-item"
+          [class.is-done]="step.state === 'done'"
+          [class.is-current]="step.state === 'current'"
+          [class.is-pending]="step.state === 'pending'"
+          [class.is-error]="step.state === 'error'"
+        >
+          <span class="timeline-marker">
+            @if (step.key === 'created') {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"></path><path d="M14 3v4h4M9 12h6M9 16h6"></path></svg>
+            } @else if (step.key === 'reservation-processing') {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+            } @else if (step.key === 'reservation-confirmed') {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v5c0 4.5 3.4 7.8 8 9 4.6-1.2 8-4.5 8-9V7l-8-4Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            } @else if (step.key === 'payment-available') {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h3"></path></svg>
+            } @else if (step.key === 'payment-confirmed') {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 3 3 5-6"></path></svg>
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3Z"></path><path d="M13 5v14"></path></svg>
+            }
+          </span>
+          <div>
+            <div class="timeline-title">
+              <strong>{{ step.title }}</strong>
+              <button class="timeline-info" type="button" [attr.aria-label]="'Mais informações: ' + step.description">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+                <span class="timeline-tooltip" role="tooltip">{{ step.description }}</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="order-shell" aria-labelledby="order-created-title">
+    <div
+      class="status-panel"
+      [class.tone-info]="statusTone() === 'info'"
+      [class.tone-warning]="statusTone() === 'warning'"
+      [class.tone-success]="statusTone() === 'success'"
+      [class.tone-danger]="statusTone() === 'danger'"
+    >
+      <h1 id="order-created-title">{{ orderStatusLabel() }}</h1>
+      @if (store.error()) {
+        <div class="status-message is-error">
+          {{ store.error() }}
+        </div>
+      }
+
+      <div class="status-actions" aria-label="Acoes do pedido">
+        @if (store.paymentUrl() && !isPaymentConfirmed() && !store.failed()) {
+          <a class="primary-action" [href]="store.paymentUrl()" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h3"></path></svg>
+            Pagar Agora
+          </a>
+        } @else if (isPaymentConfirmed()) {
+          <a routerLink="/meus-pedidos" class="primary-action" aria-label="Meus pedidos" title="Meus pedidos">
+            <lucide-icon name="ticket" size="20" aria-hidden="true"></lucide-icon>
+            Meus Pedidos
+          </a>
+        } @else if (store.failed()) {
+          <a routerLink="/shows" class="primary-action">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+            Escolher ingressos novamente
+          </a>
+        } @else {
+          <button type="button" class="primary-action" [disabled]="store.loading()" (click)="retry()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path></svg>
+            Atualizar status
+          </button>
+        }
+
+        @if (store.failed()) {
+          <button type="button" class="secondary-action" [disabled]="store.loading()" (click)="retry()">
+            Atualizar status
+          </button>
+        } @else if (!isPaymentConfirmed()) {
+          <a routerLink="/meus-pedidos" class="secondary-action ticket-action" aria-label="Meus pedidos" title="Meus pedidos">
+            <lucide-icon name="ticket" size="20" aria-hidden="true"></lucide-icon>
+          </a>
+        }
+      </div>
+    </div>
+
+    <aside class="summary-panel" aria-label="Dados principais do pedido">
+      <div class="summary-header">
+        <div>
+          <span class="summary-kicker">Pedido</span>
+          <h2 class="order-heading">
+            #{{ displayOrderId() || 'Nao identificado' }}
+          </h2>
+        </div>
+        <button
+          class="details-toggle"
+          type="button"
+          [attr.aria-expanded]="detailsExpanded()"
+          (click)="toggleDetails()"
+        >
+          <span>{{ detailsExpanded() ? 'Minimizar detalhes' : 'Maximizar detalhes' }}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path [attr.d]="detailsExpanded() ? 'm6 15 6-6 6 6' : 'm6 9 6 6 6-6'"></path>
+          </svg>
+        </button>
+      </div>
+
+      @if (detailsExpanded()) {
+      @if (hasEventDetails()) {
+        <div class="order-event-context">
+          <span>Evento</span>
+          <strong>{{ eventName() }}</strong>
+          <p>{{ eventMeta() }}</p>
+        </div>
+      }
+
+      <dl class="order-facts">
+        @if (paymentSessionId()) {
+          <div>
+            <dt>Sessao de pagamento</dt>
+            <dd>{{ paymentSessionId() }}</dd>
+          </div>
+        }
+      </dl>
+
+      @if (displayItems().length > 0) {
+        <div class="order-item-list">
+          @for (item of displayItems(); track $index) {
+            <article class="order-item-card">
+              <div class="order-item-icon" aria-hidden="true">
+                <img src="/assets/icon_logo_light.png" alt="" />
+              </div>
+              <div class="order-item-info">
+                <strong>{{ item.sector }}</strong>
+                <span>{{ item.ticketType }}</span>
+              </div>
+              <div class="order-item-quantity">
+                <span>Quantidade</span>
+                <strong>{{ item.quantity }}</strong>
+              </div>
+              <div class="order-item-price">
+                <strong>{{ formatCurrency(item.subtotal) }}</strong>
+                <span>{{ formatCurrency(item.unitPrice) }} / unidade</span>
+              </div>
+            </article>
+          }
+        </div>
+      }
+
+      <div class="order-total">
+        <span>Total do pedido</span>
+        <strong>{{ formatCurrency(store.totalAmount() ?? store.visualSubtotal()) }}</strong>
+      </div>
+      }
+    </aside>
+
+  </section>
+</main>
+
+<app-site-footer />

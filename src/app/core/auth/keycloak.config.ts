@@ -15,4 +15,4 @@ export const keycloakInitOptions = {
 } as const;
 
 export const RESERVAE_API_AUDIENCE = 'reservae-api';
-export const RESERVAE_FUNCTIONAL_ROLES = ['CUSTOMER', 'ADMIN'] as const;
+export const RESERVAE_FUNCTIONAL_ROLES = ['CUSTOMER', 'ADMIN', 'ORGANIZER', 'SUPPORT'] as const;

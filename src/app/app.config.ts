@@ -14,6 +14,7 @@ import {
   Percent,
   QrCode,
   Receipt,
+  ReceiptText,
   Save,
   Search,
   Settings as SettingsIcon,
@@ -28,14 +29,14 @@ import {
 } from 'lucide-angular';
 
 import { routes } from './app.routes';
-import { CHECKOUT_API } from './pages/checkout/state/checkout.store';
-import { EVENT_API } from './pages/events/state/event.store';
-import { SCANNER_API } from './pages/gate-scanner/state/scanner.store';
-import { TICKET_API } from './pages/my-tickets/state/ticket.store';
-import { HttpCheckoutApi } from './core/services/http-checkout.api';
-import { HttpEventApi } from './core/services/http-event.api';
-import { HttpScannerApi } from './core/services/http-scanner.api';
-import { HttpTicketApi } from './core/services/http-ticket.api';
+import { CHECKOUT_API } from './core/http/contracts/checkout.contracts';
+import { EVENT_API } from './core/http/contracts/events.contracts';
+import { SCANNER_API } from './core/http/contracts/scanner.contracts';
+import { TICKET_API } from './core/http/contracts/tickets.contracts';
+import { HttpCheckoutApi } from './features/checkout/data-access/http-checkout.api';
+import { HttpEventApi } from './features/events/data-access/http-event.api';
+import { HttpScannerApi } from './features/admin/scanner/data-access/http-scanner.api';
+import { HttpTicketApi } from './features/tickets/data-access/http-ticket.api';
 import { provideAuth } from './core/state/auth.providers';
 import { authInterceptor } from './core/auth/auth.interceptor';
 
@@ -65,6 +66,7 @@ export const appConfig: ApplicationConfig = {
         Percent,
         QrCode,
         Receipt,
+        ReceiptText,
         Save,
         Search,
         Settings: SettingsIcon,

@@ -1,0 +1,200 @@
+<app-site-navbar />
+
+<main class="checkout-container">
+  <header class="checkout-topbar">
+    <nav class="checkout-steps" aria-label="Etapas da compra">
+      <div class="checkout-step active">
+        <span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7Z"></path><path d="M13 8h.01M13 12h.01M13 16h.01"></path></svg></span>
+        <strong>Carrinho</strong>
+      </div>
+      <i aria-hidden="true"></i>
+      <div class="checkout-step">
+        <span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"></path><path d="M14 3v4h4M9 12h6M9 16h6"></path></svg></span>
+        <strong>Pedido criado</strong>
+      </div>
+      <i aria-hidden="true"></i>
+      <div class="checkout-step">
+        <span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 4.5 3.4 7.8 8 9 4.6-1.2 8-4.5 8-9V7l-8-4Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+        <strong>Reserva</strong>
+      </div>
+      <i aria-hidden="true"></i>
+      <div class="checkout-step">
+        <span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h3"></path></svg></span>
+        <strong>Pagamento</strong>
+      </div>
+      <i aria-hidden="true"></i>
+      <div class="checkout-step">
+        <span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+        <strong>Confirmação</strong>
+      </div>
+      <i aria-hidden="true"></i>
+      <div class="checkout-step">
+        <span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3Z"></path><path d="M13 5v14"></path></svg></span>
+        <strong>Ingressos gerados</strong>
+      </div>
+    </nav>
+
+    <div>
+      <h1 class="page-title">Confira seu carrinho</h1>
+    </div>
+  </header>
+
+  <div class="checkout-grid">
+    <section class="cart-panel" aria-label="Itens do pedido">
+      @if (store.items().length === 0) {
+        <div class="empty-order">
+          <strong>Nenhum ingresso selecionado</strong>
+          <span>Volte para o evento e escolha pelo menos um ingresso para continuar.</span>
+        </div>
+      } @else {
+        <div class="event-context">
+          <strong>{{ eventName() }}</strong>
+          <div class="event-details">
+            @if (eventDate()) {
+              <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+                {{ eventDate() }}
+              </span>
+            }
+            @if (eventTime()) {
+              <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                {{ eventTime() }}
+              </span>
+            }
+            @if (eventLocation()) {
+              <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+                {{ eventLocation() }}
+              </span>
+            }
+            @if (!eventDate() && !eventTime() && !eventLocation()) {
+              <span>Detalhes do evento indisponiveis</span>
+            }
+          </div>
+          @if (eventDetailsError()) {
+            <span class="summary-event-error">Nao foi possivel carregar todos os detalhes do evento.</span>
+          }
+        </div>
+
+        <div class="cart-items-header" aria-hidden="true">
+          <span></span>
+          <span>Ingresso</span>
+          <span>Tipo</span>
+          <span>Quantidade</span>
+          <span>Valor</span>
+        </div>
+
+        <div class="cart-items">
+          @for (item of store.items(); track item.sectorId + item.ticketType) {
+            <article class="cart-item">
+              <div class="ticket-icon" aria-hidden="true">
+                <img src="/assets/icon_logo_light.png" alt="" />
+              </div>
+
+              <div class="cart-item-info">
+                <h3>{{ sectorName(item) }}</h3>
+                <p>{{ ticketTypeLabel(item.ticketType) }} · Ingresso individual</p>
+              </div>
+
+              <div class="ticket-type-column">
+                <div class="ticket-type-control">
+                  <div class="ticket-type-options" role="group" aria-label="Tipo de ingresso">
+                    <button
+                      type="button"
+                      [class.active]="item.ticketType === 'FULL_TICKET_PRICE'"
+                      (click)="changeTicketType(item, 'FULL_TICKET_PRICE')"
+                    >
+                      Inteira
+                    </button>
+                    <button
+                      type="button"
+                      [class.active]="item.ticketType === 'HALF_TICKET_PRICE'"
+                      (click)="changeTicketType(item, 'HALF_TICKET_PRICE')"
+                    >
+                      Meia
+                    </button>
+                    </div>
+                  </div>
+              </div>
+
+              <div class="item-quantity-column">
+                <div class="quantity-control" aria-label="Alterar quantidade">
+                  <button type="button" [disabled]="item.quantity <= 1" (click)="decreaseQuantity(item)">−</button>
+                  <strong>{{ item.quantity }}</strong>
+                  <button type="button" (click)="increaseQuantity(item)">+</button>
+                </div>
+              </div>
+
+              <div class="cart-item-price">
+                <strong>{{ formatCurrency(item.unitPrice * item.quantity) }}</strong>
+                <span>{{ formatCurrency(item.unitPrice) }} / unidade</span>
+              </div>
+
+              <div class="cart-item-actions">
+                <button class="remove-item" type="button" aria-label="Remover ingressos deste tipo" (click)="removeItem(item)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"></path></svg>
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+
+      <div class="selected-tickets-summary">
+        <span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7Z"></path><path d="M13 8h.01M13 12h.01M13 16h.01"></path></svg>
+          Ingressos selecionados
+        </span>
+        <strong>{{ store.totalTickets() }} ingresso(s)</strong>
+      </div>
+
+    </section>
+
+    <aside class="summary-box" aria-label="Resumo do pedido">
+      <div class="summary-header">
+        <div>
+          <h2>Seu pedido</h2>
+        </div>
+      </div>
+
+      <div class="buyer-summary">
+        <div class="account-avatar" aria-hidden="true">{{ userInitials() }}</div>
+        <div>
+          <span class="section-kicker">Dados do comprador</span>
+          <strong>{{ authStore.displayName() }}</strong>
+          <p>{{ authStore.email() || 'E-mail nao informado' }}</p>
+        </div>
+      </div>
+
+      <div class="summary-totals">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong>{{ formatCurrency(store.visualSubtotal()) }}</strong>
+        </div>
+        <div class="summary-row delivery-row">
+          <span>Taxas</span>
+          <strong>Grátis</strong>
+        </div>
+        <div class="summary-row grand-total">
+          <span>Total a pagar</span>
+          <strong>{{ formatCurrency(store.visualSubtotal()) }}</strong>
+        </div>
+      </div>
+
+      @if (store.error()) {
+        <div class="summary-error">{{ store.error() }}</div>
+      }
+
+      <button class="btn-checkout" type="button" [disabled]="!store.canContinue() || store.loading() || submitInProgress()" (click)="payNow()">
+        {{ store.loading() || submitInProgress() ? 'PROCESSANDO...' : 'FINALIZAR PEDIDO' }}
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </button>
+      <button class="btn-continue-shopping" type="button" (click)="continueShopping()">
+        Continuar comprando
+      </button>
+    </aside>
+  </div>
+</main>
+
+<app-site-footer />

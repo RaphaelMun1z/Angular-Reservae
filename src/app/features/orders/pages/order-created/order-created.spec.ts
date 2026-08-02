@@ -1,0 +1,125 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute, ParamMap, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { Subject } from 'rxjs';
+import { LUCIDE_ICONS, LucideIconProvider, Ticket } from 'lucide-angular';
+
+import { CheckoutStore } from '../../../checkout/state/checkout.store';
+import { OrderCreated } from './order-created';
+
+describe('OrderCreated', () => {
+  let component: OrderCreated;
+  let fixture: ComponentFixture<OrderCreated>;
+  let queryParamMap: Subject<ParamMap>;
+
+  beforeEach(async () => {
+    queryParamMap = new Subject<ParamMap>();
+
+    await TestBed.configureTestingModule({
+      imports: [OrderCreated],
+      providers: [
+        provideRouter([]),
+        CheckoutStore,
+        {
+          provide: LUCIDE_ICONS,
+          multi: true,
+          useValue: new LucideIconProvider({ Ticket }),
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            queryParamMap: queryParamMap.asObservable(),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(OrderCreated);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should label awaiting payment orders without payment link as reservation confirmed', () => {
+    component.store.setOrder({
+      id: 'order-1',
+      eventId: 'event-1',
+      status: 'AWAITING_PAYMENT',
+      totalAmount: 10,
+      paymentUrl: null,
+      items: [],
+    });
+
+    expect(component.orderStatusLabel()).toBe('Reserva confirmada');
+  });
+
+  it('should label awaiting payment orders with payment link as payment available', () => {
+    component.store.setOrder({
+      id: 'order-1',
+      eventId: 'event-1',
+      status: 'AWAITING_PAYMENT',
+      totalAmount: 10,
+      paymentUrl: 'https://pay.test/order-1',
+      items: [],
+    });
+
+    expect(component.orderStatusLabel()).toBe('Pagamento disponivel');
+  });
+
+  it('should treat confirmed orders as completed payments', () => {
+    component.store.setOrder({
+      id: 'order-1',
+      eventId: 'event-1',
+      status: 'CONFIRMED',
+      totalAmount: 10,
+      paymentUrl: null,
+      items: [],
+    });
+
+    expect(component.orderStatusLabel()).toBe('Pagamento confirmado');
+    expect(component.isPaymentConfirmed()).toBe(true);
+    expect(component.timelineSteps().every((step) => step.state === 'done')).toBe(true);
+  });
+
+  it('should return to checkout when the URL has no orderId', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    component.store.setOrder({
+      id: 'order-1',
+      eventId: 'event-1',
+      status: 'AWAITING_PAYMENT',
+      totalAmount: 10,
+      paymentUrl: null,
+      items: [],
+    });
+
+    component.retry();
+
+    expect(navigateSpy).toHaveBeenCalledWith('/checkout');
+  });
+
+  it('should start polling the order from payment return query params', () => {
+    const pollingSpy = vi.spyOn(component.store, 'startOrderPolling');
+
+    fixture.detectChanges();
+    queryParamMap.next(convertToParamMap({ orderId: 'order-from-url', sessionId: 'cs_test_123' }));
+
+    expect(pollingSpy).toHaveBeenCalledWith('order-from-url');
+    expect(component.displayOrderId()).toBe('order-from-url');
+    expect(component.paymentSessionId()).toBe('cs_test_123');
+  });
+
+  it('should retry using the order id received in the URL', () => {
+    const pollingSpy = vi.spyOn(component.store, 'startOrderPolling');
+
+    fixture.detectChanges();
+    queryParamMap.next(convertToParamMap({ orderId: 'order-from-url' }));
+
+    pollingSpy.mockClear();
+    component.retry();
+
+    expect(pollingSpy).toHaveBeenCalledWith('order-from-url');
+  });
+});

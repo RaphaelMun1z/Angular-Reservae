@@ -1,0 +1,6 @@
+:host { display: block; }
+.empty-state { padding: 2rem; text-align: center; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; background: rgba(16,16,16,.5); }
+.empty-state__icon { margin-bottom: .75rem; font-size: 1.5rem; }
+.empty-state h2 { margin: 0 0 .5rem; }
+.empty-state p { margin: 0; color: rgba(255,255,255,.68); }
+.empty-state__action { display: inline-block; margin-top: 1rem; }

@@ -1,4 +1,4 @@
-export type ReservaeRole = 'CUSTOMER' | 'ADMIN';
+export type ReservaeRole = 'CUSTOMER' | 'ADMIN' | 'ORGANIZER' | 'SUPPORT';
 
 export interface UserProfile {
   readonly id: string | null;
@@ -22,4 +22,3 @@ export interface AuthSession {
   readonly roles: readonly ReservaeRole[];
   readonly profile: UserProfile | null;
 }
-

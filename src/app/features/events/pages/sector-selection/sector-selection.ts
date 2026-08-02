@@ -1,0 +1,159 @@
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { SiteFooter } from '../../../../layouts/site-footer/site-footer';
+import { SiteNavbar } from '../../../../layouts/site-navbar/site-navbar';
+import { SkeletonLoader } from '../../../../shared/components/skeleton-loader/skeleton-loader';
+import { CheckoutStore } from '../../../checkout/state/checkout.store';
+import { EventSector, EventStore } from '../../state/event.store';
+import { TicketType } from '../../../../core/models/event-catalog.model';
+import { ticketTypeLabel } from '../../../../shared/presentation/presentation-labels';
+
+@Component({
+  selector: 'app-sector-selection',
+  imports: [RouterLink, SiteFooter, SiteNavbar, SkeletonLoader],
+  templateUrl: './sector-selection.html',
+  styleUrl: './sector-selection.scss',
+})
+export class SectorSelection implements OnInit {
+  readonly checkoutStore = inject(CheckoutStore);
+  readonly eventStore = inject(EventStore);
+  private readonly title = inject(Title);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly quantities = signal<Record<string, number>>({});
+  private readonly ticketTypes = signal<Record<string, TicketType>>({});
+  readonly selectedSectorId = signal<string | null>(null);
+  readonly cartExpanded = signal(false);
+
+  readonly checkoutUrl = computed(() => {
+    const eventId = this.checkoutStore.eventId();
+    return eventId ? ['/checkout', eventId] : ['/checkout'];
+  });
+
+  readonly selectedSector = computed(() => {
+    const selectedSectorId = this.selectedSectorId();
+    return this.eventStore.sectors().find((sector) => sector.id === selectedSectorId) ?? null;
+  });
+
+  constructor() {
+    effect(() => {
+      const eventName = this.eventStore.selectedEvent()?.name?.trim();
+
+      if (eventName) {
+        this.title.setTitle(`Reservae | ${eventName}`);
+      } else if (this.eventStore.error()) {
+        this.title.setTitle('Reservae | Evento nao encontrado');
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    const eventId = this.route.snapshot.paramMap.get('eventId');
+
+    if (!eventId) {
+      return;
+    }
+
+    this.checkoutStore.selectEvent(eventId);
+    this.eventStore.loadEvent(eventId);
+    this.eventStore.loadSectors(eventId);
+  }
+
+  quantity(sectorId: string): number {
+    return this.quantities()[sectorId] ?? 1;
+  }
+
+  ticketType(sectorId: string): TicketType {
+    return this.ticketTypes()[sectorId] ?? 'FULL_TICKET_PRICE';
+  }
+
+  setTicketType(sectorId: string, ticketType: TicketType): void {
+    this.ticketTypes.update((ticketTypes) => ({ ...ticketTypes, [sectorId]: ticketType }));
+  }
+
+  selectSector(sector: EventSector): void {
+    if (sector.availableQuantity === 0) {
+      return;
+    }
+
+    this.selectedSectorId.set(sector.id);
+  }
+
+  increment(sector: EventSector): void {
+    this.setQuantity(sector, this.quantity(sector.id) + 1);
+  }
+
+  decrement(sector: EventSector): void {
+    this.setQuantity(sector, this.quantity(sector.id) - 1);
+  }
+
+  setQuantity(sector: EventSector, quantity: number): void {
+    const maxQuantity = sector.availableQuantity ?? Number.MAX_SAFE_INTEGER;
+    const nextQuantity = Math.min(Math.max(1, quantity), maxQuantity);
+    this.quantities.update((quantities) => ({ ...quantities, [sector.id]: nextQuantity }));
+  }
+
+  addSector(sector: EventSector): void {
+    const ticketType = this.ticketType(sector.id);
+    const unitPrice = ticketType === 'HALF_TICKET_PRICE' ? sector.halfPrice : sector.basePrice;
+
+    if (!unitPrice && unitPrice !== 0) {
+      this.checkoutStore.setError('Preco indisponivel para o setor selecionado.');
+      return;
+    }
+
+    this.checkoutStore.addItem({
+      sectorId: sector.id,
+      sectorName: sector.name,
+      quantity: this.quantity(sector.id),
+      ticketType,
+      unitPrice,
+    });
+  }
+
+  selectedQuantityForSector(sectorId: string): number {
+    return this.checkoutStore
+      .items()
+      .filter((item) => item.sectorId === sectorId)
+      .reduce((total, item) => total + item.quantity, 0);
+  }
+
+  availabilityLabel(sector: EventSector): string {
+    if (sector.availableQuantity === 0) {
+      return 'Esgotado';
+    }
+
+    if (sector.availableQuantity === null || sector.availableQuantity === undefined) {
+      return 'Disponibilidade aberta';
+    }
+
+    return `${sector.availableQuantity} disponiveis`;
+  }
+
+  ticketTypeLabel(ticketType: TicketType): string {
+    return ticketTypeLabel(ticketType);
+  }
+
+  removeCartItem(sectorId: string, ticketType: TicketType): void {
+    this.checkoutStore.removeItem(sectorId, ticketType);
+
+    if (!this.checkoutStore.hasItems()) {
+      this.cartExpanded.set(false);
+    }
+  }
+
+  toggleCartDetails(): void {
+    this.cartExpanded.update((expanded) => !expanded);
+  }
+
+  continueToCheckout(): void {
+    void this.router.navigate(this.checkoutUrl());
+  }
+
+  formatCurrency(value: number | null | undefined): string {
+    return typeof value === 'number'
+      ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      : 'Indisponivel';
+  }
+}

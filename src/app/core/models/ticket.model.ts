@@ -7,16 +7,26 @@ export type AccessValidationResultStatus =
 
 export interface Ticket {
   readonly id?: string;
+  readonly eventTitle?: string;
+  readonly eventDate?: string;
+  readonly venueName?: string;
+  readonly venueCity?: string;
+  readonly venueState?: string;
   readonly orderId?: string;
   readonly eventId?: string;
   readonly userId?: string;
   readonly sectorId?: string;
+  readonly sectorName?: string;
   readonly reservationId?: string;
   readonly ticketType?: string;
   readonly qrCodeHash?: string;
   readonly status?: TicketStatus;
   readonly createdAt?: string;
   readonly usedAt?: string;
+}
+
+export interface TicketResponseDTO extends Omit<Ticket, 'id'> {
+  readonly ticketId?: string;
 }
 
 export interface ValidateAccessRequestDTO {

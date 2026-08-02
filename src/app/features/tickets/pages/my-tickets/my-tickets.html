@@ -1,0 +1,128 @@
+<app-site-navbar />
+
+<main class="wallet-container">
+  <header class="page-header">
+    <h1 class="page-title">Meus ingressos</h1>
+  </header>
+
+  @if (!authStore.userId()) {
+    <section class="empty-wallet">
+      <h2>Autenticacao necessaria</h2>
+      <p>Faca login para consultar seus ingressos.</p>
+    </section>
+  } @else if (store.loading()) {
+    <app-skeleton-loader variant="list" [count]="3" />
+  } @else if (store.error()) {
+    <section class="empty-wallet">
+      <h2>Nao foi possivel carregar seus ingressos</h2>
+      <p>{{ store.error() }}</p>
+    </section>
+  } @else {
+    <nav class="tabs">
+      <button type="button" class="tab" [class.active]="store.statusFilter() === null" (click)="setFilter(null)">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"></path></svg>
+        Todos
+      </button>
+      <button type="button" class="tab" [class.active]="store.statusFilter() === 'VALID'" (click)="setFilter('VALID')">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>
+        Validos
+      </button>
+      <button type="button" class="tab" [class.active]="store.statusFilter() === 'USED'" (click)="setFilter('USED')">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg>
+        Usados
+      </button>
+      <button type="button" class="tab" [class.active]="store.statusFilter() === 'REVOKED'" (click)="setFilter('REVOKED')">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 8 8 8M16 8l-8 8M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg>
+        Revogados
+      </button>
+    </nav>
+
+    <div class="order-filter" role="search">
+      <label for="order-id-filter">Filtrar por código do pedido</label>
+      <div class="order-filter-control">
+        <input
+          id="order-id-filter"
+          type="search"
+          placeholder="Digite o código do pedido"
+          [ngModel]="orderIdFilter()"
+          (ngModelChange)="setOrderIdFilter($event)"
+          autocomplete="off"
+        />
+        @if (orderIdFilter()) {
+          <button type="button" class="order-filter-clear" aria-label="Limpar filtro do pedido" (click)="setOrderIdFilter('')">Limpar</button>
+        }
+      </div>
+    </div>
+
+    @if (groupedTickets().length === 0) {
+      <app-empty-state
+        title="Nenhum ingresso encontrado"
+        description="Quando seus ingressos forem emitidos, eles aparecerao aqui."
+      />
+    } @else {
+      <section class="ticket-list" aria-label="Ingressos">
+        @for (group of groupedTickets(); track group.key) {
+          <section class="ticket-order-group" [attr.aria-label]="group.orderId ? 'Pedido ' + group.orderId : 'Pedido nao informado'">
+            <header class="ticket-order-header">
+              <span class="ticket-order-label">Pedido</span>
+              <strong>{{ group.orderId ? '#' + group.orderId : 'Nao informado' }}</strong>
+            </header>
+            @for (ticket of visibleTickets(group); track ticket.id) {
+              <article class="ticket-card">
+            <div class="ticket-info">
+              <div class="ticket-topline">
+                <span class="ticket-code-label">Código do ingresso</span>
+                <span class="ticket-code">#{{ ticket.id || 'Nao informado' }}</span>
+              </div>
+
+              <h2>{{ eventName(ticket) }}</h2>
+              <p class="ticket-event-meta">{{ eventMeta(ticket) }}</p>
+              <div class="ticket-details">
+                <div>
+                  <span>Setor</span>
+                  <strong>{{ sectorName(ticket) }}</strong>
+                </div>
+
+                <div>
+                  <span>Tipo</span>
+                  <strong>{{ ticketTypeLabel(ticket.ticketType) }}</strong>
+                </div>
+
+              </div>
+            </div>
+
+            <aside class="ticket-action">
+              <span
+                class="ticket-status"
+                [class.valid]="ticket.status === 'VALID'"
+                [class.used]="ticket.status === 'USED'"
+                [class.revoked]="ticket.status === 'REVOKED'"
+              >
+                <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="statusIconPath(ticket.status)"></path></svg>
+                {{ statusLabel(ticket.status) }}
+              </span>
+
+              <a class="primary-action" [routerLink]="['/detalhes-ingresso', ticket.id]">
+                Ver detalhes
+              </a>
+            </aside>
+              </article>
+            }
+            @if (group.tickets.length > 3) {
+              <button
+                type="button"
+                class="order-expand-button"
+                [attr.aria-expanded]="isOrderExpanded(group.key)"
+                (click)="toggleOrder(group.key)"
+              >
+                {{ isOrderExpanded(group.key) ? 'Mostrar menos' : 'Mostrar todos os ' + group.tickets.length + ' ingressos' }}
+              </button>
+            }
+          </section>
+        }
+      </section>
+    }
+  }
+</main>
+
+<app-site-footer />
