@@ -29,50 +29,34 @@ O projeto foi construído como uma aplicação Angular standalone, com rotas dec
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p1.png" alt="Página inicial do Reservae" width="100%">
-      <br>
-      <strong>Página inicial</strong>
+      <img src="./public/p1.png" alt="" width="100%">
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p2.png" alt="Vitrine de shows do Reservae" width="100%">
-      <br>
-      <strong>Vitrine de shows</strong>
+      <img src="./public/p2.png" alt="" width="100%">
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p3.png" alt="Listagem de eventos do Reservae" width="100%">
-      <br>
-      <strong>Listagem de eventos</strong>
+      <img src="./public/p3.png" alt="" width="100%">
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p4.png" alt="Seleção de setor do Reservae" width="100%">
-      <br>
-      <strong>Seleção de setor</strong>
+      <img src="./public/p4.png" alt="" width="100%">
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p5.png" alt="Checkout do Reservae" width="100%">
-      <br>
-      <strong>Checkout</strong>
+      <img src="./public/p5.png" alt="" width="100%">
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p6.png" alt="Ingressos digitais do Reservae" width="100%">
-      <br>
-      <strong>Meus ingressos</strong>
+      <img src="./public/p6.png" alt="" width="100%">
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p7.png" alt="Detalhes do ingresso digital do Reservae" width="100%">
-      <br>
-      <strong>Ingresso digital</strong>
+      <img src="./public/p7.png" alt="" width="100%">
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/p8.png" alt="Dashboard administrativo do Reservae" width="100%">
-      <br>
-      <strong>Dashboard administrativo</strong>
+      <img src="./public/p8.png" alt="" width="100%">
     </td>
   </tr>
 </table>
