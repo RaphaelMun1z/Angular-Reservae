@@ -81,7 +81,17 @@ export class Shows implements OnInit {
       return;
     }
 
-    this.store.updateFilters({ status: 'SCHEDULED', size: 12, sort: 'eventDate,asc' });
+    this.store.updateFilters({
+      search: '',
+      city: null,
+      state: null,
+      startDate: null,
+      endDate: null,
+      status: 'SCHEDULED',
+      size: 12,
+      sort: 'eventDate,asc',
+    });
+    this.draftFilters.set(this.createDraftFromFilters(this.store.filters()));
   }
 
   updateDraft<K extends keyof ShowsFilterDraft>(key: K, value: ShowsFilterDraft[K]): void {
