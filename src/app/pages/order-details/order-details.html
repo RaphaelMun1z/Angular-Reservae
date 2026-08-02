@@ -47,16 +47,7 @@
 
       <aside class="order-summary-panel" aria-label="Resumo do pedido">
         <div class="summary-heading"><h2>Resumo da compra</h2></div>
-        <div
-          class="order-status"
-          [class.paid]="statusTone(currentOrder.status) === 'paid'"
-          [class.warning]="statusTone(currentOrder.status) === 'warning'"
-          [class.danger]="statusTone(currentOrder.status) === 'danger'"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path [attr.d]="statusIconPath(currentOrder.status)"></path></svg
-          >{{ statusLabel(currentOrder.status) }}
-        </div>
+        <app-status-badge [status]="currentOrder.status" context="order" />
         <div class="summary-date">
           <span>Pedido criado em</span><strong>{{ formatDate(currentOrder.createdAt) }}</strong>
         </div>

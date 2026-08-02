@@ -1,0 +1,18 @@
+:host { display: inline-flex; }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.is-success { color: #b5f5c1; background: rgba(64, 180, 93, 0.16); }
+.is-warning { color: #ffe6a3; background: rgba(221, 165, 42, 0.16); }
+.is-danger { color: #ffb4b4; background: rgba(211, 70, 70, 0.16); }
+.is-neutral { color: #d4d4d4; background: rgba(255, 255, 255, 0.1); }

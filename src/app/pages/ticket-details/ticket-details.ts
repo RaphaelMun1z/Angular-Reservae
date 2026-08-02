@@ -5,13 +5,14 @@ import { QRCodeComponent } from 'angularx-qrcode';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
+import { StatusBadgeComponent } from '../../components/status-badge/status-badge';
 import { TicketStore } from '../my-tickets/state/ticket.store';
 import { ticketStatusLabel, ticketTypeLabel } from '../../shared/presentation-labels';
 import { Ticket } from '../../core/models/ticket.model';
 
 @Component({
   selector: 'app-ticket-details',
-  imports: [RouterLink, QRCodeComponent, SiteNavbar, SiteFooter, SkeletonLoader],
+  imports: [RouterLink, QRCodeComponent, SiteNavbar, SiteFooter, SkeletonLoader, StatusBadgeComponent],
   templateUrl: './ticket-details.html',
   styleUrl: './ticket-details.scss',
 })

@@ -4,12 +4,13 @@ import { catchError, finalize, of } from 'rxjs';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
+import { StatusBadgeComponent } from '../../components/status-badge/status-badge';
 import { orderStatusLabel, ticketTypeLabel } from '../../shared/presentation-labels';
 import { CheckoutApi, CheckoutOrder, CHECKOUT_API } from '../checkout/state/checkout.store';
 
 @Component({
   selector: 'app-order-details',
-  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader],
+  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader, StatusBadgeComponent],
   templateUrl: './order-details.html',
   styleUrl: './order-details.scss',
 })

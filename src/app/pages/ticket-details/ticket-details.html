@@ -23,10 +23,7 @@
     <div class="details-layout">
       <section class="main-card" [class]="'ticket-status--' + statusTone(ticket.status)">
         <div class="ticket-status-top">
-          <span class="status-badge">
-            <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="statusIconPath(ticket.status)"></path></svg>
-            {{ statusLabel(ticket.status) }}
-          </span>
+          <app-status-badge [status]="ticket.status" context="ticket" />
         </div>
 
         <div class="event-heading">
@@ -115,14 +112,7 @@
               Ver pedido
             </a>
           }
-          @if (isTransferable(ticket.status)) {
-            <a routerLink="/transferir-ingresso" class="button button--primary">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M21 3l-9 9"></path><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"></path></svg>
-              Transferir ingresso
-            </a>
-          } @else {
-            <p class="transfer-note">{{ transferRestrictionMessage(ticket.status) }}</p>
-          }
+          <p class="transfer-note">Transferencia de ingresso ainda nao disponivel.</p>
         </section>
       </aside>
     </div>

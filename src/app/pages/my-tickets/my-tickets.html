@@ -38,10 +38,10 @@
     </nav>
 
     @if (store.filteredTickets().length === 0) {
-      <section class="empty-wallet">
-        <h2>Nenhum ingresso encontrado</h2>
-        <p>Quando seus ingressos forem emitidos, eles aparecerao aqui.</p>
-      </section>
+      <app-empty-state
+        title="Nenhum ingresso encontrado"
+        description="Quando seus ingressos forem emitidos, eles aparecerao aqui."
+      />
     } @else {
       <section class="ticket-list" aria-label="Ingressos">
         @for (ticket of store.filteredTickets(); track ticket.id) {

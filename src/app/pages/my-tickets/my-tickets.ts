@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { Ticket, TicketStatus } from '../../core/models/ticket.model';
 import { TicketStore } from './state/ticket.store';
 import { AuthStore } from '../../core/state/auth.store';
@@ -10,7 +11,7 @@ import { ticketStatusLabel, ticketTypeLabel } from '../../shared/presentation-la
 
 @Component({
   selector: 'app-my-tickets',
-  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader],
+    imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader, EmptyStateComponent],
   templateUrl: './my-tickets.html',
   styleUrl: './my-tickets.scss',
 })
