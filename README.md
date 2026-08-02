@@ -29,48 +29,48 @@ O projeto foi construído como uma aplicação Angular standalone, com rotas dec
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/inicio.png" alt="Página inicial do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p1.png" alt="Página inicial do Reservae" width="100%">
       <br>
       <strong>Página inicial</strong>
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/shows.png" alt="Vitrine de shows do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p2.png" alt="Vitrine de shows do Reservae" width="100%">
       <br>
       <strong>Vitrine de shows</strong>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/eventos.png" alt="Listagem de eventos do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p3.png" alt="Listagem de eventos do Reservae" width="100%">
       <br>
       <strong>Listagem de eventos</strong>
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/selecionar-setor.png" alt="Seleção de setor do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p4.png" alt="Seleção de setor do Reservae" width="100%">
       <br>
       <strong>Seleção de setor</strong>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/checkout.png" alt="Checkout do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p5.png" alt="Checkout do Reservae" width="100%">
       <br>
       <strong>Checkout</strong>
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/meus-ingressos.png" alt="Ingressos digitais do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p6.png" alt="Ingressos digitais do Reservae" width="100%">
       <br>
       <strong>Meus ingressos</strong>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/detalhes-ingresso.png" alt="Detalhes do ingresso digital do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p7.png" alt="Detalhes do ingresso digital do Reservae" width="100%">
       <br>
       <strong>Ingresso digital</strong>
     </td>
     <td align="center" width="50%">
-      <img src="./src/app/assets/previews/dashboard.png" alt="Dashboard administrativo do Reservae" width="100%">
+      <img src="./src/app/assets/previews/p8.png" alt="Dashboard administrativo do Reservae" width="100%">
       <br>
       <strong>Dashboard administrativo</strong>
     </td>
@@ -110,20 +110,6 @@ O projeto foi construído como uma aplicação Angular standalone, com rotas dec
 - **RxJS:** suporte reativo usado pelo ecossistema Angular.
 - **Vitest e jsdom:** ambiente de testes configurado pelo Angular.
 - **angular-cli-ghpages:** publicação da build no GitHub Pages.
-
-## Status das integrações
-
-| Status | Serviço | Responsabilidade | Páginas previstas |
-| :----: | :------ | :---------------- | :---------------- |
-| ⚪ | User Profile Service | Dados de perfil do participante e organizador | `/perfil`, `/configuracoes`, `/cadastro`, `/dashboard` |
-| ⚪ | Event Catalog Service | Catálogo de eventos, locais, categorias e detalhes de apresentação | `/inicio`, `/shows`, `/eventos`, `/club-vip`, `/criar-evento`, `/dashboard` |
-| ⚪ | Inventory Service | Disponibilidade de setores, lotes e ingressos reserváveis | `/selecionar-setor`, `/checkout`, `/dashboard`, `/criar-evento` |
-| ⚪ | Order Service | Criação, consulta e acompanhamento de pedidos | `/avaliacao`, `/checkout`, `/sucesso`, `/meus-ingressos`, `/dashboard` |
-| ⚪ | Payment Service | Dados de pagamento, status da transação e confirmação do checkout | `/checkout`, `/sucesso`, `/dashboard` |
-| ⚪ | Ticket Service | Emissão, consulta, transferência e validação de ingressos | `/meus-ingressos`, `/detalhes-ingresso`, `/transferir-ingresso`, `/scanner` |
-| ⚪ | Notification Service | Histórico e preferências de notificações relacionadas à conta e aos eventos | `/suporte`, `/perfil`, `/configuracoes`, `/dashboard` |
-
-> Legenda: `⚪` planejado, `🟡` em desenvolvimento, `✅` integrado.
 
 ## Como executar localmente
 
