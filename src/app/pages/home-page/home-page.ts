@@ -120,7 +120,13 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !this.homePageContent) {
+    if (typeof window.matchMedia !== 'function') {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion || !this.homePageContent) {
       return;
     }
 

@@ -7,7 +7,6 @@ import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { CheckoutItem, CheckoutStore } from '../checkout/state/checkout.store';
 import { orderStatusLabel as friendlyOrderStatusLabel, ticketTypeLabel } from '../../shared/presentation-labels';
-import { EventDisplayData, EventDisplayDataService } from '../../shared/event-display-data.service';
 import { LucideAngularModule } from 'lucide-angular';
 
 type StatusTone = 'info' | 'warning' | 'success' | 'danger';
@@ -38,26 +37,13 @@ export class OrderCreated implements OnInit {
   readonly store = inject(CheckoutStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly eventDisplayData = inject(EventDisplayDataService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly eventData = signal<EventDisplayData | null>(null);
   private readonly queryOrderId = signal<string | null>(null);
   readonly paymentSessionId = signal<string | null>(null);
-  readonly eventDetailsLoading = signal(false);
-  readonly eventDetailsError = signal(false);
   readonly detailsExpanded = signal(true);
   private confettiLaunched = false;
-  private eventDataRequestId: string | null = null;
 
   constructor() {
-    effect(() => {
-      const eventId = this.store.order()?.eventId ?? this.store.eventId();
-
-      if (eventId) {
-        queueMicrotask(() => this.loadEventData(eventId));
-      }
-    });
-
     effect(() => {
       if (this.isPaymentConfirmed() && !this.store.loading() && !this.store.error()) {
         queueMicrotask(() => this.launchSuccessConfetti());
@@ -233,29 +219,25 @@ export class OrderCreated implements OnInit {
   }
 
   hasEventDetails(): boolean {
-    return this.eventData()?.event !== null && this.eventData()?.event !== undefined;
+    const order = this.store.order();
+    return Boolean(order?.eventTitle || order?.eventDate || order?.venueName || order?.venueCity || order?.venueState);
   }
 
   eventName(): string {
-    const eventId = this.store.order()?.eventId ?? this.store.eventId();
-
-    if (!eventId) {
-      return 'Evento nao informado';
-    }
-
-    return this.eventData()?.event?.name || (this.eventDetailsLoading() ? 'Carregando evento...' : 'Evento nao identificado');
+    return this.store.order()?.eventTitle || 'Evento nao informado';
   }
 
   eventMeta(): string {
-    const event = this.eventData()?.event;
-    const date = this.formatDate(event?.date);
-    const location = this.eventLocation(event);
+    const order = this.store.order();
+    const date = this.formatDate(order?.eventDate);
+    const cityState = [order?.venueCity, order?.venueState].filter(Boolean).join(', ');
+    const location = [order?.venueName, cityState].filter(Boolean).join(' - ');
 
     if (date && location) {
       return `${date} - ${location}`;
     }
 
-    return date || location || (this.eventDetailsError() ? 'Detalhes do evento indisponiveis' : 'Detalhes do evento em carregamento');
+    return date || location || 'Detalhes do evento indisponiveis';
   }
 
   formatCurrency(value: number | null | undefined): string {
@@ -341,7 +323,7 @@ export class OrderCreated implements OnInit {
     const subtotal = item.subtotal ?? (item.appliedPrice !== undefined ? item.appliedPrice * quantity : null);
 
     return {
-      sector: this.sectorName(item.sectorId),
+      sector: item.sectorName || 'Setor nao informado',
       ticketType: this.ticketTypeLabel(item.ticketType),
       quantity,
       unitPrice: item.appliedPrice ?? (subtotal !== null ? subtotal / quantity : null),
@@ -351,7 +333,7 @@ export class OrderCreated implements OnInit {
 
   private fromCheckoutItem(item: CheckoutItem): DisplayItem {
     return {
-      sector: this.sectorName(item.sectorId, item.sectorName),
+      sector: item.sectorName || 'Setor nao informado',
       ticketType: this.ticketTypeLabel(item.ticketType),
       quantity: item.quantity,
       unitPrice: item.unitPrice,
@@ -361,54 +343,6 @@ export class OrderCreated implements OnInit {
 
   private ticketTypeLabel(ticketType: CheckoutItem['ticketType'] | undefined): string {
     return ticketTypeLabel(ticketType);
-  }
-
-  private sectorName(sectorId: string | undefined, fallback?: string): string {
-    if (!sectorId) {
-      return fallback || 'Setor nao informado';
-    }
-
-    const sector = this.eventData()?.sectors.find((currentSector) => currentSector.id === sectorId);
-    return sector?.name || fallback || (this.eventDetailsLoading() ? 'Carregando setor...' : `Setor ${sectorId}`);
-  }
-
-  private loadEventData(eventId: string): void {
-    if (this.eventData()?.event?.id === eventId || this.eventDataRequestId === eventId) {
-      return;
-    }
-
-    this.eventDataRequestId = eventId;
-    this.eventDetailsLoading.set(true);
-    this.eventDetailsError.set(false);
-
-    this.eventDisplayData
-      .getEventData(eventId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (eventData) => {
-          if (this.eventDataRequestId !== eventId) {
-            return;
-          }
-
-          this.eventData.set(eventData);
-          this.eventDetailsLoading.set(false);
-        },
-        error: () => {
-          if (this.eventDataRequestId !== eventId) {
-            return;
-          }
-
-          this.eventData.set(null);
-          this.eventDataRequestId = null;
-          this.eventDetailsLoading.set(false);
-          this.eventDetailsError.set(true);
-        },
-      });
-  }
-
-  private eventLocation(event: EventDisplayData['event'] | undefined): string {
-    const cityState = [event?.city, event?.state].filter(Boolean).join(', ');
-    return [event?.venueName, cityState].filter(Boolean).join(' - ');
   }
 
   private formatDate(value: string | null | undefined): string {

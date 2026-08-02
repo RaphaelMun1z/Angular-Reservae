@@ -13,10 +13,35 @@ export interface EventDisplayData {
 })
 export class EventDisplayDataService {
   private readonly api = inject(EVENT_API, { optional: true });
-  private readonly cache = new Map<string, Observable<EventDisplayData>>();
+  private readonly basicCache = new Map<string, Observable<EventListItem | null>>();
+  private readonly availabilityCache = new Map<string, Observable<EventDisplayData>>();
 
-  getEventData(eventId: string): Observable<EventDisplayData> {
-    const cachedData = this.cache.get(eventId);
+  getBasicEventData(eventId: string): Observable<EventListItem | null> {
+    const cachedData = this.basicCache.get(eventId);
+
+    if (cachedData) {
+      return cachedData;
+    }
+
+    if (!this.api) {
+      return throwError(() => new Error('Integracao de eventos nao configurada.'));
+    }
+
+    const request = this.api.getEvent(eventId).pipe(
+      catchError(() => of(null)),
+      catchError((error: unknown) => {
+        this.basicCache.delete(eventId);
+        return throwError(() => error);
+      }),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+
+    this.basicCache.set(eventId, request);
+    return request;
+  }
+
+  getEventWithAvailability(eventId: string): Observable<EventDisplayData> {
+    const cachedData = this.availabilityCache.get(eventId);
 
     if (cachedData) {
       return cachedData;
@@ -32,13 +57,14 @@ export class EventDisplayDataService {
     }).pipe(
       map(({ event, sectors }) => ({ event, sectors })),
       catchError((error: unknown) => {
-        this.cache.delete(eventId);
+        this.availabilityCache.delete(eventId);
         return throwError(() => error);
       }),
       shareReplay({ bufferSize: 1, refCount: false }),
     );
 
-    this.cache.set(eventId, request);
+    this.availabilityCache.set(eventId, request);
     return request;
   }
+
 }

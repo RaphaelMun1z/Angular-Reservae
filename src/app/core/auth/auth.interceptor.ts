@@ -24,7 +24,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       return next(authorizedRequest);
     }),
     catchError((error: unknown) => {
-      if (!isProfileRequest(request.url)) {
+      if (!isProfileRequest(request.url) && isAuthenticationFailure(error)) {
         authStore.clearSession('Sua sessao expirou. Entre novamente para continuar.');
       }
       return throwError(() => error);
@@ -39,6 +39,18 @@ function shouldAttachToken(url: string): boolean {
   const keycloakUrl = new URL(environment.auth.keycloakUrl);
 
   return requestUrl.origin === apiUrl.origin && requestUrl.origin !== keycloakUrl.origin;
+}
+
+function isAuthenticationFailure(error: unknown): boolean {
+  if (error instanceof HttpErrorResponse) {
+    return error.status === 401;
+  }
+
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return /invalid_grant|invalid[_ -]?token|token[^.]{0,40}(expired|expirado|not active)|login_required/i.test(error.message);
 }
 
 function handleAuthError(authStore: AuthStore, router: Router, requestUrl: string): MonoTypeOperatorFunction<HttpEvent<unknown>> {

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, ParamMap, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
+import { LUCIDE_ICONS, LucideIconProvider, Ticket } from 'lucide-angular';
 
 import { CheckoutStore } from '../checkout/state/checkout.store';
 import { OrderCreated } from './order-created';
@@ -18,6 +19,11 @@ describe('OrderCreated', () => {
       providers: [
         provideRouter([]),
         CheckoutStore,
+        {
+          provide: LUCIDE_ICONS,
+          multi: true,
+          useValue: new LucideIconProvider({ Ticket }),
+        },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -77,8 +83,9 @@ describe('OrderCreated', () => {
     expect(component.timelineSteps().every((step) => step.state === 'done')).toBe(true);
   });
 
-  it('should retry when orderId exists', () => {
-    const pollingSpy = vi.spyOn(component.store, 'startOrderPolling');
+  it('should return to checkout when the URL has no orderId', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     component.store.setOrder({
       id: 'order-1',
       eventId: 'event-1',
@@ -90,7 +97,7 @@ describe('OrderCreated', () => {
 
     component.retry();
 
-    expect(pollingSpy).toHaveBeenCalledWith('order-1');
+    expect(navigateSpy).toHaveBeenCalledWith('/checkout');
   });
 
   it('should start polling the order from payment return query params', () => {

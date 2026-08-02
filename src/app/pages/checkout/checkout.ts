@@ -174,7 +174,7 @@ export class Checkout implements OnInit {
     this.eventDetailsError.set(false);
 
     this.eventDisplayData
-      .getEventData(eventId)
+      .getEventWithAvailability(eventId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (eventData) => {

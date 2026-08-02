@@ -100,7 +100,6 @@ export class TicketStore {
 
   setStatusFilter(status: string | null): void {
     this._statusFilter.set(status);
-    this.loadTickets();
   }
 
   transferTicket(request: TicketTransferRequest): void {

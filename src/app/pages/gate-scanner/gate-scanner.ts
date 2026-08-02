@@ -34,10 +34,10 @@ export class GateScanner implements OnInit, OnDestroy {
     if (eventId) {
       this.eventName.set('Carregando evento...');
       this.eventDisplayData
-        .getEventData(eventId)
+        .getBasicEventData(eventId)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: (eventData) => this.eventName.set(eventData.event?.name || 'Evento nao identificado'),
+          next: (eventData) => this.eventName.set(eventData?.name || 'Evento nao identificado'),
           error: () => this.eventName.set('Evento nao identificado'),
         });
     }
