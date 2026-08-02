@@ -17,6 +17,7 @@ export const organizerRoutes: Routes = [{
         { path: '', redirectTo: 'events', pathMatch: 'full' },
         { path: 'events', loadComponent: () => import('./pages/organizer-events/organizer-events').then((m) => m.OrganizerEvents) },
         { path: 'events/create', loadComponent: () => import('./pages/organizer-event-form/organizer-event-form').then((m) => m.OrganizerEventForm) },
+        { path: 'venues/create', loadComponent: () => import('./pages/organizer-venue-form/organizer-venue-form').then((m) => m.OrganizerVenueForm) },
         { path: 'venues', loadComponent: () => import('./pages/organizer-venues/organizer-venues').then((m) => m.OrganizerVenues) },
         { path: 'events/:eventId', loadComponent: () => import('./pages/organizer-event-overview/organizer-event-overview').then((m) => m.OrganizerEventOverview) },
         { path: 'events/:eventId/edit', loadComponent: () => import('./pages/organizer-event-form/organizer-event-form').then((m) => m.OrganizerEventForm) },

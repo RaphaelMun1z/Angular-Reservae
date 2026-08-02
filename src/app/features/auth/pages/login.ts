@@ -28,7 +28,9 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     if (this.authStore.authenticated()) {
-      void this.router.navigateByUrl('/inicio');
+      void this.router.navigateByUrl(
+        this.authStore.isOrganizer() && !this.authStore.isAdmin() ? '/organizer/management/events' : '/inicio',
+      );
     }
   }
 
@@ -38,7 +40,9 @@ export class Login implements OnInit {
 
   protected loginWithMockCredentials(credentials: MockCredential): void {
     if (this.authStore.loginMock(credentials.email, credentials.password)) {
-      void this.router.navigateByUrl('/inicio');
+      void this.router.navigateByUrl(
+        this.authStore.isOrganizer() && !this.authStore.isAdmin() ? '/organizer/management/events' : '/inicio',
+      );
     }
   }
 }

@@ -12,11 +12,15 @@ export const eventRoutes: Routes = [
   {
     path: 'eventos',
     loadComponent: () => import('./pages/events').then((m) => m.Events),
+    canActivate: [roleGuard],
+    data: { roles: ['CUSTOMER', 'ADMIN'] },
     title: 'Reservae | Eventos',
   },
   {
     path: 'shows',
     loadComponent: () => import('./pages/shows/shows').then((m) => m.Shows),
+    canActivate: [roleGuard],
+    data: { roles: ['CUSTOMER', 'ADMIN'] },
     title: 'Reservae | Eventos',
   },
   {

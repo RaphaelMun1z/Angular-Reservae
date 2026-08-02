@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Observable, of, throwError } from 'rxjs';
 import { EVENT_API, EventApi, EventFilters, EventListItem, EventListResponse, EventSectorMutationRequest, EventStore } from './event.store';
+import { CreateEventRequest } from '../../../core/http/contracts/events.contracts';
 
 class FakeEventApi implements EventApi {
   supportsEventList?: boolean;
@@ -25,6 +26,10 @@ class FakeEventApi implements EventApi {
 
   getEvent(): Observable<EventListItem> {
     return of({ id: 'event-1', name: 'Show A' });
+  }
+
+  createEvent(_request: CreateEventRequest): Observable<EventListItem> {
+    return of({ id: 'event-created', name: 'Show criado' });
   }
 
   listSectors(): Observable<[]> {

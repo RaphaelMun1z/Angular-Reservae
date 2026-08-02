@@ -197,10 +197,113 @@
             TICKETS
 ================================ */
 
+.order-filter {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.order-filter label {
+  color: #cfcfcf;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.order-filter-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 460px;
+}
+
+.order-filter input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  color: #fff;
+  background: rgba(13, 13, 13, 0.72);
+}
+
+.order-filter input:focus {
+  outline: 2px solid rgba(255, 107, 89, 0.55);
+  outline-offset: 2px;
+}
+
+.order-filter-clear {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  color: #d5d5d5;
+  background: transparent;
+  cursor: pointer;
+}
+
 .ticket-list {
   display: grid;
 
   gap: 12px;
+}
+
+.ticket-order-group {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(13, 13, 13, 0.54);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+
+  & + & {
+    margin-top: 14px;
+  }
+}
+
+.ticket-order-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0 4px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.ticket-order-label {
+  color: #a3a3a3;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ticket-order-header strong {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.order-expand-button {
+  width: fit-content;
+  min-height: 38px;
+  justify-self: center;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 98, 77, 0.45);
+  border-radius: 999px;
+  color: #ff9d90;
+  background: rgba(255, 98, 77, 0.06);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.order-expand-button:hover,
+.order-expand-button:focus-visible {
+  border-color: var(--red);
+  color: #fff;
+  background: rgba(255, 98, 77, 0.14);
 }
 
 .ticket-card {

@@ -16,6 +16,8 @@ export interface OrganizerSectorManagementItemViewModel {
   readonly capacity: number | null;
   readonly fullPrice: number | null;
   readonly halfPrice: number | null;
+  readonly reservedQuantity: number | null;
+  readonly soldQuantity: number | null;
   readonly available: number | null;
 }
 

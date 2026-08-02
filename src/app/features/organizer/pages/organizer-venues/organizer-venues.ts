@@ -9,7 +9,7 @@ import { OrganizerVenue } from '../../organizer-venue.models';
   imports: [RouterLink],
   template: `
     <main class="organizer-page">
-      <header class="page-header"><div><h1>Locais</h1></div><a class="button secondary" routerLink="/organizer/management">Voltar</a></header>
+      <header class="page-header"><div><h1>Locais</h1></div><div class="actions"><a class="button primary" routerLink="/organizer/management/venues/create">Criar local</a><a class="button secondary" routerLink="/organizer/management">Voltar</a></div></header>
       @if (loading()) { <p class="card">Carregando locais...</p> }
       @else if (error()) { <p class="notice">{{ error() }}</p> }
       @else if (!venues().length) { <section class="empty-state"><strong>Nenhum local encontrado.</strong><span>Não há locais disponíveis nos dados retornados pelo backend.</span></section> }
@@ -25,8 +25,11 @@ export class OrganizerVenues implements OnInit {
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
 
-  ngOnInit(): void {
+  ngOnInit(): void { this.loadVenues(); }
+
+  protected loadVenues(): void {
     this.loading.set(true);
     this.api.list().pipe(catchError(() => { this.error.set('Não foi possível carregar os locais no momento.'); return of([] as readonly OrganizerVenue[]); }), finalize(() => this.loading.set(false))).subscribe((venues) => this.venues.set(venues));
   }
+
 }

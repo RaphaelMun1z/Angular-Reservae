@@ -27,6 +27,10 @@ export class OrganizerVenueApi {
     return this.http.get<unknown>(this.apiUrl.url(`${VENUE_CATALOG_PATH}/${venueId}`)).pipe(map((response) => this.toVenue(response)));
   }
 
+  create(request: CreateOrganizerVenueRequest): Observable<OrganizerVenue> {
+    return this.http.post<unknown>(this.apiUrl.url(VENUE_CATALOG_PATH), request).pipe(map((response) => this.toVenue(response)));
+  }
+
   addSector(venueId: string, request: { readonly name: string; readonly capacity: number }): Observable<unknown> {
     return this.http.post<unknown>(this.apiUrl.url(`${VENUE_CATALOG_PATH}/${venueId}/add-sector`), request);
   }
@@ -52,11 +56,29 @@ export class OrganizerVenueApi {
 
   private toSector(value: unknown): OrganizerVenue['sectors'][number] {
     const item = this.isRecord(value) ? value : {};
-    return { id: this.string(item['id'] ?? item['sectorId']), name: this.string(item['name'] ?? item['sectorName']), capacity: this.number(item['capacity']), price: this.number(item['price'] ?? item['basePrice']) };
+    return {
+      id: this.string(item['id'] ?? item['sectorId']),
+      name: this.string(item['name'] ?? item['sectorName']),
+      capacity: this.number(item['capacity'] ?? item['sectorCapacity']),
+      price: this.number(item['price'] ?? item['basePrice']),
+    };
   }
 
   private isRecord(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null; }
   private string(value: unknown): string { return typeof value === 'string' ? value : ''; }
   private optionalString(value: unknown): string | null { return typeof value === 'string' ? value : null; }
   private number(value: unknown): number | null { return typeof value === 'number' ? value : null; }
+}
+
+export interface CreateOrganizerVenueRequest {
+  readonly name: string;
+  readonly city: string;
+  readonly state: string;
+  readonly totalCapacity: number;
+  readonly sectors: readonly CreateOrganizerVenueSectorRequest[];
+}
+
+export interface CreateOrganizerVenueSectorRequest {
+  readonly name: string;
+  readonly capacity: number;
 }

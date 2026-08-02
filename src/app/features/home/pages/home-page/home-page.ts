@@ -61,7 +61,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     MA: 'https://loremflickr.com/1600/900/sao%20luis,maranhao,brazil?lock=110',
     MT: 'https://loremflickr.com/1600/900/cuiaba,mato%20grosso,brazil?lock=111',
     MS: 'https://loremflickr.com/1600/900/campo%20grande,mato%20grosso%20do%20sul,brazil?lock=112',
-    MG: 'https://loremflickr.com/1600/900/belo%20horizonte,minas%20gerais,brazil?lock=113',
+    MG: 'assets/parquesabia.webp',
     PA: 'https://loremflickr.com/1600/900/belem,para,brazil?lock=114',
     PB: 'https://loremflickr.com/1600/900/joao%20pessoa,paraiba,brazil?lock=115',
     PR: 'https://loremflickr.com/1600/900/curitiba,parana,brazil?lock=116',

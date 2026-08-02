@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, InjectionToken, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { AuthSession, ReservaeRole, UpdateUserProfileRequest, UserProfile } from '../auth/auth.models';
@@ -32,6 +33,7 @@ const emptySession: AuthSession = {
 })
 export class AuthStore {
   private readonly integration = inject(AUTH_INTEGRATION, { optional: true });
+  private readonly router = inject(Router);
 
   private readonly _session = signal<AuthSession>(emptySession);
   private readonly _loading = signal(false);
@@ -120,7 +122,16 @@ export class AuthStore {
     this.integration
       .login(redirectUri)
       .pipe(
-        tap((session) => this._session.set(this.normalizeSession(session))),
+        tap((session) => {
+          const normalizedSession = this.normalizeSession(session);
+          this._session.set(normalizedSession);
+
+          if (this.isOrganizerOnly(normalizedSession)) {
+            void this.router.navigateByUrl('/organizer/management/events');
+          } else if (redirectUri === window.location.href || redirectUri.endsWith('/login')) {
+            void this.router.navigateByUrl('/inicio');
+          }
+        }),
         catchError((error: unknown) => {
           this._error.set(this.errorMessage(error, 'Nao foi possivel concluir o login. Tente novamente.'));
           return of(null);
@@ -236,6 +247,10 @@ export class AuthStore {
       roles: [...session.roles],
       profile: session.profile ? { ...session.profile } : null,
     };
+  }
+
+  private isOrganizerOnly(session: AuthSession): boolean {
+    return session.roles.includes('ORGANIZER') && !session.roles.includes('ADMIN');
   }
 
   private errorMessage(error: unknown, fallback: string): string {

@@ -17,6 +17,7 @@ import {
   EventListResponse,
   EventSector,
   EventSectorMutationRequest,
+  CreateEventRequest,
 } from '../../../core/http/contracts/events.contracts';
 
 const EVENT_CATALOG_EVENTS_PATH = '/event-catalog-service/api/events/v1';
@@ -57,6 +58,10 @@ export class HttpEventApi implements EventApi {
 
   removeSector(eventId: string, sectorId: string): Observable<unknown> {
     return this.http.delete<unknown>(this.apiUrl.url(`${EVENT_CATALOG_EVENTS_PATH}/${eventId}/remove-sector/${sectorId}`)).pipe(tap(() => this.eventDetailsCache.delete(eventId)));
+  }
+
+  createEvent(request: CreateEventRequest): Observable<EventListItem> {
+    return this.http.post<unknown>(this.apiUrl.url(EVENT_CATALOG_EVENTS_PATH), request).pipe(map((response) => this.toEventListItem(response as EventSummaryResponse)));
   }
 
   consultTicketPrices(
@@ -194,6 +199,8 @@ export class HttpEventApi implements EventApi {
           .pipe(
             map((inventory) => ({
               ...sector,
+              reservedQuantity: inventory.reservedQuantity ?? null,
+              soldQuantity: inventory.soldQuantity ?? null,
               availableQuantity: inventory.availableQuantity ?? null,
             })),
             catchError(() => of(sector)),

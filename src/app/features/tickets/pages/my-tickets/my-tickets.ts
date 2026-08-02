@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SiteFooter } from '../../../../layouts/site-footer/site-footer';
 import { SiteNavbar } from '../../../../layouts/site-navbar/site-navbar';
@@ -11,13 +12,60 @@ import { ticketStatusLabel, ticketTypeLabel } from '../../../../shared/presentat
 
 @Component({
   selector: 'app-my-tickets',
-    imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader, EmptyStateComponent],
+    imports: [RouterLink, FormsModule, SiteNavbar, SiteFooter, SkeletonLoader, EmptyStateComponent],
   templateUrl: './my-tickets.html',
   styleUrl: './my-tickets.scss',
 })
 export class MyTickets implements OnInit {
   readonly store = inject(TicketStore);
   readonly authStore = inject(AuthStore);
+  readonly orderIdFilter = signal('');
+  readonly expandedOrders = signal<ReadonlySet<string>>(new Set());
+  readonly groupedTickets = computed<readonly TicketGroup[]>(() => {
+    const groups = new Map<string, TicketGroup>();
+    const orderIdFilter = this.orderIdFilter().trim().toLowerCase();
+
+    for (const ticket of this.store.filteredTickets()) {
+      if (orderIdFilter && !(ticket.orderId || '').toLowerCase().includes(orderIdFilter)) {
+        continue;
+      }
+
+      const key = ticket.orderId || `ticket:${ticket.id || 'unknown'}`;
+      const group = groups.get(key);
+
+      if (group) {
+        group.tickets.push(ticket);
+      } else {
+        groups.set(key, { key, orderId: ticket.orderId || null, tickets: [ticket] });
+      }
+    }
+
+    return [...groups.values()];
+  });
+
+  setOrderIdFilter(value: string): void {
+    this.orderIdFilter.set(value);
+  }
+
+  visibleTickets(group: TicketGroup): readonly Ticket[] {
+    return this.isOrderExpanded(group.key) ? group.tickets : group.tickets.slice(0, 3);
+  }
+
+  isOrderExpanded(orderKey: string): boolean {
+    return this.expandedOrders().has(orderKey);
+  }
+
+  toggleOrder(orderKey: string): void {
+    this.expandedOrders.update((expanded) => {
+      const next = new Set(expanded);
+      if (next.has(orderKey)) {
+        next.delete(orderKey);
+      } else {
+        next.add(orderKey);
+      }
+      return next;
+    });
+  }
   ngOnInit(): void {
     this.store.loadTickets();
   }
@@ -84,4 +132,10 @@ export class MyTickets implements OnInit {
       minute: '2-digit',
     });
   }
+}
+
+interface TicketGroup {
+  readonly key: string;
+  readonly orderId: string | null;
+  readonly tickets: Ticket[];
 }

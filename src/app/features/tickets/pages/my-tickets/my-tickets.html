@@ -37,15 +37,38 @@
       </button>
     </nav>
 
-    @if (store.filteredTickets().length === 0) {
+    <div class="order-filter" role="search">
+      <label for="order-id-filter">Filtrar por código do pedido</label>
+      <div class="order-filter-control">
+        <input
+          id="order-id-filter"
+          type="search"
+          placeholder="Digite o código do pedido"
+          [ngModel]="orderIdFilter()"
+          (ngModelChange)="setOrderIdFilter($event)"
+          autocomplete="off"
+        />
+        @if (orderIdFilter()) {
+          <button type="button" class="order-filter-clear" aria-label="Limpar filtro do pedido" (click)="setOrderIdFilter('')">Limpar</button>
+        }
+      </div>
+    </div>
+
+    @if (groupedTickets().length === 0) {
       <app-empty-state
         title="Nenhum ingresso encontrado"
         description="Quando seus ingressos forem emitidos, eles aparecerao aqui."
       />
     } @else {
       <section class="ticket-list" aria-label="Ingressos">
-        @for (ticket of store.filteredTickets(); track ticket.id) {
-          <article class="ticket-card">
+        @for (group of groupedTickets(); track group.key) {
+          <section class="ticket-order-group" [attr.aria-label]="group.orderId ? 'Pedido ' + group.orderId : 'Pedido nao informado'">
+            <header class="ticket-order-header">
+              <span class="ticket-order-label">Pedido</span>
+              <strong>{{ group.orderId ? '#' + group.orderId : 'Nao informado' }}</strong>
+            </header>
+            @for (ticket of visibleTickets(group); track ticket.id) {
+              <article class="ticket-card">
             <div class="ticket-info">
               <div class="ticket-topline">
                 <span class="ticket-code-label">Código do ingresso</span>
@@ -83,7 +106,19 @@
                 Ver detalhes
               </a>
             </aside>
-          </article>
+              </article>
+            }
+            @if (group.tickets.length > 3) {
+              <button
+                type="button"
+                class="order-expand-button"
+                [attr.aria-expanded]="isOrderExpanded(group.key)"
+                (click)="toggleOrder(group.key)"
+              >
+                {{ isOrderExpanded(group.key) ? 'Mostrar menos' : 'Mostrar todos os ' + group.tickets.length + ' ingressos' }}
+              </button>
+            }
+          </section>
         }
       </section>
     }

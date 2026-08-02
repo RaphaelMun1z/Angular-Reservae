@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EventApi, EventFilters, EventListItem, EventSector, EventSectorMutationRequest, EVENT_API } from '../../../core/http/contracts/events.contracts';
+import { CreateEventRequest, EventApi, EventFilters, EventListItem, EventSector, EventSectorMutationRequest, EVENT_API } from '../../../core/http/contracts/events.contracts';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizerEventApi {
@@ -14,4 +14,5 @@ export class OrganizerEventApi {
   sectors(eventId: string): Observable<readonly EventSector[]> { return this.api.listSectors(eventId); }
   addSector(eventId: string, request: EventSectorMutationRequest): Observable<unknown> { return this.api.addSector(eventId, request); }
   removeSector(eventId: string, sectorId: string): Observable<unknown> { return this.api.removeSector(eventId, sectorId); }
+  create(request: CreateEventRequest): Observable<EventListItem> { return this.api.createEvent(request); }
 }

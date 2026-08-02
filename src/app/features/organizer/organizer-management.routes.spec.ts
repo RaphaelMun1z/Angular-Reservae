@@ -14,7 +14,7 @@ describe('Central organizer management routes', () => {
 
   it('defines all management resources below the central shell', () => {
     expect(managementChildren.map((route) => route.path)).toEqual([
-      '', 'events', 'events/create', 'venues', 'events/:eventId', 'events/:eventId/edit',
+      '', 'events', 'events/create', 'venues/create', 'venues', 'events/:eventId', 'events/:eventId/edit',
       'events/:eventId/add-sector', 'events/:eventId/sectors', 'events/:eventId/sales',
       'events/:eventId/check-in', 'events/:eventId/reports',
     ]);

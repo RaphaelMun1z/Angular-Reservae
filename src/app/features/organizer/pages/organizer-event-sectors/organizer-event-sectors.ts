@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CircleDollarSign, Layers, LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, Ticket, Trash2, Users } from 'lucide-angular';
 import { OrganizerEventApi } from '../../data-access/organizer-event.api';
 import { OrganizerStore } from '../../state/organizer.store';
+import { OrganizerSectorManagementItemViewModel } from '../../organizer.models';
 
 @Component({
   selector: 'app-organizer-event-sectors',
@@ -32,7 +33,7 @@ import { OrganizerStore } from '../../state/organizer.store';
                   <td><strong class="sector-price">{{ formatPrice(sector.fullPrice) }}</strong></td>
                   <td>{{ formatPrice(sector.halfPrice) }}</td>
                   <td><span class="sector-availability"><lucide-icon name="ticket" size="15" aria-hidden="true"></lucide-icon>{{ formatQuantity(sector.available) }}</span></td>
-                  <td class="sector-actions-cell"><button class="sector-remove-button" type="button" [disabled]="removingSectorId() === sector.id" [attr.aria-label]="'Remover setor ' + sector.name" (click)="requestRemoval(sector.id, sector.name)"><lucide-icon name="trash-2" size="16" aria-hidden="true"></lucide-icon><span>Remover</span></button></td>
+                  <td class="sector-actions-cell"><button class="sector-remove-button sector-icon-button" type="button" [disabled]="removingSectorId() === sector.id || hasIssuedTickets(sector)" [attr.aria-label]="hasIssuedTickets(sector) ? 'Setor não pode ser removido pois possui ingressos' : 'Remover setor ' + sector.name" [attr.title]="hasIssuedTickets(sector) ? 'Não é possível remover: há ingressos reservados ou vendidos' : 'Remover setor'" (click)="requestRemoval(sector)"><lucide-icon name="trash-2" size="16" aria-hidden="true"></lucide-icon></button></td>
                 </tr>
               }
             </tbody>
@@ -82,12 +83,19 @@ export class OrganizerEventSectors implements OnInit {
     return value === null ? 'Indisponível' : this.quantityFormatter.format(value);
   }
 
-  protected requestRemoval(sectorId: string, sectorName: string): void {
+  protected hasIssuedTickets(sector: OrganizerSectorManagementItemViewModel): boolean { return (sector.reservedQuantity ?? 0) > 0 || (sector.soldQuantity ?? 0) > 0; }
+
+  protected requestRemoval(sector: OrganizerSectorManagementItemViewModel): void {
     if (!this.eventId) {
       return;
     }
 
-    this.sectorPendingRemoval.set({ id: sectorId, name: sectorName });
+    if (this.hasIssuedTickets(sector)) {
+      this.message.set('Este setor não pode ser removido porque possui ingressos reservados ou vendidos.');
+      return;
+    }
+
+    this.sectorPendingRemoval.set({ id: sector.id, name: sector.name });
   }
 
   protected cancelRemoval(): void {
@@ -97,6 +105,13 @@ export class OrganizerEventSectors implements OnInit {
   protected confirmRemoval(): void {
     const sector = this.sectorPendingRemoval();
     if (!this.eventId || !sector) {
+      return;
+    }
+
+    const currentSector = this.store.sectors().find((item) => item.id === sector.id);
+    if (currentSector && this.hasIssuedTickets(currentSector)) {
+      this.message.set('Este setor não pode ser removido porque possui ingressos reservados ou vendidos.');
+      this.sectorPendingRemoval.set(null);
       return;
     }
 

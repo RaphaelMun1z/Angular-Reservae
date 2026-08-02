@@ -12,7 +12,7 @@ describe('roleGuard', () => {
 
     const result = TestBed.runInInjectionContext(() => roleGuard({ data: { roles: ['CUSTOMER', 'ADMIN'] } } as never, { url: '/checkout' } as never));
 
-    expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe('/organizer/management');
+    expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe('/organizer/management/events');
   });
 
   it('allows a customer on customer routes', () => {

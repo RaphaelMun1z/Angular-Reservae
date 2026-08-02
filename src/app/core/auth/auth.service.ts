@@ -7,11 +7,7 @@ import { environment } from '../../../environments/environment';
 import { ApiUrlService } from '../http/api-url.service';
 import { AuthIntegration } from '../state/auth.store';
 import { AuthSession, ReservaeRole, UpdateUserProfileRequest, UserProfile } from './auth.models';
-import {
-  keycloak,
-  keycloakInitOptions,
-  RESERVAE_FUNCTIONAL_ROLES,
-} from './keycloak.config';
+import { keycloak, keycloakInitOptions, RESERVAE_FUNCTIONAL_ROLES } from './keycloak.config';
 
 const PROFILE_PATH = '/user-profile-service/api/profiles/v1/me';
 
@@ -88,10 +84,7 @@ export class AuthService implements AuthIntegration {
 
   getRoles(): readonly ReservaeRole[] {
     const clientRoles = this.keycloak.resourceAccess?.[environment.auth.clientId]?.roles ?? [];
-    return this.normalizeRoles([
-      ...(this.keycloak.realmAccess?.roles ?? []),
-      ...clientRoles,
-    ]);
+    return this.normalizeRoles([...(this.keycloak.realmAccess?.roles ?? []), ...clientRoles]);
   }
 
   loadMyProfile(): Observable<UserProfile> {
@@ -144,9 +137,13 @@ export class AuthService implements AuthIntegration {
   private normalizeRoles(roles: readonly string[]): readonly ReservaeRole[] {
     const functionalRoles = new Set<string>(RESERVAE_FUNCTIONAL_ROLES);
 
-    return [...new Set(roles
-      .map((role) => role.toUpperCase())
-      .filter((role): role is ReservaeRole => functionalRoles.has(role)))];
+    return [
+      ...new Set(
+        roles
+          .map((role) => role.toUpperCase())
+          .filter((role): role is ReservaeRole => functionalRoles.has(role)),
+      ),
+    ];
   }
 
   private normalizeProfile(profile: UserProfileResponse): UserProfile {
@@ -172,7 +169,9 @@ export class AuthService implements AuthIntegration {
       return new Error(fallback);
     }
 
-    return new Error(`${fallback} Verifique se o Keycloak esta disponivel em ${environment.auth.keycloakUrl}.`);
+    return new Error(
+      `${fallback} Verifique se o Keycloak esta disponivel em ${environment.auth.keycloakUrl}.`,
+    );
   }
 }
 

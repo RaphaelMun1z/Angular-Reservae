@@ -18,6 +18,8 @@ export interface EventSector {
   readonly basePrice?: number | null;
   readonly halfPrice?: number | null;
   readonly totalCapacity?: number | null;
+  readonly reservedQuantity?: number | null;
+  readonly soldQuantity?: number | null;
   readonly availableQuantity?: number | null;
 }
 
@@ -52,9 +54,23 @@ export interface EventApi {
   listSectors(eventId: string): Observable<readonly EventSector[]>;
   addSector(eventId: string, request: EventSectorMutationRequest): Observable<unknown>;
   removeSector(eventId: string, sectorId: string): Observable<unknown>;
+  createEvent(request: CreateEventRequest): Observable<EventListItem>;
 }
 
 export interface EventSectorMutationRequest {
+  readonly sectorId: string;
+  readonly basePrice: number;
+  readonly halfPrice: number;
+}
+
+export interface CreateEventRequest {
+  readonly title: string;
+  readonly eventDate: string;
+  readonly venueId: string;
+  readonly sectorsPricing: readonly CreateEventSectorPricingRequest[];
+}
+
+export interface CreateEventSectorPricingRequest {
   readonly sectorId: string;
   readonly basePrice: number;
   readonly halfPrice: number;
