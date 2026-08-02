@@ -15,6 +15,7 @@ import { Login } from './pages/login/login';
 import { MyOrders } from './pages/my-orders/my-orders';
 import { MyTickets } from './pages/my-tickets/my-tickets';
 import { OrderCreated } from './pages/order-created/order-created';
+import { OrderDetails } from './pages/order-details/order-details';
 import { Profile } from './pages/profile/profile';
 import { Register } from './pages/register/register';
 import { Review } from './pages/review/review';
@@ -146,6 +147,12 @@ export const routes: Routes = [
         component: MyOrders,
         canActivate: [authGuard],
         title: 'Reservae | Meus pedidos',
+      },
+      {
+        path: 'detalhes-pedido/:orderId',
+        component: OrderDetails,
+        canActivate: [authGuard],
+        title: 'Reservae | Detalhes do pedido',
       },
       {
         path: 'perfil',

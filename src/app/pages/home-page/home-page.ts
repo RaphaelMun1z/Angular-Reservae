@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
 import { SkeletonLoader } from '../../components/skeleton-loader/skeleton-loader';
@@ -33,6 +33,7 @@ interface HeroPhrase {
 })
 export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   readonly eventStore = inject(EventStore);
+  private readonly router = inject(Router);
   protected readonly newsletterMessage = signal<string | null>(null);
   protected readonly heroPhrases: readonly HeroPhrase[] = [
     { lead: 'Viva seus', highlight: 'melhores momentos.' },
@@ -216,12 +217,25 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return eventStatusLabel(status);
   }
 
+  protected openEvent(eventId: string, clickEvent: Event): void {
+    clickEvent.preventDefault();
+    clickEvent.stopPropagation();
+
+    if (eventId) {
+      void this.router.navigate(['/selecionar-setor', eventId]);
+    }
+  }
+
   protected retryEvents(): void {
     this.eventStore.loadFeaturedEvents();
   }
 
   protected startFeaturedDrag(event: PointerEvent): void {
     if (event.pointerType === 'mouse' && event.button !== 0) {
+      return;
+    }
+
+    if ((event.target as HTMLElement | null)?.closest('a, button')) {
       return;
     }
 
@@ -284,6 +298,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   protected startStateEventsDrag(event: PointerEvent): void {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if ((event.target as HTMLElement | null)?.closest('a, button')) return;
     const carousel = this.stateCarousel?.nativeElement;
     if (!carousel) return;
     this.draggingStateEvents = true;

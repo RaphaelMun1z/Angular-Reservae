@@ -110,7 +110,14 @@ svg {
 
 .main-card {
   min-width: 0;
+  position: relative;
   padding: 24px;
+}
+
+.ticket-status-top {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 14px;
 }
 
 .event-heading {
@@ -129,6 +136,36 @@ svg {
   overflow-wrap: anywhere;
 }
 
+.ticket-id-label {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.ticket-id-value {
+  position: absolute;
+  top: 40px;
+  right: 24px;
+  display: block;
+  color: #fff;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.event-heading > div:first-child {
+  padding-right: 190px;
+}
+
 .load-note {
   display: inline-block;
   margin-top: 8px;
@@ -143,14 +180,24 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid rgba(0, 230, 118, 0.36);
-  border-radius: 999px;
-  background: rgba(0, 230, 118, 0.12);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: #9dffc9;
   font-size: 11px;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.status-icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 .status-dot {
@@ -161,41 +208,38 @@ svg {
 }
 
 .ticket-status--used .status-badge {
-  border-color: rgba(125, 180, 255, 0.32);
-  background: rgba(125, 180, 255, 0.12);
   color: #9bc1e5;
 }
 
 .ticket-status--revoked .status-badge {
-  border-color: rgba(255, 98, 77, 0.34);
-  background: rgba(255, 98, 77, 0.12);
   color: #ffb4a9;
 }
 
 .ticket-status--expired .status-badge {
-  border-color: rgba(251, 191, 36, 0.34);
-  background: rgba(251, 191, 36, 0.12);
   color: #ffe0a3;
 }
 
 .ticket-status--unknown .status-badge {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
   color: var(--gray);
 }
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 18px;
 }
 
 .info-card {
   min-width: 0;
-  padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.info-card + .info-card {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
 }
 
 .info-card span,
@@ -205,6 +249,22 @@ svg {
   font-weight: 900;
   letter-spacing: 0.8px;
   text-transform: uppercase;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.info-label svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--red);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 .info-card strong {
@@ -272,6 +332,7 @@ svg {
 }
 
 .qr-box {
+  position: relative;
   width: min(100%, 260px);
   margin: 0 auto 14px;
   padding: 18px;
@@ -279,7 +340,70 @@ svg {
   display: grid;
   place-items: center;
   background: #fff;
+  cursor: pointer;
+  z-index: 1;
 }
+
+.qr-box qrcode {
+  filter: blur(12px);
+  transition: filter 180ms ease;
+}
+
+.qr-view-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+
+.qr-view-hint svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.qr-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.78);
+  cursor: zoom-out;
+}
+
+.qr-modal {
+  position: relative;
+  width: min(420px, calc(100vw - 32px));
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  gap: 16px;
+  background: #fff;
+  color: #202020;
+  cursor: default;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+}
+
+.qr-modal qrcode { display: block; line-height: 0; }
+.qr-modal > span { font-size: 12px; font-weight: 800; }
+.qr-modal-close { position: absolute; top: 10px; right: 12px; width: 32px; height: 32px; border: 0; border-radius: 50%; color: #222; font-size: 24px; line-height: 1; cursor: pointer; background: rgba(0, 0, 0, 0.08); }
 
 .qr-box qrcode {
   display: block;
@@ -303,6 +427,16 @@ svg {
   line-height: 1.5;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.qr-hash-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
 }
 
 .qr-empty {
@@ -384,6 +518,7 @@ svg {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.05);
 }
+
 
 .transfer-note {
   margin: 0;

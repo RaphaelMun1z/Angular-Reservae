@@ -49,11 +49,6 @@ export class Checkout implements OnInit {
       this.loadEventData(selectedEventId);
     }
 
-    const restoredOrderId = this.store.restorePendingOrder();
-
-    if (restoredOrderId) {
-      this.store.startOrderPolling(restoredOrderId);
-    }
   }
 
   payNow(): void {

@@ -850,6 +850,10 @@
   transform: none;
 }
 
+.event-card a:hover {
+  background: transparent !important;
+}
+
 .home-action.secondary:hover {
   border-color: rgb(255 255 255 / 14%);
 }

@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, effect, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
@@ -8,7 +7,6 @@ import { Ticket, TicketStatus } from '../../core/models/ticket.model';
 import { TicketStore } from './state/ticket.store';
 import { AuthStore } from '../../core/state/auth.store';
 import { ticketStatusLabel, ticketTypeLabel } from '../../shared/presentation-labels';
-import { EventDisplayData, EventDisplayDataService } from '../../shared/event-display-data.service';
 
 @Component({
   selector: 'app-my-tickets',
@@ -19,22 +17,6 @@ import { EventDisplayData, EventDisplayDataService } from '../../shared/event-di
 export class MyTickets implements OnInit {
   readonly store = inject(TicketStore);
   readonly authStore = inject(AuthStore);
-  private readonly eventDisplayData = inject(EventDisplayDataService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly eventData = signal<Record<string, EventDisplayData | null>>({});
-  private readonly loadingEventIds = signal<Record<string, boolean>>({});
-  private readonly failedEventIds = signal<Record<string, boolean>>({});
-
-  constructor() {
-    effect(() => {
-      const eventIds = Array.from(
-        new Set(this.store.tickets().map((ticket) => ticket.eventId).filter((eventId): eventId is string => Boolean(eventId))),
-      );
-
-      eventIds.forEach((eventId) => queueMicrotask(() => this.loadEventData(eventId)));
-    });
-  }
-
   ngOnInit(): void {
     this.store.loadTickets();
   }
@@ -47,85 +29,39 @@ export class MyTickets implements OnInit {
     return ticketStatusLabel(status);
   }
 
+  statusIconPath(status?: string): string {
+    if (status === 'VALID') {
+      return 'm5 12 4 4L19 6';
+    }
+
+    if (status === 'REVOKED' || status === 'EXPIRED') {
+      return 'm8 8 8 8M16 8l-8 8';
+    }
+
+    return 'M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z';
+  }
+
   ticketTypeLabel(ticketType?: string): string {
     return ticketTypeLabel(ticketType);
   }
 
   eventName(ticket: Ticket): string {
-    const eventId = ticket.eventId;
-
-    if (!eventId) {
-      return 'Evento nao informado';
-    }
-
-    return this.eventData()[eventId]?.event?.name || (this.isEventLoading(eventId) ? 'Carregando evento...' : 'Evento nao identificado');
+    return ticket.eventTitle || 'Evento nao informado';
   }
 
   eventMeta(ticket: Ticket): string {
-    const eventId = ticket.eventId;
-
-    if (!eventId) {
-      return 'Detalhes do evento indisponiveis';
-    }
-
-    const event = this.eventData()[eventId]?.event;
-    const date = this.formatDate(event?.date);
-    const location = this.eventLocation(event);
+    const date = this.formatDate(ticket.eventDate);
+    const location = [ticket.venueName, [ticket.venueCity, ticket.venueState].filter(Boolean).join(', ')].filter(Boolean).join(' - ');
 
     if (date && location) {
       return `${date} - ${location}`;
     }
 
-    return date || location || (this.hasEventLoadFailed(eventId) ? 'Detalhes do evento indisponiveis' : 'Carregando detalhes...');
+    return date || location || 'Detalhes do evento indisponiveis';
   }
 
   sectorName(ticket: Ticket): string {
-    const eventId = ticket.eventId;
-    const sectorId = ticket.sectorId;
-
-    if (!sectorId) {
-      return 'Setor nao informado';
-    }
-
-    const sector = eventId ? this.eventData()[eventId]?.sectors.find((currentSector) => currentSector.id === sectorId) : null;
-    return sector?.name || (eventId && this.isEventLoading(eventId) ? 'Carregando setor...' : `Setor ${sectorId}`);
-  }
-
-  isEventLoading(eventId: string | undefined): boolean {
-    return eventId ? Boolean(this.loadingEventIds()[eventId]) : false;
-  }
-
-  hasEventLoadFailed(eventId: string | undefined): boolean {
-    return eventId ? Boolean(this.failedEventIds()[eventId]) : false;
-  }
-
-  private loadEventData(eventId: string): void {
-    if (this.eventData()[eventId] !== undefined || this.loadingEventIds()[eventId]) {
-      return;
-    }
-
-    this.loadingEventIds.update((ids) => ({ ...ids, [eventId]: true }));
-    this.failedEventIds.update((ids) => ({ ...ids, [eventId]: false }));
-
-    this.eventDisplayData
-      .getEventData(eventId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (eventData) => {
-          this.eventData.update((currentData) => ({ ...currentData, [eventId]: eventData }));
-          this.loadingEventIds.update((ids) => ({ ...ids, [eventId]: false }));
-        },
-        error: () => {
-          this.eventData.update((currentData) => ({ ...currentData, [eventId]: null }));
-          this.loadingEventIds.update((ids) => ({ ...ids, [eventId]: false }));
-          this.failedEventIds.update((ids) => ({ ...ids, [eventId]: true }));
-        },
-      });
-  }
-
-  private eventLocation(event: EventDisplayData['event'] | undefined): string {
-    const cityState = [event?.city, event?.state].filter(Boolean).join(', ');
-    return [event?.venueName, cityState].filter(Boolean).join(' - ');
+    return ticket.sectorName || (ticket.sectorId ? `Setor ${ticket.sectorId}` : 'Setor nao informado');
   }
 
   private formatDate(value: string | null | undefined): string {

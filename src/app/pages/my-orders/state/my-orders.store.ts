@@ -25,17 +25,20 @@ export class MyOrdersStore {
   readonly hasOrders = computed(() => this._orders().length > 0);
   readonly filteredOrders = computed(() => {
     const filter = this._statusFilter();
-    if (filter === 'ALL') {
-      return this._orders();
-    }
+    const orders = this._orders();
+    let filteredOrders: readonly CheckoutOrder[];
 
-    if (filter === 'CANCELLED') {
-      return this._orders().filter(
+    if (filter === 'ALL') {
+      filteredOrders = orders;
+    } else if (filter === 'CANCELLED') {
+      filteredOrders = orders.filter(
         (order) => order.status === 'CANCELLED' || order.status === 'RESERVATION_FAILED' || order.status === 'PAYMENT_FAILED',
       );
+    } else {
+      filteredOrders = orders.filter((order) => order.status === filter);
     }
 
-    return this._orders().filter((order) => order.status === filter);
+    return [...filteredOrders].sort((first, second) => this.createdAtTimestamp(second.createdAt) - this.createdAtTimestamp(first.createdAt));
   });
 
   loadOrders(): void {
@@ -89,5 +92,14 @@ export class MyOrdersStore {
     }
 
     return 'Nao foi possivel carregar seus pedidos.';
+  }
+
+  private createdAtTimestamp(value: string | null | undefined): number {
+    if (!value) {
+      return Number.NEGATIVE_INFINITY;
+    }
+
+    const timestamp = Date.parse(value);
+    return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
   }
 }

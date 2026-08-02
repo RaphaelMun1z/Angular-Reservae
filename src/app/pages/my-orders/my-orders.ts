@@ -1,4 +1,5 @@
 import { Component, DestroyRef, OnInit, effect, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SiteFooter } from '../../components/site-footer/site-footer';
 import { SiteNavbar } from '../../components/site-navbar/site-navbar';
@@ -11,7 +12,7 @@ import { MyOrdersStore, OrderStatusFilter } from './state/my-orders.store';
 
 @Component({
   selector: 'app-my-orders',
-  imports: [SiteNavbar, SiteFooter, SkeletonLoader],
+  imports: [RouterLink, SiteNavbar, SiteFooter, SkeletonLoader],
   providers: [MyOrdersStore],
   templateUrl: './my-orders.html',
   styleUrl: './my-orders.scss',
@@ -95,6 +96,10 @@ export class MyOrders implements OnInit {
   }
 
   eventName(order: CheckoutOrder): string {
+    if (order.eventTitle) {
+      return order.eventTitle;
+    }
+
     if (!order.eventId) {
       return 'Evento nao informado';
     }
@@ -103,6 +108,13 @@ export class MyOrders implements OnInit {
   }
 
   eventMeta(order: CheckoutOrder): string {
+    const directEventDate = this.formatDate(order.eventDate);
+    const directLocation = [order.venueName, [order.venueCity, order.venueState].filter(Boolean).join(', ')].filter(Boolean).join(' - ');
+
+    if (directEventDate || directLocation) {
+      return [directEventDate, directLocation].filter(Boolean).join(' - ');
+    }
+
     const event = order.eventId ? this.eventData()[order.eventId]?.event : null;
     const eventDate = this.formatDate(event?.date);
     const location = [event?.venueName, [event?.city, event?.state].filter(Boolean).join(', ')].filter(Boolean).join(' - ');
@@ -175,6 +187,10 @@ export class MyOrders implements OnInit {
   }
 
   isEventDataUnavailable(order: CheckoutOrder): boolean {
+    if (order.eventTitle || order.eventDate || order.venueName || order.venueCity || order.venueState) {
+      return false;
+    }
+
     if (!order.eventId || this.isEventLoading(order.eventId)) {
       return true;
     }

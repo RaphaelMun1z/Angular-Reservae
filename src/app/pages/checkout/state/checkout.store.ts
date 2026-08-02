@@ -27,7 +27,13 @@ export interface CheckoutItem {
 
 export interface CheckoutOrder {
   readonly id: string;
+  readonly userId?: string | null;
   readonly eventId: string | null;
+  readonly eventTitle?: string | null;
+  readonly eventDate?: string | null;
+  readonly venueName?: string | null;
+  readonly venueCity?: string | null;
+  readonly venueState?: string | null;
   readonly status: OrderStatus | null;
   readonly createdAt?: string | null;
   readonly totalAmount: number | null;

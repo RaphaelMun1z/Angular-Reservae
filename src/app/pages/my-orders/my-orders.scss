@@ -428,7 +428,7 @@
 }
 
 .order-modal {
-  width: min(680px, 100%);
+  width: min(820px, 100%);
   max-height: calc(100vh - 48px);
   overflow-y: auto;
   padding: 26px;
@@ -439,7 +439,8 @@
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
 }
 
-.order-modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.order-modal-header { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.modal-header-actions { display: flex; align-items: center; gap: 10px; }
 .modal-kicker, .modal-event > span, .modal-facts dt { display: block; color: var(--red); font-size: 10px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
 .order-modal-header h2 { margin-top: 5px; font-size: 25px; font-weight: 900; }
 .modal-close { width: 36px; height: 36px; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; font: inherit; font-size: 24px; cursor: pointer; background: rgba(255, 255, 255, 0.05); }
@@ -455,16 +456,37 @@
 .modal-facts dd { margin-top: 5px; color: #fff; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
 .modal-items { padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, 0.09); }
 .modal-items h3 { margin-bottom: 12px; font-size: 15px; font-weight: 900; }
+.modal-items-header { display: grid; grid-template-columns: minmax(150px, 1.6fr) repeat(4, minmax(80px, 1fr)); gap: 16px; padding: 0 0 8px; color: var(--gray); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.modal-items-header span:last-child { text-align: right; }
 .modal-muted { color: var(--gray); font-size: 13px; font-weight: 600; }
-.modal-item { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+.modal-item { display: grid; grid-template-columns: minmax(150px, 1.6fr) repeat(4, minmax(80px, 1fr)); align-items: center; gap: 16px; padding: 13px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
 .modal-item:last-child { border-bottom: 0; }
 .modal-item div { display: grid; gap: 4px; min-width: 0; }
 .modal-item strong { font-size: 13px; font-weight: 900; overflow-wrap: anywhere; }
+.modal-item strong small { color: var(--gray); font-size: 11px; font-weight: 700; }
 .modal-item span { color: var(--gray); font-size: 11px; font-weight: 600; }
+.modal-item > div:first-child > span { display: none; }
+.modal-item-ticket-type { color: var(--gray); font-size: 11px; font-weight: 600; }
+.tickets-page-action, .modal-tickets-action { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 42px; padding: 0 14px; }
+.tickets-page-action svg, .modal-tickets-action svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.modal-tickets-action { width: 100%; margin-top: 16px; }
+.modal-item-column span { display: none; }
+.modal-item-column strong { font-size: 13px; }
+.modal-item-subtotal { text-align: right; }
+.modal-total { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.09); }
+.modal-total span { color: var(--gray); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+.modal-total strong { color: #fff; font-size: 18px; font-weight: 900; }
 .modal-payment { display: flex; min-height: 44px; align-items: center; justify-content: center; margin-top: 18px; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 900; text-decoration: none; background: var(--red); }
 
 @media (max-width: 640px) {
   .order-modal-backdrop { padding: 12px; }
   .order-modal { max-height: calc(100vh - 24px); padding: 20px; border-radius: 18px; }
   .modal-facts { grid-template-columns: 1fr; gap: 12px; }
+  .modal-item { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .modal-item > div:first-child { grid-column: 1 / -1; }
+  .modal-items-header { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .modal-items-header span:nth-child(3) { grid-column: 1; }
+  .modal-items-header span:nth-child(4) { grid-column: 2; }
+  .modal-items-header span:last-child { grid-column: 1 / -1; text-align: left; }
+  .modal-item-subtotal { text-align: left; }
 }

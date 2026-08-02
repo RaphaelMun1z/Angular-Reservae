@@ -35,6 +35,12 @@ export interface CheckoutRequestDTO {
 export interface OrderSummaryResponseDTO {
   readonly orderId?: string;
   readonly eventId?: string;
+  readonly userId?: string;
+  readonly eventTitle?: string;
+  readonly eventDate?: string;
+  readonly venueName?: string;
+  readonly venueCity?: string;
+  readonly venueState?: string;
   readonly createdAt?: string;
   readonly totalAmount?: number;
   readonly status?: OrderStatus;
@@ -46,6 +52,7 @@ export interface OrderSummaryResponseDTO {
 export interface OrderItemResponseDTO {
   readonly orderItemId?: string;
   readonly sectorId?: string;
+  readonly sectorName?: string;
   readonly reservationId?: string;
   readonly ticketType?: TicketType;
   readonly quantity?: number;
@@ -57,6 +64,11 @@ export interface OrderResponseDTO {
   readonly orderId?: string;
   readonly eventId?: string;
   readonly userId?: string;
+  readonly eventTitle?: string;
+  readonly eventDate?: string;
+  readonly venueName?: string;
+  readonly venueCity?: string;
+  readonly venueState?: string;
   readonly createdAt?: string;
   readonly totalAmount?: number;
   readonly status?: OrderStatus;

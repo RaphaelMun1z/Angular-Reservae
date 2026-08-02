@@ -41,7 +41,13 @@ export class HttpCheckoutApi implements CheckoutApi {
 
     return {
       id: order?.orderId ?? '',
+      userId: order?.userId ?? null,
       eventId,
+      eventTitle: order?.eventTitle ?? null,
+      eventDate: order?.eventDate ?? null,
+      venueName: order?.venueName ?? null,
+      venueCity: order?.venueCity ?? null,
+      venueState: order?.venueState ?? null,
       status: order?.status ?? (response.status === 202 ? 'PENDING' : null),
       createdAt: null,
       totalAmount: order?.totalAmount ?? null,
@@ -53,7 +59,13 @@ export class HttpCheckoutApi implements CheckoutApi {
   private fromOrderSummary(order: OrderSummaryResponseDTO | null, eventId: string): CheckoutOrder {
     return {
       id: order?.orderId ?? '',
+      userId: order?.userId ?? null,
       eventId,
+      eventTitle: order?.eventTitle ?? null,
+      eventDate: order?.eventDate ?? null,
+      venueName: order?.venueName ?? null,
+      venueCity: order?.venueCity ?? null,
+      venueState: order?.venueState ?? null,
       status: order?.status ?? 'PENDING',
       createdAt: null,
       totalAmount: order?.totalAmount ?? null,
@@ -65,7 +77,13 @@ export class HttpCheckoutApi implements CheckoutApi {
   private fromOrderSummaryResponse(order: OrderSummaryResponseDTO): CheckoutOrder {
     return {
       id: order.orderId ?? '',
+      userId: order.userId ?? null,
       eventId: order.eventId ?? null,
+      eventTitle: order.eventTitle ?? null,
+      eventDate: order.eventDate ?? null,
+      venueName: order.venueName ?? null,
+      venueCity: order.venueCity ?? null,
+      venueState: order.venueState ?? null,
       status: order.status ?? null,
       createdAt: order.createdAt ?? null,
       totalAmount: order.totalAmount ?? null,
@@ -94,7 +112,13 @@ export class HttpCheckoutApi implements CheckoutApi {
   private fromOrderResponse(order: OrderResponseDTO): CheckoutOrder {
     return {
       id: order.orderId ?? '',
+      userId: order.userId ?? null,
       eventId: order.eventId ?? null,
+      eventTitle: order.eventTitle ?? null,
+      eventDate: order.eventDate ?? null,
+      venueName: order.venueName ?? null,
+      venueCity: order.venueCity ?? null,
+      venueState: order.venueState ?? null,
       status: order.status ?? null,
       createdAt: order.createdAt ?? null,
       totalAmount: order.totalAmount ?? null,

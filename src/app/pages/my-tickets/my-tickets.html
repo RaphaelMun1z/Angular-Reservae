@@ -47,21 +47,13 @@
         @for (ticket of store.filteredTickets(); track ticket.id) {
           <article class="ticket-card">
             <div class="ticket-info">
-              <span
-                class="ticket-status"
-                [class.valid]="ticket.status === 'VALID'"
-                [class.used]="ticket.status === 'USED'"
-                [class.revoked]="ticket.status === 'REVOKED'"
-              >
-                {{ statusLabel(ticket.status) }}
-              </span>
+              <div class="ticket-topline">
+                <span class="ticket-code-label">Código do ingresso</span>
+                <span class="ticket-code">#{{ ticket.id || 'Nao informado' }}</span>
+              </div>
 
               <h2>{{ eventName(ticket) }}</h2>
               <p class="ticket-event-meta">{{ eventMeta(ticket) }}</p>
-              @if (hasEventLoadFailed(ticket.eventId)) {
-                <p class="ticket-load-note">Nao foi possivel carregar todos os detalhes do evento.</p>
-              }
-
               <div class="ticket-details">
                 <div>
                   <span>Setor</span>
@@ -73,14 +65,20 @@
                   <strong>{{ ticketTypeLabel(ticket.ticketType) }}</strong>
                 </div>
 
-                <div>
-                  <span>Codigo do ingresso</span>
-                  <strong class="ticket-code">{{ ticket.id || 'Nao informado' }}</strong>
-                </div>
               </div>
             </div>
 
             <aside class="ticket-action">
+              <span
+                class="ticket-status"
+                [class.valid]="ticket.status === 'VALID'"
+                [class.used]="ticket.status === 'USED'"
+                [class.revoked]="ticket.status === 'REVOKED'"
+              >
+                <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="statusIconPath(ticket.status)"></path></svg>
+                {{ statusLabel(ticket.status) }}
+              </span>
+
               <a class="primary-action" [routerLink]="['/detalhes-ingresso', ticket.id]">
                 Ver detalhes
               </a>

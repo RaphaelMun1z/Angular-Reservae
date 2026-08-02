@@ -81,16 +81,23 @@
               </span>
 
               <div class="order-action-buttons">
+                @if (order.id) {
+                  <a class="secondary-action" [routerLink]="['/detalhes-pedido', order.id]">
+                    Ver detalhes
+                  </a>
+                }
+
                 @if (isPaymentPending(order.status) && order.paymentUrl) {
-                  <a class="secondary-action" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">
+                  <a class="primary-action" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">
                     Continuar pagamento
                   </a>
                 }
 
-                @if (order.id) {
-                  <button class="primary-action" type="button" (click)="openOrderDetails(order)">
-                    Ver detalhes
-                  </button>
+                @if (isPaid(order.status)) {
+                  <a class="primary-action tickets-page-action" routerLink="/meus-ingressos">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3Z"></path><path d="M13 5v14"></path></svg>
+                    Meus ingressos
+                  </a>
                 }
               </div>
             </aside>
@@ -113,7 +120,7 @@
       <header class="order-modal-header">
         <div>
           <span class="modal-kicker">Detalhes do pedido</span>
-          <h2 id="order-modal-title">#{{ shortOrderId(order) }}</h2>
+          <h2 id="order-modal-title">#{{ fullOrderId(order) }}</h2>
         </div>
         <button class="modal-close" type="button" aria-label="Fechar detalhes" (click)="closeOrderDetails()">×</button>
       </header>
@@ -136,28 +143,62 @@
       </div>
 
       <dl class="modal-facts">
-        <div><dt>ID do pedido</dt><dd>{{ fullOrderId(order) }}</dd></div>
         <div><dt>Criado em</dt><dd>@if (order.createdAt) { {{ orderDate(order) }} } @else { <span class="field-skeleton skeleton-line"></span> }</dd></div>
-        <div><dt>Total</dt><dd>@if (hasTotal(order)) { {{ formatCurrency(order.totalAmount) }} } @else { <span class="field-skeleton skeleton-line"></span> }</dd></div>
         <div><dt>Ingressos</dt><dd>@if (order.items.length > 0) { {{ totalTickets(order) }} } @else { <span class="field-skeleton skeleton-line"></span> }</dd></div>
       </dl>
 
       <div class="modal-items">
         <h3>Itens do pedido</h3>
+        <div class="modal-items-header" aria-hidden="true">
+          <span>Setor</span>
+          <span>Tipo</span>
+          <span>Quantidade</span>
+          <span>Preço unitário</span>
+          <span>Subtotal</span>
+        </div>
         @if (order.items.length === 0) {
           <span class="field-skeleton skeleton-line skeleton-items"></span>
         } @else {
           @for (item of order.items; track item.orderItemId || $index) {
             <div class="modal-item">
               <div>
-                <strong>{{ item.sectorId || 'Setor não informado' }}</strong>
+                <span class="modal-item-label">Setor</span>
+                <span class="modal-item-ticket-type">{{ ticketTypeLabel(item.ticketType) }}</span>
+                <strong>{{ item.sectorName || item.sectorId || 'Setor não informado' }}</strong>
                 <span>{{ ticketTypeLabel(item.ticketType) }} · {{ item.quantity ?? 1 }} ingresso(s)</span>
               </div>
-              <strong>{{ formatCurrency(item.subtotal ?? item.appliedPrice) }}</strong>
+              <div class="modal-item-column modal-item-type">
+                <span>Tipo</span>
+                <strong>{{ ticketTypeLabel(item.ticketType) }}</strong>
+              </div>
+              <div class="modal-item-column">
+                <span>Quantidade</span>
+                <strong>{{ item.quantity ?? 1 }}</strong>
+              </div>
+              <div class="modal-item-column">
+                <span>Preço unitário</span>
+                <strong>{{ formatCurrency(item.appliedPrice) }}</strong>
+              </div>
+              <div class="modal-item-column modal-item-subtotal">
+                <span>Subtotal</span>
+                <strong>{{ formatCurrency(item.subtotal ?? item.appliedPrice) }}</strong>
+              </div>
             </div>
           }
         }
       </div>
+
+      <div class="modal-total">
+        <span>Total</span>
+        <strong>@if (hasTotal(order)) { {{ formatCurrency(order.totalAmount) }} } @else { <span class="field-skeleton skeleton-line"></span> }</strong>
+      </div>
+
+      @if (isPaid(order.status)) {
+        <a class="primary-action modal-tickets-action" routerLink="/meus-ingressos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3Z"></path><path d="M13 5v14"></path></svg>
+          Acessar meus ingressos
+        </a>
+      }
 
       @if (isPaymentPending(order.status) && order.paymentUrl) {
         <a class="modal-payment" [href]="order.paymentUrl" target="_blank" rel="noopener noreferrer">Continuar pagamento</a>
