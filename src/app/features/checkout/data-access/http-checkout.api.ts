@@ -1,0 +1,129 @@
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CheckoutRequestDTO, OrderResponseDTO, OrderSummaryResponseDTO } from '../../../core/models/order.model';
+import { ApiUrlService } from '../../../core/http/api-url.service';
+import { CheckoutApi, CheckoutOrder } from '../../../core/http/contracts/checkout.contracts';
+
+const ORDER_PATH = '/order-service/api/orders/v1';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HttpCheckoutApi implements CheckoutApi {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = inject(ApiUrlService);
+
+  startCheckout(request: CheckoutRequestDTO): Observable<CheckoutOrder> {
+    return this.http
+      .post(this.apiUrl.url(`${ORDER_PATH}/checkout`), request, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(map((response) => this.fromCheckoutResponse(response, request.eventId)));
+  }
+
+  getOrder(orderId: string): Observable<CheckoutOrder> {
+    return this.http
+      .get<OrderResponseDTO>(this.apiUrl.url(`${ORDER_PATH}/${orderId}`))
+      .pipe(map((order) => this.fromOrderResponse(order)));
+  }
+
+  findOrdersByUserId(userId: string): Observable<readonly CheckoutOrder[]> {
+    return this.http
+      .get<readonly OrderSummaryResponseDTO[]>(this.apiUrl.url(`${ORDER_PATH}/user/${encodeURIComponent(userId)}/orders`))
+      .pipe(map((orders) => orders.map((order) => this.fromOrderSummaryResponse(order))));
+  }
+
+  private fromCheckoutResponse(response: HttpResponse<string>, eventId: string): CheckoutOrder {
+    const order = this.parseOrderSummary(response.body);
+
+    return {
+      id: order?.orderId ?? '',
+      userId: order?.userId ?? null,
+      eventId,
+      eventTitle: order?.eventTitle ?? null,
+      eventDate: order?.eventDate ?? null,
+      venueName: order?.venueName ?? null,
+      venueCity: order?.venueCity ?? null,
+      venueState: order?.venueState ?? null,
+      status: order?.status ?? (response.status === 202 ? 'PENDING' : null),
+      createdAt: null,
+      totalAmount: order?.totalAmount ?? null,
+      paymentUrl: order?.paymentUrl ?? null,
+      items: [],
+    };
+  }
+
+  private fromOrderSummary(order: OrderSummaryResponseDTO | null, eventId: string): CheckoutOrder {
+    return {
+      id: order?.orderId ?? '',
+      userId: order?.userId ?? null,
+      eventId,
+      eventTitle: order?.eventTitle ?? null,
+      eventDate: order?.eventDate ?? null,
+      venueName: order?.venueName ?? null,
+      venueCity: order?.venueCity ?? null,
+      venueState: order?.venueState ?? null,
+      status: order?.status ?? 'PENDING',
+      createdAt: null,
+      totalAmount: order?.totalAmount ?? null,
+      paymentUrl: order?.paymentUrl ?? null,
+      items: [],
+    };
+  }
+
+  private fromOrderSummaryResponse(order: OrderSummaryResponseDTO): CheckoutOrder {
+    return {
+      id: order.orderId ?? '',
+      userId: order.userId ?? null,
+      eventId: order.eventId ?? null,
+      eventTitle: order.eventTitle ?? null,
+      eventDate: order.eventDate ?? null,
+      venueName: order.venueName ?? null,
+      venueCity: order.venueCity ?? null,
+      venueState: order.venueState ?? null,
+      status: order.status ?? null,
+      createdAt: order.createdAt ?? null,
+      totalAmount: order.totalAmount ?? null,
+      paymentUrl: order.paymentUrl ?? null,
+      items: order.itens ?? order.items ?? [],
+    };
+  }
+
+  private parseOrderSummary(body: string | null): OrderSummaryResponseDTO | null {
+    if (!body?.trim()) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(body) as unknown;
+      return this.isOrderSummaryResponse(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private isOrderSummaryResponse(value: unknown): value is OrderSummaryResponseDTO {
+    return typeof value === 'object' && value !== null;
+  }
+
+  private fromOrderResponse(order: OrderResponseDTO): CheckoutOrder {
+    return {
+      id: order.orderId ?? '',
+      userId: order.userId ?? null,
+      eventId: order.eventId ?? null,
+      eventTitle: order.eventTitle ?? null,
+      eventDate: order.eventDate ?? null,
+      venueName: order.venueName ?? null,
+      venueCity: order.venueCity ?? null,
+      venueState: order.venueState ?? null,
+      status: order.status ?? null,
+      createdAt: order.createdAt ?? null,
+      totalAmount: order.totalAmount ?? null,
+      paymentUrl: order.paymentUrl ?? null,
+      items: order.itens ?? order.items ?? [],
+    };
+  }
+}

@@ -17,5 +17,9 @@ export const roleGuard: CanActivateFn = (route, state): boolean | UrlTree => {
     return true;
   }
 
+  if (authStore.isOrganizer() && roles.includes('CUSTOMER')) {
+    return router.parseUrl('/organizer/management');
+  }
+
   return router.parseUrl('/403');
 };

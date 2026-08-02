@@ -4,7 +4,7 @@ import Keycloak, { KeycloakTokenParsed } from 'keycloak-js';
 import { from, Observable, of, switchMap, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { ApiUrlService } from '../services/api-url.service';
+import { ApiUrlService } from '../http/api-url.service';
 import { AuthIntegration } from '../state/auth.store';
 import { AuthSession, ReservaeRole, UpdateUserProfileRequest, UserProfile } from './auth.models';
 import {

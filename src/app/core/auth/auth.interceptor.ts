@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpEvent, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
 import { Router } from '@angular/router';
 import { MonoTypeOperatorFunction, catchError, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -9,10 +9,10 @@ import { AuthStore } from '../state/auth.store';
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
   const authStore = inject(AuthStore);
-  const router = inject(Router);
+  const environmentInjector = inject(EnvironmentInjector);
 
   if (!shouldAttachToken(request.url) || !authService.isAuthenticated()) {
-    return next(request).pipe(handleAuthError(authStore, router, request.url));
+    return next(request).pipe(handleAuthError(authStore, environmentInjector, request.url));
   }
 
   return authService.getAccessToken().pipe(
@@ -29,7 +29,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       }
       return throwError(() => error);
     }),
-    handleAuthError(authStore, router, request.url),
+    handleAuthError(authStore, environmentInjector, request.url),
   );
 };
 
@@ -53,7 +53,7 @@ function isAuthenticationFailure(error: unknown): boolean {
   return /invalid_grant|invalid[_ -]?token|token[^.]{0,40}(expired|expirado|not active)|login_required/i.test(error.message);
 }
 
-function handleAuthError(authStore: AuthStore, router: Router, requestUrl: string): MonoTypeOperatorFunction<HttpEvent<unknown>> {
+function handleAuthError(authStore: AuthStore, environmentInjector: EnvironmentInjector, requestUrl: string): MonoTypeOperatorFunction<HttpEvent<unknown>> {
   return catchError((error: unknown) => {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 401) {
@@ -64,7 +64,9 @@ function handleAuthError(authStore: AuthStore, router: Router, requestUrl: strin
 
       if (error.status === 403) {
         if (!isProfileRequest(requestUrl)) {
-          void router.navigateByUrl('/403');
+          runInInjectionContext(environmentInjector, () => {
+            void inject(Router).navigateByUrl('/403');
+          });
         }
       }
     }

@@ -1,0 +1,83 @@
+<nav class="nav">
+  <a routerLink="/inicio" class="logo" aria-label="Reservae">
+    <img src="/assets/icon_logo_dark.png" alt="Reservae" class="brand-logo-image" />
+  </a>
+
+  <div class="nav-center" aria-label="Navegacao principal">
+    @for (item of navItems(); track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.path === '/inicio' }"
+        [attr.aria-label]="item.label"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="item.iconPath"></path></svg>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </div>
+
+  <div class="nav-right">
+    @if (showOrganizer()) {
+      <a routerLink="/organizer/management" routerLinkActive="active" class="cart-link dashboard-link" aria-label="Abrir Dashboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h5"></path></svg>
+      </a>
+    }
+    @if (showDashboard()) {
+      <a routerLink="/dashboard" routerLinkActive="active" class="cart-link dashboard-link" aria-label="Abrir dashboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 13h6V4H4zM14 20h6v-7h-6zM14 10h6V4h-6zM4 20h6v-3H4z"></path>
+        </svg>
+      </a>
+    } @else if (showCart()) {
+      <a routerLink="/checkout" routerLinkActive="active" class="cart-link" aria-label="Abrir checkout">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 6h15l-1.5 9h-12z"></path>
+        <path d="M6 6 5 3H2"></path>
+        <circle cx="9" cy="20" r="1.5"></circle>
+        <circle cx="18" cy="20" r="1.5"></circle>
+      </svg>
+      @if (checkoutStore.totalTickets() > 0) {
+        <span>{{ checkoutStore.totalTickets() }}</span>
+      }
+      </a>
+    }
+    <app-user-menu />
+    <button
+      type="button"
+      class="menu"
+      aria-label="Abrir menu"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      (click)="toggleMobileMenu()"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  @if (mobileMenuOpen()) {
+    <div class="mobile-menu-panel">
+      @for (item of navItems(); track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/inicio' }"
+          (click)="closeMobileMenu()"
+        >
+          {{ item.label }}
+        </a>
+      }
+      @if (showDashboard()) {
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">Dashboard</a>
+      } @else if (showOrganizer()) {
+        <a routerLink="/organizer/management" routerLinkActive="active" (click)="closeMobileMenu()">Dashboard</a>
+      } @else if (showCart()) {
+        <a routerLink="/checkout" routerLinkActive="active" (click)="closeMobileMenu()">
+          Checkout
+          @if (checkoutStore.totalTickets() > 0) {
+            <span class="mobile-cart-count">{{ checkoutStore.totalTickets() }}</span>
+          }
+        </a>
+      }
+    </div>
+  }
+</nav>
